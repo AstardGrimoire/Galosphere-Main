@@ -7,11 +7,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.orcinus.galosphere.init.GConfiguredFeatures;
-import net.orcinus.galosphere.init.GPlacedFeatures;
 
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("UnstableApiUsage")
 public class GConfiguredFeaturesProvider extends FabricDynamicRegistryProvider {
     public GConfiguredFeaturesProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
@@ -19,27 +17,7 @@ public class GConfiguredFeaturesProvider extends FabricDynamicRegistryProvider {
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        add(registries, entries, GConfiguredFeatures.LARGE_ALLURITE_CRYSTAL_FLOOR);
-        add(registries, entries, GConfiguredFeatures.LARGE_LUMIERE_CRYSTAL_FLOOR);
-        add(registries, entries, GConfiguredFeatures.LARGE_ALLURITE_CRYSTAL_CEILING);
-        add(registries, entries, GConfiguredFeatures.LARGE_LUMIERE_CRYSTAL_CEILING);
-        add(registries, entries, GConfiguredFeatures.ALLURITE_CRYSTAL_FLOOR);
-        add(registries, entries, GConfiguredFeatures.LUMIERE_CRYSTAL_FLOOR);
-        add(registries, entries, GConfiguredFeatures.ALLURITE_CRYSTAL_CEILING);
-        add(registries, entries, GConfiguredFeatures.LUMIERE_CRYSTAL_CEILING);
-        add(registries, entries, GConfiguredFeatures.ORE_SILVER_SMALL);
-        add(registries, entries, GConfiguredFeatures.ORE_SILVER_LARGE);
-        add(registries, entries, GConfiguredFeatures.BOWL_LICHEN);
-        add(registries, entries, GConfiguredFeatures.LICHEN_VEGETATION);
-        add(registries, entries, GConfiguredFeatures.LICHEN_PATCH);
-        add(registries, entries, GConfiguredFeatures.GRAVEL_PATCH);
-        add(registries, entries, GConfiguredFeatures.LICHEN_CORDYCEPS);
-        add(registries, entries, GConfiguredFeatures.PINK_SALT_GROUND_NOISE_PATCH);
-        add(registries, entries, GConfiguredFeatures.PINK_SALT_CEILING_NOISE_PATCH);
-        add(registries, entries, GConfiguredFeatures.PINK_SALT_STRAW_CEILING_PATCH);
-        add(registries, entries, GConfiguredFeatures.PINK_SALT_STRAW_FLOOR_PATCH);
-        add(registries, entries, GConfiguredFeatures.OASIS);
-        add(registries, entries, GConfiguredFeatures.BERSERKER);
+        GConfiguredFeatures.CONFIGURED_FEATURES.values().forEach(configuredFeatureResourceKey -> add(registries, entries, configuredFeatureResourceKey));
     }
 
     private void add(HolderLookup.Provider registries, Entries entries, ResourceKey<ConfiguredFeature<?, ?>> resourceKey) {

@@ -2,7 +2,6 @@ package net.orcinus.galosphere.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,14 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.entities.SpectatorVision;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class SpectatorVisionRenderer extends EntityRenderer<SpectatorVision> {
-    private static final Function<Integer, ResourceLocation> FUNCTION = integer -> new ResourceLocation(Galosphere.MODID, "textures/entity/spectator_vision/spectator_vision_" + integer + ".png");
+    private static final Function<Integer, ResourceLocation> FUNCTION = integer -> Galosphere.id("textures/entity/spectator_vision/spectator_vision_" + integer + ".png");
 
     public SpectatorVisionRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -31,19 +28,17 @@ public class SpectatorVisionRenderer extends EntityRenderer<SpectatorVision> {
     @Override
     public void render(SpectatorVision entity, float f, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
         poseStack.pushPose();
-        poseStack.scale(1.5F, 1.5F, 1.5F);
+        float size = 1.5F;
         float sin = Mth.sin(entity.tickCount / 4.0F) / 16.0F;
+        poseStack.scale(size, size, size);
         poseStack.translate(0, sin, 0);
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
         PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix4f = pose.pose();
-        Matrix3f matrix3f = pose.normal();
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityCutout(this.getTextureLocation(entity)));
-        SpectatorVisionRenderer.vertex(vertexConsumer, matrix4f, matrix3f, i, 0.0f, 0, 0, 1);
-        SpectatorVisionRenderer.vertex(vertexConsumer, matrix4f, matrix3f, i, 1.0f, 0, 1, 1);
-        SpectatorVisionRenderer.vertex(vertexConsumer, matrix4f, matrix3f, i, 1.0f, 1, 1, 0);
-        SpectatorVisionRenderer.vertex(vertexConsumer, matrix4f, matrix3f, i, 0.0f, 1, 0, 0);
+        vertex(vertexConsumer, pose, i, 0.0f, 0, 0, 1);
+        vertex(vertexConsumer, pose, i, 1.0f, 0, 1, 1);
+        vertex(vertexConsumer, pose, i, 1.0f, 1, 1, 0);
+        vertex(vertexConsumer, pose, i, 0.0f, 1, 0, 0);
         poseStack.popPose();
     }
 
@@ -52,8 +47,8 @@ public class SpectatorVisionRenderer extends EntityRenderer<SpectatorVision> {
         return entity.getPhase();
     }
 
-    private static void vertex(VertexConsumer vertexConsumer, Matrix4f matrix4f, Matrix3f matrix3f, int i, float f, int j, int k, int l) {
-        vertexConsumer.vertex(matrix4f, f - 0.5f, (float)j - 0.5f, 0.0f).color(255, 255, 255, 255).uv(k, l).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(i).normal(matrix3f, 0.0f, 1.0f, 0.0f).endVertex();
+    private static void vertex(VertexConsumer vertexConsumer, PoseStack.Pose pose, int i, float f, int j, int k, int l) {
+        vertexConsumer.addVertex(pose, f - 0.5f, (float)j - 0.5f, 0.0f).setColor(-1).setUv(k, l).setOverlay(OverlayTexture.NO_OVERLAY).setLight(i).setNormal(pose, 0.0f, 1.0f, 0.0f);
     }
 
     @Override

@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -28,13 +27,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -50,6 +47,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -62,14 +60,16 @@ import net.orcinus.galosphere.api.Spectatable;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
 import net.orcinus.galosphere.entities.ai.SpectreAi;
 import net.orcinus.galosphere.init.GBlockTags;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItemTags;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMemoryModuleTypes;
-import net.orcinus.galosphere.init.GNetwork;
 import net.orcinus.galosphere.init.GParticleTypes;
 import net.orcinus.galosphere.init.GSensorTypes;
 import net.orcinus.galosphere.init.GSoundEvents;
+import net.orcinus.galosphere.items.components.SpectreBound;
+import net.orcinus.galosphere.network.SendPerspectivePacket;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -125,11 +125,11 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MANIPULATOR, Optional.empty());
-        this.entityData.define(CAN_BE_MANIPULATED, false);
-        this.entityData.define(FROM_BOTTLE, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MANIPULATOR, Optional.empty());
+        builder.define(CAN_BE_MANIPULATED, false);
+        builder.define(FROM_BOTTLE, false);
     }
 
     public static boolean checkSpectreSpawnRules(EntityType<? extends LivingEntity> type, LevelAccessor level, MobSpawnType reason, BlockPos pos, RandomSource random) {
@@ -144,11 +144,6 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
     @Override
     public int getMaxHeadYRot() {
         return 1;
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
-        return super.getStandingEyeHeight(pose, entityDimensions) - 0.1F;
     }
 
     @Override
@@ -348,9 +343,9 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
             this.playSound(GSoundEvents.SPECTRE_LOCK_TO_SPYGLASS, 1, 1);
             ItemStack spectreBoundedSpyglass = new ItemStack(GItems.SPECTRE_BOUND_SPYGLASS);
             if (this.hasCustomName()) {
-                spectreBoundedSpyglass.setHoverName(this.getCustomName());
+                spectreBoundedSpyglass.set(DataComponents.CUSTOM_NAME, this.getCustomName());
             }
-            SpectreBoundSpyglass.addSpectreBoundedTags(this, spectreBoundedSpyglass.getOrCreateTag());
+            spectreBoundedSpyglass.set(GDataComponents.SPECTRE_BOUND, new SpectreBound(this.getId(), this.getUUID()));
             player.setItemInHand(interactionHand, spectreBoundedSpyglass);
             this.setCanBeManipulated(false);
             return InteractionResult.SUCCESS;
@@ -362,7 +357,7 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
                 ItemStack itemStack2 = new ItemStack(GItems.BOTTLE_OF_SPECTRE);
                 CompoundTag compoundTag = new CompoundTag();
                 this.save(compoundTag);
-                itemStack2.setTag(compoundTag);
+                itemStack2.set(GDataComponents.BOTTLE_ENTITY_DATA, CustomData.of(compoundTag));
                 player.setItemInHand(interactionHand, ItemUtils.createFilledResult(stack, player, itemStack2));
                 this.discard();
             }
@@ -383,10 +378,7 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
         if (!this.level().isClientSide()) {
             ((SpectreBoundSpyglass)player).setUsingSpectreBoundedSpyglass(true);
             this.setManipulatorUUID(player.getUUID());
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            buf.writeUUID(player.getUUID());
-            buf.writeInt(this.getId());
-            ServerPlayNetworking.send((ServerPlayer) player, GNetwork.SEND_PERSPECTIVE, buf);
+            ServerPlayNetworking.send((ServerPlayer) player, new SendPerspectivePacket(player.getUUID(), this.getId()));
             player.playNotifySound(GSoundEvents.SPECTRE_MANIPULATE_BEGIN, getSoundSource(), 1, 1);
         }
     }

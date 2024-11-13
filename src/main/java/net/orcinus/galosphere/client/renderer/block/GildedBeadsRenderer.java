@@ -18,8 +18,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
@@ -32,7 +30,7 @@ import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class GildedBeadsRenderer implements BlockEntityRenderer<GildedBeadsBlockEntity> {
-    public static final Function<BlockState, Material> FUNCTION = state -> new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Galosphere.MODID, "entity/gilded_beads/" + (state.getValue(BlockStateProperties.BOTTOM) ? "gilded_beads_head" : "gilded_beads_body")));
+    public static final Function<BlockState, Material> FUNCTION = state -> new Material(TextureAtlas.LOCATION_BLOCKS, Galosphere.id("entity/gilded_beads/" + (state.getValue(BlockStateProperties.BOTTOM) ? "gilded_beads_head" : "gilded_beads_body")));
     private final ModelPart gilded_beads;
 
     public GildedBeadsRenderer(BlockEntityRendererProvider.Context context) {

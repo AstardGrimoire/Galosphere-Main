@@ -1,7 +1,7 @@
 package net.orcinus.galosphere.init;
 
 import com.google.common.collect.Maps;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +21,7 @@ public class GStructureProcessorTypes {
     public static final StructureProcessorType<NoWaterloggedProcessor> NO_WATERLOGGED = register("no_waterlogged", NoWaterloggedProcessor.CODEC);
     public static final StructureProcessorType<RawOreProcessor> RAW_ORES = register("raw_ores", RawOreProcessor.CODEC);
 
-    public static <P extends StructureProcessor> StructureProcessorType<P> register(String string, Codec<P> codec) {
+    public static <P extends StructureProcessor> StructureProcessorType<P> register(String string, MapCodec<P> codec) {
         StructureProcessorType<P> type = () -> codec;
         STRUCTURE_PROCESSORS.put(Galosphere.id(string), type);
         return type;

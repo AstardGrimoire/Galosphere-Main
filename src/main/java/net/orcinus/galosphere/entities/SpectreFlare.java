@@ -1,9 +1,7 @@
 package net.orcinus.galosphere.entities;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
@@ -18,9 +16,9 @@ import net.minecraft.world.phys.Vec3;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
-import net.orcinus.galosphere.init.GNetwork;
 import net.orcinus.galosphere.init.GSoundEvents;
 import net.orcinus.galosphere.mixin.access.FireworkRocketEntityAccessor;
+import net.orcinus.galosphere.network.SendPerspectivePacket;
 import org.jetbrains.annotations.Nullable;
 
 public class SpectreFlare extends ThrowableLaunchedProjectile {
@@ -35,9 +33,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
 
     public SpectreFlare(Level level, @Nullable Entity entity, ItemStack itemStack) {
         super(GEntityTypes.SPECTRE_FLARE, level);
-        if (!itemStack.isEmpty() && itemStack.hasTag()) {
-            this.entityData.set(FireworkRocketEntityAccessor.getDATA_ID_FIREWORKS_ITEM(), itemStack.copy());
-        }
+        this.entityData.set(FireworkRocketEntityAccessor.getDATA_ID_FIREWORKS_ITEM(), itemStack.copy());
         this.entityData.set(THROWN, true);
         this.setOwner(entity);
     }
@@ -79,10 +75,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
                 serverPlayer.playNotifySound(GSoundEvents.SPECTRE_MANIPULATE_BEGIN, getSoundSource(), 1, 1);
                 world.addFreshEntity(spectatorVision);
                 ((SpectreBoundSpyglass)serverPlayer).setUsingSpectreBoundedSpyglass(true);
-                FriendlyByteBuf buf = PacketByteBufs.create();
-                buf.writeUUID(serverPlayer.getUUID());
-                buf.writeInt(spectatorVision.getId());
-                ServerPlayNetworking.send(serverPlayer, GNetwork.SEND_PERSPECTIVE, buf);
+                ServerPlayNetworking.send(serverPlayer, new SendPerspectivePacket(serverPlayer.getUUID(), spectatorVision.getId()));
             }
         }
     }

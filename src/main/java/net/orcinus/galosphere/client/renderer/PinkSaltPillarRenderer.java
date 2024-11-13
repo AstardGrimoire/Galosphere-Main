@@ -2,7 +2,6 @@ package net.orcinus.galosphere.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,7 +35,7 @@ public class PinkSaltPillarRenderer extends EntityRenderer<PinkSaltPillar> {
         poseStack.translate(0.0F, -1.0F, 0.0F);
         this.model.setupAnim(entity, 0.0F, 0.0f, ticks, entity.getYRot(), entity.getXRot());
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(this.model.renderType(TEXTURE));
-        this.model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+        this.model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
         super.render(entity, f, g, poseStack, multiBufferSource, i);
     }

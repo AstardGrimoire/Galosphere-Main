@@ -1,5 +1,6 @@
-// 1.20.1	2023-12-26T06:19:33.1127233	Galosphere/minecraft:entity Loot Table
-51e5460cba5799f93993e2d9079c1ffae2eb8669 data\galosphere\loot_tables\entities\berserker.json
-ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_tables\entities\spectre.json
-ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_tables\entities\specterpillar.json
-ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_tables\entities\sparkle.json
+// 1.21	2024-11-14T09:05:01.551898	Galosphere/minecraft:entity Loot Table
+ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_table\entities\sparkle.json
+ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_table\entities\spectre.json
+ef017fe8afbc1e704a7cfb4818ece7ba018f9c91 data\galosphere\loot_table\entities\specterpillar.json
+b508f95867e4a4ba03bafd8a22a697a9b4f0084b data\galosphere\loot_table\entities\preserved.json
+51e5460cba5799f93993e2d9079c1ffae2eb8669 data\galosphere\loot_table\entities\berserker.json

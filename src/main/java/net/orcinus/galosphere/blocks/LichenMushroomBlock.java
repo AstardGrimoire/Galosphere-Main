@@ -1,6 +1,7 @@
 package net.orcinus.galosphere.blocks;
 
 import com.google.common.collect.Sets;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -29,12 +30,18 @@ import net.orcinus.galosphere.world.gen.features.LichenMushroomFeature;
 import org.jetbrains.annotations.Nullable;
 
 public class LichenMushroomBlock extends BushBlock implements BonemealableBlock, SimpleWaterloggedBlock {
+    public static final MapCodec<LichenMushroomBlock> CODEC = LichenMushroomBlock.simpleCodec(LichenMushroomBlock::new);
     protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 9.0D, 12.0D);
     private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public LichenMushroomBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BushBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -72,7 +79,7 @@ public class LichenMushroomBlock extends BushBlock implements BonemealableBlock,
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return true;
     }
 

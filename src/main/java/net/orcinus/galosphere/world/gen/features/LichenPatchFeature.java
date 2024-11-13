@@ -5,9 +5,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.DripstoneUtils;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
@@ -54,17 +55,17 @@ public class LichenPatchFeature extends Feature<VegetationPatchConfiguration> {
                 if (!flag3 && (!flag4 || config.extraEdgeColumnChance != 0.0F && !(random.nextFloat() > config.extraEdgeColumnChance))) {
                     blockpos$mutableblockpos.setWithOffset(blockPos, i, 0, j);
 
-                    for (int k = 0; world.isStateAtPosition(blockpos$mutableblockpos, BlockBehaviour.BlockStateBase::isAir) && k < config.verticalRange; ++k) {
+                    for (int k = 0; world.isStateAtPosition(blockpos$mutableblockpos, DripstoneUtils::isEmptyOrWater) && k < config.verticalRange; ++k) {
                         blockpos$mutableblockpos.move(direction);
                     }
 
-                    for (int i1 = 0; world.isStateAtPosition(blockpos$mutableblockpos, (state) -> !state.isAir()) && i1 < config.verticalRange; ++i1) {
+                    for (int i1 = 0; world.isStateAtPosition(blockpos$mutableblockpos, (state) -> !(state.isAir() || state.is(Blocks.WATER))) && i1 < config.verticalRange; ++i1) {
                         blockpos$mutableblockpos.move(direction1);
                     }
 
                     blockpos$mutableblockpos1.setWithOffset(blockpos$mutableblockpos, config.surface.getDirection());
                     BlockState blockstate = world.getBlockState(blockpos$mutableblockpos1);
-                    if (world.isEmptyBlock(blockpos$mutableblockpos) && blockstate.isFaceSturdy(world, blockpos$mutableblockpos1, config.surface.getDirection().getOpposite())) {
+                    if (world.isStateAtPosition(blockpos$mutableblockpos, DripstoneUtils::isEmptyOrWater) && blockstate.isFaceSturdy(world, blockpos$mutableblockpos1, config.surface.getDirection().getOpposite())) {
                         int l = config.depth.sample(random) + (config.extraBottomBlockChance > 0.0F && random.nextFloat() < config.extraBottomBlockChance ? 1 : 0);
                         BlockPos blockpos = blockpos$mutableblockpos1.immutable();
                         boolean flag5 = this.placeGround(world, config, predicate, random, blockpos$mutableblockpos1, l);

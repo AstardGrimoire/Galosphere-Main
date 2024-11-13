@@ -1,22 +1,33 @@
 package net.orcinus.galosphere.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.init.GSoundEvents;
 
-public class SendParticlesPacket implements ClientPlayNetworking.PlayChannelHandler {
+public record SendParticlesPacket(BlockPos blockPos) implements CustomPacketPayload {
+    public static final Type<SendParticlesPacket> TYPE = new Type<>(Galosphere.id("send_particles"));
+    public static final StreamCodec<FriendlyByteBuf, SendParticlesPacket> STREAM_CODEC = CustomPacketPayload.codec(SendParticlesPacket::write, SendParticlesPacket::new);
 
-    @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        BlockPos blockPos = buf.readBlockPos();
+    private SendParticlesPacket(FriendlyByteBuf friendlyByteBuf) {
+        this(friendlyByteBuf.readBlockPos());
+    }
+
+    public void write(FriendlyByteBuf friendlyByteBuf) {
+        friendlyByteBuf.writeBlockPos(this.blockPos);
+    }
+
+    public void receive(ClientPlayNetworking.Context context) {
+        Minecraft client = context.client();
+        BlockPos blockPos = this.blockPos();
         client.execute(() -> {
             ClientLevel world = client.level;
             if (world == null) return;
@@ -33,5 +44,10 @@ public class SendParticlesPacket implements ClientPlayNetworking.PlayChannelHand
             }
             world.playLocalSound(blockPos, GSoundEvents.GLOW_FLARE_SPREAD, SoundSource.BLOCKS, 1, 1, false);
         });
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

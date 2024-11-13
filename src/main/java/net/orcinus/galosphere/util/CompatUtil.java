@@ -1,7 +1,6 @@
 package net.orcinus.galosphere.util;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,19 +34,19 @@ public class CompatUtil {
     }
 
     public Block getCompatBlock(String modid, String name) {
-        return BuiltInRegistries.BLOCK.get(new ResourceLocation(modid, name));
+        return BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public Item getCompatItem(String modid, String name) {
-        return BuiltInRegistries.ITEM.get(new ResourceLocation(modid, name));
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public SimpleParticleType getCompatParticle(String modid, String name) {
-        return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(new ResourceLocation(modid, name));
+        return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public MobEffect getCompatEffect(String modid, String name) {
-        return BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(modid, name));
+        return BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
 }

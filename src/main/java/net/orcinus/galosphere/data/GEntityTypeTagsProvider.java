@@ -22,5 +22,8 @@ public class GEntityTypeTagsProvider extends FabricTagProvider.EntityTypeTagProv
         this.getOrCreateTagBuilder(GEntityTypeTags.PRESERVED_INVALID_TARGETS).add(EntityType.ARMOR_STAND).add(GEntityTypes.BERSERKER).add(GEntityTypes.PRESERVED);
         this.getOrCreateTagBuilder(EntityTypeTags.FROG_FOOD).add(GEntityTypes.SPECTERPILLAR);
         this.getOrCreateTagBuilder(EntityTypeTags.IMPACT_PROJECTILES).add(GEntityTypes.SIVLER_BOMB);
+        this.getOrCreateTagBuilder(EntityTypeTags.UNDEAD).add(GEntityTypes.PRESERVED, GEntityTypes.BERSERKER);
+        this.getOrCreateTagBuilder(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(GEntityTypes.SPARKLE);
+//        this.getOrCreateTagBuilder(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(GEntityTypes.SPARKLE, GEntityTypes.STONEFISH);
     }
 }

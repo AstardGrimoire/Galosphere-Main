@@ -7,12 +7,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.LootingEnchantFunction;
+import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
@@ -42,6 +41,7 @@ import net.orcinus.galosphere.api.Spectatable;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
 import net.orcinus.galosphere.blocks.LumiereComposterBlock;
 import net.orcinus.galosphere.config.GalosphereConfig;
+import net.orcinus.galosphere.network.BarometerPacket;
 import net.orcinus.galosphere.util.BannerRendererUtil;
 import net.orcinus.galosphere.util.PreservedShulkerBox;
 
@@ -71,11 +71,9 @@ public class GEvents {
     private static void registerServerTickEvents() {
         ServerTickEvents.START_WORLD_TICK.register(Galosphere.id("send_barometer_info"), (level) -> {
             level.getPlayers((player) -> player.level() != null).forEach((player) -> {
-                FriendlyByteBuf buf = PacketByteBufs.create();
                 ServerLevelData levelData = (ServerLevelData) level.getLevelData();
                 int rainTime = levelData.getClearWeatherTime() > 0 ? levelData.getClearWeatherTime() : levelData.getRainTime();
-                buf.writeInt(rainTime);
-                ServerPlayNetworking.send(player, GNetwork.BAROMETER_INFO, buf);
+                ServerPlayNetworking.send(player, new BarometerPacket(rainTime));
             });
         });
     }
@@ -92,7 +90,7 @@ public class GEvents {
                 }
                 copy.setCount(1);
                 ((BannerAttachable) player).setBanner(copy);
-                player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+                player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0F, 1.0F);
                 return InteractionResultHolder.success(stack);
             } else {
                 return InteractionResultHolder.pass(ItemStack.EMPTY);
@@ -104,11 +102,11 @@ public class GEvents {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity && ((PreservedShulkerBox)shulkerBoxBlockEntity).isPreserved()) {
                 ItemStack stack = new ItemStack(ShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) state.getBlock()).getColor()));
-                shulkerBoxBlockEntity.saveToItem(stack);
+                shulkerBoxBlockEntity.saveToItem(stack, world.registryAccess());
                 if (shulkerBoxBlockEntity.hasCustomName()) {
-                    stack.setHoverName(shulkerBoxBlockEntity.getCustomName());
+                    stack.set(DataComponents.CUSTOM_NAME, shulkerBoxBlockEntity.getCustomName());
                 }
-                stack.getOrCreateTag().putBoolean("Preserved", true);
+                stack.set(GDataComponents.PRESERVED, true);
                 ItemEntity itementity = new ItemEntity(player.level(), (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, stack);
                 itementity.setDefaultPickUpDelay();
                 world.addFreshEntity(itementity);
@@ -144,14 +142,14 @@ public class GEvents {
     }
 
     private static void registerLootTableEvents() {
-        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-            if (id.equals(EntityType.PILLAGER.getDefaultLootTable()) && GalosphereConfig.pillagerDropSilverIngot) {
-                tableBuilder.pool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(GItems.SILVER_NUGGET).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))).build());
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (key.equals(EntityType.PILLAGER.getDefaultLootTable()) && GalosphereConfig.pillagerDropSilverIngot) {
+                tableBuilder.pool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(GItems.SILVER_NUGGET).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F))).apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0f, 1.0f)))).build());
             }
-            if (id.equals(BuiltInLootTables.ANCIENT_CITY) && GalosphereConfig.spectreFlareAncientCityLoot) {
+            if (key.equals(BuiltInLootTables.ANCIENT_CITY) && GalosphereConfig.spectreFlareAncientCityLoot) {
                 tableBuilder.pool(LootPool.lootPool().add(LootItem.lootTableItem(GItems.SPECTRE_FLARE).setWeight(1).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))).build());
             }
-            if ((id.equals(BuiltInLootTables.ABANDONED_MINESHAFT) || id.equals(BuiltInLootTables.PILLAGER_OUTPOST)) && GalosphereConfig.silverUpgradeTemplatesLoot) {
+            if (key.equals(BuiltInLootTables.ABANDONED_MINESHAFT) || key.equals(BuiltInLootTables.PILLAGER_OUTPOST) && GalosphereConfig.silverUpgradeTemplatesLoot) {
                 tableBuilder.pool(LootPool.lootPool().add(LootItem.lootTableItem(GItems.SILVER_UPGRADE_SMITHING_TEMPLATE).setWeight(1).apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))).build());
             }
         });

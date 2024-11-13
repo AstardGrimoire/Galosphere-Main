@@ -53,11 +53,11 @@ public class SpectatorVision extends AmbientCreature implements Spectatable {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(MANIPULATOR, Optional.empty());
-        this.entityData.define(PHASE, 0);
-        this.entityData.define(SPECTATING_TICKS, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MANIPULATOR, Optional.empty());
+        builder.define(PHASE, 0);
+        builder.define(SPECTATING_TICKS, 0);
     }
 
     @Override

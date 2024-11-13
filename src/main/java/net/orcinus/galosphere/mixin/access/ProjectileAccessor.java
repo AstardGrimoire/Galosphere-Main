@@ -5,6 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
+import java.util.UUID;
+
 @Mixin(Projectile.class)
 public interface ProjectileAccessor {
     @Accessor
@@ -21,4 +23,7 @@ public interface ProjectileAccessor {
 
     @Invoker
     boolean callCheckLeftOwner();
+
+    @Accessor
+    UUID getOwnerUUID();
 }

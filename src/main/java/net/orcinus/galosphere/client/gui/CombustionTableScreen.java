@@ -1,13 +1,9 @@
 package net.orcinus.galosphere.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,7 +23,7 @@ public class CombustionTableScreen extends AbstractContainerScreen<CombustionTab
 
     @Override
     public void render(GuiGraphics source, int mouseX, int mouseY, float delta) {
-        this.renderBackground(source);
+        this.renderBackground(source, mouseX, mouseY, delta);
         super.render(source, mouseX, mouseY, delta);
         this.renderTooltip(source, mouseX, mouseY);
     }

@@ -51,5 +51,10 @@ public class GBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
         this.getOrCreateTagBuilder(GBlockTags.OASIS_REPLACE).addOptionalTag(GBlockTags.PINK_SALT_BLOCKS).addOptionalTag(BlockTags.BASE_STONE_OVERWORLD).addOptionalTag(BlockTags.FLOWERS).addOptionalTag(BlockTags.DIRT).addOptionalTag(ConventionalBlockTags.ORES);
         this.getOrCreateTagBuilder(GBlockTags.OMIT_ASTRAL).add(Blocks.BEDROCK, Blocks.OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.REINFORCED_DEEPSLATE);
         this.getOrCreateTagBuilder(GBlockTags.OASIS_GENERATE_ON).addOptionalTag(GBlockTags.PINK_SALT_BLOCKS).addOptionalTag(BlockTags.BASE_STONE_OVERWORLD);
+        this.getOrCreateTagBuilder(GBlockTags.CRYSTAL_CLUSTERS).add(Blocks.AMETHYST_CLUSTER, GBlocks.ALLURITE_CLUSTER, GBlocks.LUMIERE_CLUSTER);
+        this.getOrCreateTagBuilder(GBlockTags.STONEFISH_PREFER_JUMP_TO).addOptionalTag(BlockTags.BASE_STONE_OVERWORLD).addOptionalTag(BlockTags.BASE_STONE_NETHER).add(Blocks.WATER);
+        this.getOrCreateTagBuilder(GBlockTags.CONVERT_STONE_STONEFISH).add(Blocks.STONE, Blocks.COBBLESTONE);
+        this.getOrCreateTagBuilder(GBlockTags.CONVERT_DRIPSTONE_STONEFISH).add(Blocks.DRIPSTONE_BLOCK);
+        this.getOrCreateTagBuilder(GBlockTags.CONVERT_DEEPSLATE_STONEFISH).add(Blocks.DEEPSLATE, Blocks.COBBLED_DEEPSLATE);
     }
 }

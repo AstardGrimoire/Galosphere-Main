@@ -13,12 +13,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.orcinus.galosphere.Galosphere;
-import net.orcinus.galosphere.blocks.PinkSalt;
 import net.orcinus.galosphere.entities.Berserker;
-import net.orcinus.galosphere.entities.PinkSaltShard;
-import net.orcinus.galosphere.entities.Preserved;
 import net.orcinus.galosphere.entities.GlowFlare;
 import net.orcinus.galosphere.entities.PinkSaltPillar;
+import net.orcinus.galosphere.entities.PinkSaltShard;
+import net.orcinus.galosphere.entities.Preserved;
 import net.orcinus.galosphere.entities.SilverBomb;
 import net.orcinus.galosphere.entities.Sparkle;
 import net.orcinus.galosphere.entities.SpectatorVision;
@@ -57,6 +56,7 @@ public class GEntityTypes {
             map.put(GEntityTypes.SPECTATOR_VISION, SpectatorVision.createAttributes());
             map.put(GEntityTypes.BERSERKER, Berserker.createAttributes());
             map.put(GEntityTypes.PRESERVED, Preserved.createAttributes());
+//            map.put(GEntityTypes.STONEFISH, Stonefish.createAttributes());
         }).build().forEach(FabricDefaultAttributeRegistry::register);
     }
 

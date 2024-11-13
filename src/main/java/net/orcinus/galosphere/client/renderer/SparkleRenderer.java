@@ -25,7 +25,7 @@ public class SparkleRenderer extends MobRenderer<Sparkle, EntityModel<Sparkle>> 
     private static final ResourceLocation TEXTURE = Galosphere.id("textures/entity/sparkle/sparkle.png");
 
     public SparkleRenderer(EntityRendererProvider.Context context) {
-        super(context, new SparkleModel<>(context.bakeLayer(GModelLayers.SPARKLE)), 0.6F);
+        super(context, new SparkleModel<>(context.bakeLayer(GModelLayers.SPARKLE)), 0.4F);
     }
 
     @Override

@@ -2,9 +2,11 @@ package net.orcinus.galosphere.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -15,24 +17,34 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GBuiltinLootTables;
-import net.orcinus.galosphere.init.GEnchantments;
-import net.orcinus.galosphere.init.GItems;
+import net.orcinus.galosphere.init.GEnchantmentTags;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
 public class GChestLootTableProvider extends SimpleFabricLootTableProvider {
+    private final CompletableFuture<HolderLookup.Provider> registryLookup;
 
-    public GChestLootTableProvider(FabricDataOutput output) {
-        super(output, LootContextParamSets.CHEST);
+    public GChestLootTableProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+        super(output, registryLookup, LootContextParamSets.CHEST);
+        this.registryLookup = registryLookup;
     }
 
     @Override
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
+    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer) {
+        HolderLookup.Provider provider;
+        try {
+            provider = this.registryLookup.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        HolderLookup.RegistryLookup<Enchantment> registryLookup = provider.lookupOrThrow(Registries.ENCHANTMENT);
         biConsumer.accept(GBuiltinLootTables.PINK_SALT_SHRINE_CHEST, LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(5.0F, 10.0F))
                         .add(LootItem.lootTableItem(GBlocks.PINK_SALT_CHAMBER.asItem())
-                             .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
-                             .setWeight(2)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                .setWeight(2)
                         ).add(LootItem.lootTableItem(Items.NAME_TAG)
                                 .setWeight(2)
                         ).add(LootItem.lootTableItem(Items.LEATHER)
@@ -50,9 +62,9 @@ public class GChestLootTableProvider extends SimpleFabricLootTableProvider {
                         .add(LootItem.lootTableItem(Items.BOOK)
                                 .setWeight(1)
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))
-                                .apply(new EnchantRandomlyFunction.Builder()
-                                        .withEnchantment(GEnchantments.SUSTAIN)
-                                        .withEnchantment(GEnchantments.ENFEEBLE).withEnchantment(GEnchantments.RUPTURE).withEnchantment(Enchantments.UNBREAKING)))
+                                .apply(EnchantRandomlyFunction.randomEnchantment()
+                                        .withOneOf(registryLookup.getOrThrow(GEnchantmentTags.PINK_SALT_SHRINE_LOOT))
+                                ))
                 )
         );
         biConsumer.accept(GBuiltinLootTables.PINK_SALT_SHRINE_LIBRARY_CHEST, LootTable.lootTable()
@@ -66,7 +78,10 @@ public class GChestLootTableProvider extends SimpleFabricLootTableProvider {
                         ).add(LootItem.lootTableItem(Items.BOOK)
                                 .setWeight(1)
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
-                                .apply(new EnchantRandomlyFunction.Builder().withEnchantment(GEnchantments.SUSTAIN).withEnchantment(GEnchantments.ENFEEBLE).withEnchantment(GEnchantments.RUPTURE).withEnchantment(Enchantments.UNBREAKING)))
+                                .apply(EnchantRandomlyFunction.randomEnchantment()
+                                        .withOneOf(registryLookup.getOrThrow(GEnchantmentTags.PINK_SALT_SHRINE_LOOT))
+                                ))
                 ));
     }
+
 }

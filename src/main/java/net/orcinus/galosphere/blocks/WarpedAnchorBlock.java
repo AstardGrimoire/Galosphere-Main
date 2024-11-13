@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -67,17 +67,16 @@ public class WarpedAnchorBlock extends Block {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack stack = player.getItemInHand(hand);
-        int i = state.getValue(WARPED_CHARGE);
-        if (stack.getItem() == GBlocks.ALLURITE_BLOCK.asItem() && i < 4) {
-            this.incrementCharge(state, world, pos, i);
-            if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
-            }
-            return InteractionResult.SUCCESS;
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        int warpedCharge = blockState.getValue(WARPED_CHARGE);
+        if (itemStack.is(GBlocks.ALLURITE_BLOCK.asItem()) && warpedCharge < 4) {
+            this.incrementCharge(blockState, level, blockPos, warpedCharge);
+
+            if (!player.getAbilities().instabuild) itemStack.shrink(1);
+
+            return ItemInteractionResult.SUCCESS;
         }
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     public void incrementCharge(BlockState state, Level world, BlockPos pos, int i) {

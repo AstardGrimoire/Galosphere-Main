@@ -7,9 +7,13 @@ import net.minecraft.world.item.Item;
 
 public class CItemTags {
 
-    public static final TagKey<Item> SILVER_BLOCKS = TagKey.create(Registries.ITEM, new ResourceLocation("c", "silver_blocks"));
-    public static final TagKey<Item> SILVER_INGOTS = TagKey.create(Registries.ITEM, new ResourceLocation("c", "silver_ingots"));
-    public static final TagKey<Item> SILVER_NUGGETS = TagKey.create(Registries.ITEM, new ResourceLocation("c", "silver_nuggets"));
-    public static final TagKey<Item> SILVER_ORES = TagKey.create(Registries.ITEM, new ResourceLocation("c", "silver_ores"));
+    public static final TagKey<Item> SILVER_BLOCKS = register("silver_blocks");
+    public static final TagKey<Item> SILVER_INGOTS = register("silver_ingots");
+    public static final TagKey<Item> SILVER_NUGGETS = register("silver_nuggets");
+    public static final TagKey<Item> SILVER_ORES = register("silver_ores");
+
+    private static TagKey<Item> register(String name) {
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", name));
+    }
 
 }

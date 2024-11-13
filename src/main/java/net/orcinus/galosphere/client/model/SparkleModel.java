@@ -101,22 +101,22 @@ public class SparkleModel<T extends Sparkle> extends AgeableListModel<T> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
 		if (this.young) {
 			poseStack.pushPose();
 			float f1 = 1.0F / 2.0F;
 			poseStack.scale(f1, f1, f1);
 			poseStack.translate(0.0D, 1.5F, 5.0F / 24.0F);
-			this.headParts().forEach((part) -> part.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha));
+			this.headParts().forEach((part) -> part.render(poseStack, vertexConsumer, i, j, k));
 			poseStack.popPose();
 			poseStack.pushPose();
 			poseStack.scale(f1, f1, f1);
 			poseStack.translate(0.0D, 24.0F / 16.0F, 0.0D);
-			this.bodyParts().forEach((part) -> part.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha));
+			this.bodyParts().forEach((part) -> part.render(poseStack, vertexConsumer, i, j, k));
 			poseStack.popPose();
 		} else {
-			this.headParts().forEach((part) -> part.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha));
-			this.bodyParts().forEach((part) -> part.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha));
+			this.headParts().forEach((part) -> part.render(poseStack, vertexConsumer, i, j, k));
+			this.bodyParts().forEach((part) -> part.render(poseStack, vertexConsumer, i, j, k));
 		}
 	}
 }

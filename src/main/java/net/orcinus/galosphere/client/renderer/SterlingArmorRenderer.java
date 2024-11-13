@@ -2,7 +2,6 @@ package net.orcinus.galosphere.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HeadedModel;
@@ -37,8 +36,8 @@ public class SterlingArmorRenderer<T extends LivingEntity, M extends EntityModel
             poseStack.pushPose();
             ((HeadedModel) this.getParentModel()).getHead().translateAndRotate(poseStack);
             poseStack.translate(0.0F, -0.1F, 0.0F);
-            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(multiBufferSource, RenderType.armorCutoutNoCull(TEXTURE), false, stack.hasFoil());
-            this.model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(multiBufferSource, RenderType.armorCutoutNoCull(TEXTURE), stack.hasFoil());
+            this.model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
     }

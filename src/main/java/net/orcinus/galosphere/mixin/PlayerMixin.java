@@ -61,7 +61,7 @@ public class PlayerMixin {
         ItemStack stack = $this.getItemInHand(interactionHand);
         BannerRendererUtil util = new BannerRendererUtil();
         if (entity instanceof Horse horse) {
-            if (horse.getArmor().is(GItems.STERLING_HORSE_ARMOR)) {
+            if (horse.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR)) {
                 if (((BannerAttachable) horse).getBanner().isEmpty()) {
                     if (util.isTapestryStack(stack) || stack.getItem() instanceof BannerItem) {
                         if (!horse.level().isClientSide()) {

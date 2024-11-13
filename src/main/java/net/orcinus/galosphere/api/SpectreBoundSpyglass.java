@@ -3,6 +3,7 @@ package net.orcinus.galosphere.api;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.orcinus.galosphere.entities.Spectre;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GItems;
 
 public interface SpectreBoundSpyglass {
@@ -12,8 +13,7 @@ public interface SpectreBoundSpyglass {
     }
 
     static boolean isSpectreBoundSpyglass(ItemStack stack) {
-        CompoundTag compoundtag = stack.getTag();
-        return compoundtag != null && (compoundtag.contains("SpectreBoundId") && compoundtag.contains("SpectreBoundUUID"));
+        return stack.has(GDataComponents.SPECTRE_BOUND);
     }
 
     static void addSpectreBoundedTags(Spectre spectre, CompoundTag compoundTag) {

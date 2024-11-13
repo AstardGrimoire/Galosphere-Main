@@ -2,8 +2,9 @@ package net.orcinus.galosphere.init;
 
 import com.google.common.collect.ImmutableMap;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry;
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.Util;
+import net.minecraft.core.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.orcinus.galosphere.crafting.GlowFlareDispenseItemBehavior;
 import net.orcinus.galosphere.crafting.LumiereComposterDispenseItemBehavior;
 import net.orcinus.galosphere.crafting.MonstrometerDispenseItemBehavior;
 import net.orcinus.galosphere.crafting.PickaxeDispenseItemBehavior;
@@ -26,8 +26,10 @@ public class GVanillaIntegration {
     }
 
     public static void registerBrewables() {
-        FabricBrewingRecipeRegistry.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(GItems.CURED_MEMBRANE), GPotions.ASTRAL);
-        FabricBrewingRecipeRegistry.registerPotionRecipe(GPotions.ASTRAL, Ingredient.of(Items.REDSTONE), GPotions.LONG_ASTRAL);
+        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(GItems.CURED_MEMBRANE), GPotions.ASTRAL);
+            builder.registerPotionRecipe(GPotions.ASTRAL, Ingredient.of(Items.REDSTONE), GPotions.LONG_ASTRAL);
+        });
     }
 
     public static void registerCompostables() {
@@ -48,7 +50,7 @@ public class GVanillaIntegration {
         DispenserBlock.registerBehavior(GBlocks.ALLURITE_BLOCK.asItem(), new WarpedAnchorDispenseItemBehavior());
 
         DispenserBlock.registerBehavior(GItems.LUMIERE_SHARD, new LumiereComposterDispenseItemBehavior());
-        DispenserBlock.registerBehavior(GItems.GLOW_FLARE, new GlowFlareDispenseItemBehavior());
+        DispenserBlock.registerBehavior(GItems.GLOW_FLARE, new ProjectileDispenseBehavior(GItems.GLOW_FLARE));
 
         BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.CLUSTER_MAX_HARVESTABLES).iterator().forEachRemaining(holder -> DispenserBlock.registerBehavior(holder.value(), new PickaxeDispenseItemBehavior()));
     }

@@ -7,7 +7,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
@@ -15,7 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.orcinus.galosphere.Galosphere;
 
 public class GCreativeModeTabs {
-    public static final ResourceKey<CreativeModeTab> GALOSPHERE = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(Galosphere.MODID, "galosphere"));
+    public static final ResourceKey<CreativeModeTab> GALOSPHERE = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Galosphere.id("galosphere"));
 
     public static void init() {
         initGalosphereTab();
@@ -35,6 +34,8 @@ public class GCreativeModeTabs {
                     output.accept(GItems.SPECTERPILLAR_SPAWN_EGG);
                     output.accept(GItems.BERSERKER_SPAWN_EGG);
                     output.accept(GItems.PRESERVED_SPAWN_EGG);
+//                    output.accept(GItems.STONEFISH_SPAWN_EGG);
+//                    output.accept(GItems.STONEFISH_BUCKET);
                     output.accept(GItems.BOTTLE_OF_SPECTRE);
                     output.accept(GItems.ALLURITE_SHARD);
                     output.accept(GItems.LUMIERE_SHARD);

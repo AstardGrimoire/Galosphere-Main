@@ -1,7 +1,6 @@
 package net.orcinus.galosphere.init;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.orcinus.galosphere.Galosphere;
@@ -13,7 +12,7 @@ public class GEntityTypeTags {
     public static final TagKey<EntityType<?>> PRESERVED_INVALID_TARGETS = create("preserved_invalid_targets");
 
     private static TagKey<EntityType<?>> create(String string) {
-        return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(Galosphere.MODID, string));
+        return TagKey.create(Registries.ENTITY_TYPE, Galosphere.id(string));
     }
 
 }

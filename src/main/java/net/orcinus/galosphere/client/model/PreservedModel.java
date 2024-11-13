@@ -1,8 +1,4 @@
-package net.orcinus.galosphere.client.model;// Made with Blockbench 4.8.3
-// Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
-
-
+package net.orcinus.galosphere.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
@@ -72,10 +68,9 @@ public class PreservedModel<T extends Preserved> extends HierarchicalModel<T> {
         return this.root.getChild(name);
     }
 
-
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
+        this.root.render(poseStack, vertexConsumer, i, j, k);
     }
 
     @Override

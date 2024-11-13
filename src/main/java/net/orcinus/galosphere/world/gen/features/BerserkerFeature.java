@@ -12,7 +12,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.orcinus.galosphere.entities.Berserker;
-import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEntityTypes;
 
 public class BerserkerFeature extends Feature<NoneFeatureConfiguration> {
@@ -42,7 +41,7 @@ public class BerserkerFeature extends Feature<NoneFeatureConfiguration> {
             berserker.setYRot(rot);
             world.setBlock(pos.below(2), Blocks.CHISELED_DEEPSLATE.defaultBlockState(), 2);
         }
-        berserker.finalizeSpawn(world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+        berserker.finalizeSpawn(world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
         world.addFreshEntityWithPassengers(berserker);
         return true;
     }

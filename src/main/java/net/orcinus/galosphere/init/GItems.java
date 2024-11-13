@@ -4,13 +4,10 @@ import com.google.common.collect.Maps;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.HorseArmorItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.items.ChandelierItem;
@@ -49,13 +46,13 @@ public class GItems {
     public static final Item SILVER_INGOT = registerBaseItem("silver_ingot");
     public static final Item SILVER_NUGGET = registerBaseItem("silver_nugget");
     public static final Item SILVER_UPGRADE_SMITHING_TEMPLATE = register("silver_upgrade_smithing_template", new SilverSmithingTemplateItem());
-    public static final Item SILVER_BOMB = register("silver_bomb", new SilverBombItem(new Item.Properties().stacksTo(16)));
+    public static final Item SILVER_BOMB = register("silver_bomb", new SilverBombItem(new Item.Properties().stacksTo(16).component(GDataComponents.EXPLOSION, 0).component(GDataComponents.BOUNCY, 0).component(GDataComponents.DURATION, 0)));
     public static final Item BAROMETER = registerBaseItem("barometer");
-    public static final Item STERLING_HELMET = register("sterling_helmet", new SterlingArmorItem(ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1)));
-    public static final Item STERLING_CHESTPLATE = register("sterling_chestplate", new SterlingArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)));
-    public static final Item STERLING_LEGGINGS = register("sterling_leggings", new SterlingArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1)));
-    public static final Item STERLING_BOOTS = register("sterling_boots", new SterlingArmorItem(ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1)));
-    public static final Item STERLING_HORSE_ARMOR = register("sterling_horse_armor", new HorseArmorItem(4, "sterling", new Item.Properties().stacksTo(1)));
+    public static final Item STERLING_HELMET = register("sterling_helmet", new SterlingArmorItem(ArmorItem.Type.HELMET, new Item.Properties().stacksTo(1).durability(156)));
+    public static final Item STERLING_CHESTPLATE = register("sterling_chestplate", new SterlingArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1).durability(180)));
+    public static final Item STERLING_LEGGINGS = register("sterling_leggings", new SterlingArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1).durability(192)));
+    public static final Item STERLING_BOOTS = register("sterling_boots", new SterlingArmorItem(ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1).durability(132)));
+    public static final Item STERLING_HORSE_ARMOR = register("sterling_horse_armor", new AnimalArmorItem(GArmorMaterials.STERLING, AnimalArmorItem.BodyType.EQUESTRIAN, false, new Item.Properties().stacksTo(1)));
     public static final Item SALTED_JERKY = register("salted_jerky", new Item(new Item.Properties().food(GFoods.SALTED_JERKY)));
     public static final Item CURED_MEMBRANE = registerBaseItem("cured_membrane");
     public static final Item LICHEN_CORDYCEPS = register("lichen_cordyceps", new LichenCordycepsItem(GBlocks.LICHEN_CORDYCEPS, new Item.Properties().food(GFoods.LICHEN_CORDYCEPS)));
@@ -64,10 +61,11 @@ public class GItems {
     public static final Item SPECTRE_FLARE = register("spectre_flare", new SpectreFlareItem(new Item.Properties()));
     public static final Item SPECTRE_BOUND_SPYGLASS = register("spectre_bound_spyglass", new SpectreBoundSpyglassItem(new Item.Properties().stacksTo(1)));
     public static final Item CHANDELIER = register("chandelier", new ChandelierItem(GBlocks.CHANDELIER, new Item.Properties()));
+//    public static final Item STONEFISH_BUCKET = register("stonefish_bucket", new StonefishBucketItem(GEntityTypes.STONEFISH, Fluids.WATER, SoundEvents.BUCKET_EMPTY_AXOLOTL, new Item.Properties().stacksTo(1).component(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY)));
 
     public static final Item SALTBOUND_TABLET = register("saltbound_tablet", new SaltboundTabletItem(new Item.Properties().stacksTo(1).durability(432)));
     public static final Item PRESERVED_TEMPLATE = register("preserved_template", new PreservedSmithingTemplateItem());
-    public static final Item PRESERVED_FLESH = register("preserved_flesh", new PreservedFleshItem(new Item.Properties().stacksTo(1).durability(180).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.1f).meat().build())));
+    public static final Item PRESERVED_FLESH = register("preserved_flesh", new PreservedFleshItem(new Item.Properties().stacksTo(1).durability(180).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.1f).build())));
 
     public static Item registerBaseItem(String name) {
         return register(name, new Item(new Item.Properties()));

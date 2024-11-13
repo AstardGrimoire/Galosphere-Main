@@ -7,7 +7,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
@@ -30,7 +29,7 @@ public class MonstrometerBlockEntity extends BlockEntity {
     }
 
     public static void createParticles(Level world, BlockPos origin) {
-        Predicate<BlockPos> predicate = (pos) -> world.isEmptyBlock(pos) && NaturalSpawner.isSpawnPositionOk(SpawnPlacements.Type.ON_GROUND, world, pos, EntityType.ZOMBIE);
+        Predicate<BlockPos> predicate = (pos) -> world.isEmptyBlock(pos) && world.getBlockState(pos.below()).isSolidRender(world, pos.below()) && NaturalSpawner.isValidEmptySpawnBlock(world, pos, world.getBlockState(pos), world.getFluidState(pos), EntityType.ZOMBIE);
         if (world instanceof ServerLevel serverLevel) {
             MonstrometerBlock.getIndicatedBlocks(origin, predicate).forEach(pos -> {
                 double x = pos.getX() + 0.5;

@@ -29,7 +29,7 @@ public class HorseBannerLayer extends RenderLayer<Horse, HorseModel<Horse>> {
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource source, int packedLight, Horse entity, float p_117353_, float p_117354_, float p_117355_, float p_117356_, float p_117357_, float p_117358_) {
-        if (entity.getArmor().is(GItems.STERLING_HORSE_ARMOR)) {
+        if (entity.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR)) {
             if (!((BannerAttachable) entity).getBanner().isEmpty()) {
                 ItemStack itemstack = ((BannerAttachable) entity).getBanner();
                 if (itemstack != null) {

@@ -1,6 +1,8 @@
-// 1.20.1	2023-12-26T06:19:33.1258634	Galosphere/Tags for minecraft:entity_type
-68fae7a2bce70bef7d248066627b75aed1330b05 data\galosphere\tags\entity_types\berserker_invalid_targets.json
-f67f8b82a50d225838cc7bba498414a569bca9b5 data\minecraft\tags\entity_types\frog_food.json
-141c85b1ca530a4045ec707f3ad9087c11a93c2e data\galosphere\tags\entity_types\sterling_immune_entity_types.json
-68fae7a2bce70bef7d248066627b75aed1330b05 data\galosphere\tags\entity_types\preserved_invalid_targets.json
-130c9e7ebfb0e97b55f82906a0afd6cd82afbeeb data\minecraft\tags\entity_types\impact_projectiles.json
+// 1.21	2024-11-14T09:05:01.548883	Galosphere/Tags for minecraft:entity_type
+d7cd223d191bdfdc869639b750cce2d206ec3115 data\minecraft\tags\entity_type\undead.json
+4a42af1a3918e19a33d18551510b0ff55586bb05 data\minecraft\tags\entity_type\impact_projectiles.json
+70b7edfdf84e6de50608d7925601e1c59d05cb43 data\minecraft\tags\entity_type\can_breathe_under_water.json
+5b7d9ed97873d32c8c215e0c46aac8dbeaeb7156 data\galosphere\tags\entity_type\berserker_invalid_targets.json
+5b7d9ed97873d32c8c215e0c46aac8dbeaeb7156 data\galosphere\tags\entity_type\preserved_invalid_targets.json
+51770d4a6eead209273770cfd1fffb2442f2b727 data\galosphere\tags\entity_type\sterling_immune_entity_types.json
+9757327fb8283797218b3d8972e30a7ee3f9692c data\minecraft\tags\entity_type\frog_food.json

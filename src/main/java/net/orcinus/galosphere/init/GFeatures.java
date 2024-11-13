@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.world.gen.features.BerserkerFeature;
@@ -17,6 +18,7 @@ import net.orcinus.galosphere.world.gen.features.LichenPatchFeature;
 import net.orcinus.galosphere.world.gen.features.NoisePatchFeature;
 import net.orcinus.galosphere.world.gen.features.OasisFeature;
 import net.orcinus.galosphere.world.gen.features.PinkSaltStrawPatchFeature;
+import net.orcinus.galosphere.world.gen.features.SimpleWaterloggedBlockFeature;
 import net.orcinus.galosphere.world.gen.features.config.CrystalSpikeConfig;
 import net.orcinus.galosphere.world.gen.features.config.NoisePatchConfig;
 import net.orcinus.galosphere.world.gen.features.config.PinkSaltStrawPatchConfig;
@@ -35,6 +37,7 @@ public class GFeatures {
     public static final Feature<PinkSaltStrawPatchConfig> PINK_SALT_STRAW_PATCH = registerFeature("pink_salt_straw_patch", new PinkSaltStrawPatchFeature(PinkSaltStrawPatchConfig.CODEC));
     public static final Feature<NoneFeatureConfiguration> OASIS = registerFeature("oasis", new OasisFeature(NoneFeatureConfiguration.CODEC));
     public static final Feature<NoneFeatureConfiguration> BERSERKER = registerFeature("berserker", new BerserkerFeature(NoneFeatureConfiguration.CODEC));
+    public static final Feature<SimpleBlockConfiguration> SIMPLE_WATERLOGGED_BLOCK = registerFeature("simple_waterlogged_block", new SimpleWaterloggedBlockFeature(SimpleBlockConfiguration.CODEC));
 
     public static <FC extends FeatureConfiguration, F extends Feature<FC>> F registerFeature(String name, F feature) {
         FEATURES.put(Galosphere.id(name), feature);

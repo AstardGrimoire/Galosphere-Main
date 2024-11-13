@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:bedrock",
+    "minecraft:obsidian",
+    "minecraft:netherite_block",
+    "minecraft:ancient_debris",
+    "minecraft:reinforced_deepslate"
+  ]
+}

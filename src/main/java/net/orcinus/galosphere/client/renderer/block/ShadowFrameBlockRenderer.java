@@ -143,7 +143,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
             q = 1.0f;
             r = 1.0f;
         }
-        vertexConsumer.putBulkData(pose, bakedQuad, new float[]{f, g, h, i}, p, q, r, new int[]{j, k, l, m}, n, true);
+        vertexConsumer.putBulkData(pose, bakedQuad, new float[]{f, g, h, i}, p, q, r, 1.0f, new int[]{j, k, l, m}, n, true);
     }
 
     private void calculateShape(BlockAndTintGetter blockAndTintGetter, BlockState blockState, BlockPos blockPos, int[] is, Direction direction, @Nullable float[] fs, BitSet bitSet) {

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#galosphere:pink_salt_blocks",
+      "required": false
+    },
+    {
+      "id": "#minecraft:base_stone_overworld",
+      "required": false
+    }
+  ]
+}

@@ -3,14 +3,13 @@ package net.orcinus.galosphere.blocks.blockentities;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.levelgen.feature.DripstoneUtils;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.orcinus.galosphere.blocks.PinkSaltChamberBlock;
@@ -44,15 +43,15 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
-        this.cooldown = compoundTag.getInt("Cooldown");
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
+        this.setCooldown(compoundTag.getInt("Cooldown"));
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
-        compoundTag.putInt("Cooldown", this.cooldown);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.saveAdditional(compoundTag, provider);
+        compoundTag.putInt("Cooldown", this.getCooldown());
     }
 
     public int getCooldown() {
@@ -74,7 +73,7 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
             blockEntity.preserves.clear();
             blockEntity.resetCooldown();
         }
-        if (blockEntity.cooldown >= blockEntity.maxCooldown) {
+        if (blockEntity.getCooldown() >= blockEntity.maxCooldown) {
             if (blockState.getValue(PinkSaltChamberBlock.PHASE) == PinkSaltChamberBlock.ChamberPhase.COOLDOWN) {
                 boolean flag2 = false;
                 for (Direction direction : Direction.values()) {
@@ -102,7 +101,7 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
                     for (int x = -range; x <= range; x++) {
                         for (int z = -range; z <= range; z++) {
                             BlockPos position = blockPos.offset(x, y, z);
-                            if (level.getBlockState(position.below()).isFaceSturdy(level, position.below(), Direction.UP) && level.getBlockState(position).isAir()) {
+                            if (level.getBlockState(position.below()).isFaceSturdy(level, position.below(), Direction.UP) && level.isStateAtPosition(position, DripstoneUtils::isEmptyOrWater)) {
                                 poses.add(position);
                             }
                         }
@@ -121,19 +120,20 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
                 blockEntity.resetCooldown();
             }
         } else {
-            blockEntity.cooldown++;
+            blockEntity.setCooldown(blockEntity.getCooldown() + 1);
         }
     }
 
     private void resetCooldown() {
-        this.cooldown = 0;
+        this.setCooldown(0);
     }
 
     private void handleSpawning(ServerLevel serverLevel, BlockPos pos) {
         if (serverLevel.getDifficulty() == Difficulty.PEACEFUL) {
+            serverLevel.setBlock(this.getBlockPos(), this.getBlockState().setValue(PinkSaltChamberBlock.PHASE, PinkSaltChamberBlock.ChamberPhase.COOLDOWN), 2);
             serverLevel.setBlock(pos, GBlocks.PINK_SALT_CLUSTER.defaultBlockState(), 2);
         } else {
-            Preserved preserved = GEntityTypes.PRESERVED.create(serverLevel, null, null, pos, MobSpawnType.TRIGGERED, true, true);
+            Preserved preserved = GEntityTypes.PRESERVED.spawn(serverLevel, null, null, pos, MobSpawnType.TRIGGERED, true, true);
             preserved.setPos(pos.getX(), pos.getY(), pos.getZ());
             preserved.setPersistenceRequired();
             preserved.setFromChamber(true);

@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "#minecraft:cluster_max_harvestables",
+      "required": false
+    }
+  ]
+}

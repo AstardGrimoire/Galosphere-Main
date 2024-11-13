@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -23,17 +23,16 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.orcinus.galosphere.Galosphere;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class GBiomes {
-    private static final Map<ResourceKey<Biome>, ResourceLocation> VALUES = Maps.newLinkedHashMap();
+    public static final Map<ResourceLocation, ResourceKey<Biome>> BIOMES = Maps.newLinkedHashMap();
 
     public static final ResourceKey<Biome> CRYSTAL_CANYONS = register("crystal_canyons");
     public static final ResourceKey<Biome> LICHEN_CAVES = register("lichen_caves");
     public static final ResourceKey<Biome> PINK_SALT_CAVES = register("pink_salt_caves");
 
-    public static void bootstrap(BootstapContext<Biome> bootstapContext) {
+    public static void bootstrap(BootstrapContext<Biome> bootstapContext) {
         HolderGetter<PlacedFeature> holderGetter = bootstapContext.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> holderGetter2 = bootstapContext.lookup(Registries.CONFIGURED_CARVER);
         bootstapContext.register(CRYSTAL_CANYONS, crystalCanyons(holderGetter, holderGetter2));
@@ -110,11 +109,11 @@ public class GBiomes {
         return biome(true, 0.5f, 0.5f, mobBuilder, biomeBuilder, music);
     }
 
-    private static Biome biome(boolean bl, float f, float g, MobSpawnSettings.Builder builder, BiomeGenerationSettings.Builder builder2, @org.jetbrains.annotations.Nullable Music music) {
+    private static Biome biome(boolean bl, float f, float g, MobSpawnSettings.Builder builder, BiomeGenerationSettings.Builder builder2, @Nullable Music music) {
         return biome(bl, f, g, 4159204, 329011, null, null, builder, builder2, music);
     }
 
-    private static Biome biome(boolean bl, float f, float g, int i, int j, @org.jetbrains.annotations.Nullable Integer integer, @org.jetbrains.annotations.Nullable Integer integer2, MobSpawnSettings.Builder builder, BiomeGenerationSettings.Builder builder2, @Nullable Music music) {
+    private static Biome biome(boolean bl, float f, float g, int i, int j, @Nullable Integer integer, @Nullable Integer integer2, MobSpawnSettings.Builder builder, BiomeGenerationSettings.Builder builder2, @Nullable Music music) {
         BiomeSpecialEffects.Builder builder3 = new BiomeSpecialEffects.Builder().waterColor(i).waterFogColor(j).fogColor(12638463).skyColor(OverworldBiomes.calculateSkyColor(f)).ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS).backgroundMusic(music);
         if (integer != null) {
             builder3.grassColorOverride(integer);
@@ -126,13 +125,10 @@ public class GBiomes {
     }
 
     private static ResourceKey<Biome> register(String name) {
-        ResourceLocation id = new ResourceLocation(Galosphere.MODID, name);
+        ResourceLocation id = Galosphere.id(name);
         ResourceKey<Biome> biomeResourceKey = ResourceKey.create(Registries.BIOME, id);
-        VALUES.put(biomeResourceKey, id);
+        BIOMES.put(id, biomeResourceKey);
         return biomeResourceKey;
     }
 
-    public static Collection<ResourceLocation> getIds() {
-        return VALUES.values();
-    }
 }

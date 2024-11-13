@@ -9,7 +9,6 @@
     "ChorusFruitItemMixin",
     "ComposterBlockMixin",
     "CrossbowItemMixin",
-    "EnchantmentCategoryMixin",
     "EntityMixin",
     "InventoryMixin",
     "ItemMixin",
@@ -22,12 +21,14 @@
     "ServerPlayerMixin",
     "ShulkerBoxBlockEntityMixin",
     "ThrownEnderpearlMixin",
+    "access.AbstractArrowAccessor",
     "access.AbstractHorseAccessor",
+    "access.EnchantmentAccessor",
+    "access.EnchantmentHelperAccessor",
     "access.FireworkRocketEntityAccessor",
     "access.LightningBoltAccessor",
     "access.LivingEntityAccessor",
-    "access.ProjectileAccessor",
-    "access.WorldGenRegionAccessor"
+    "access.ProjectileAccessor"
   ],
   "client": [
     "access.AmbientOcclusionFaceAccessor",
@@ -50,6 +51,7 @@
     "client.ItemRendererMixin",
     "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
+    "client.ModelBakeryMixin",
     "client.MultiPlayerGameModeMixin",
     "client.PlayerItemInHandLayerMixin",
     "client.PlayerRendererMixin",

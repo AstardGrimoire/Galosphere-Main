@@ -21,7 +21,6 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
@@ -43,7 +42,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.orcinus.galosphere.entities.ai.PreservedAi;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEntityTypeTags;
-import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GSensorTypes;
 import net.orcinus.galosphere.init.GSoundEvents;
 import org.jetbrains.annotations.Nullable;
@@ -59,11 +57,6 @@ public class Preserved extends Monster {
 
     public Preserved(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
-    }
-
-    @Override
-    public MobType getMobType() {
-        return MobType.UNDEAD;
     }
 
     @Override
@@ -84,9 +77,9 @@ public class Preserved extends Monster {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource damageSource, int i, boolean bl) {
-        super.dropCustomDeathLoot(damageSource, i, bl);
-        if (this.level().getRandom().nextFloat() > 0.25F && this.isFromChamber()) {
+    protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource damageSource, boolean bl) {
+        super.dropCustomDeathLoot(serverLevel, damageSource, bl);
+        if (this.getRandom().nextFloat() > 0.25F && this.isFromChamber()) {
             this.spawnAtLocation(new ItemStack(GBlocks.PINK_SALT_CLUSTER));
         }
     }
@@ -126,13 +119,13 @@ public class Preserved extends Monster {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (mobSpawnType == MobSpawnType.TRIGGERED) {
             this.setPose(Pose.EMERGING);
             this.getBrain().setMemoryWithExpiry(MemoryModuleType.IS_EMERGING, Unit.INSTANCE, 40);
             this.playSound(GSoundEvents.PRESERVED_EMERGE, 1.0f, 1.0f);
         }
-        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
+        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
     @Override

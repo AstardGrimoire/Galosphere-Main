@@ -14,7 +14,7 @@
   "contact": {
     "sources": "https://github.com/0rc1nus/Galosphere"
   },
-  "license": "CC0-1.0",
+  "license": "All Rights Reserved",
   "icon": "assets/galosphere/icon.png",
   "accessWidener": "galosphere.accesswidener",
   "environment": "*",
@@ -27,9 +27,6 @@
     ],
     "fabric-datagen": [
       "net.orcinus.galosphere.data.GDataGenerator"
-    ],
-    "mm:early_risers": [
-      "net.orcinus.galosphere.asm.GalosphereASM"
     ]
   },
   "mixins": [
@@ -37,8 +34,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.9",
-    "fabric": "*",
-    "minecraft": ">=1.20",
+    "fabric-api": "*",
+    "minecraft": ">=1.21",
     "java": ">=17"
   }
 }

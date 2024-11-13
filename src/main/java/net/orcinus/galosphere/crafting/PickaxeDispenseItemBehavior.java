@@ -1,12 +1,11 @@
 package net.orcinus.galosphere.crafting;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
@@ -15,17 +14,16 @@ import net.orcinus.galosphere.entities.Sparkle;
 public class PickaxeDispenseItemBehavior extends OptionalDispenseItemBehavior {
 
     @Override
-    protected ItemStack execute(BlockSource source, ItemStack stack) {
-        Level level = source.getLevel();
+    protected ItemStack execute(BlockSource blockSource, ItemStack itemStack) {
+        ServerLevel level = blockSource.level();
         if (!level.isClientSide()) {
-            BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
-            this.setSuccess(extractItemFromEntity((ServerLevel)level, blockpos, stack));
-            if (this.isSuccess() && stack.hurt(1, level.getRandom(), null)) {
-                stack.setCount(0);
+            BlockPos blockpos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
+            this.setSuccess(extractItemFromEntity(level, blockpos, itemStack));
+            if (this.isSuccess()) {
+                itemStack.hurtAndBreak(1, level, null, item -> {});
             }
         }
-
-        return stack;
+        return itemStack;
     }
 
     private static boolean extractItemFromEntity(ServerLevel world, BlockPos blockPos, ItemStack stack) {

@@ -1,12 +1,13 @@
 package net.orcinus.galosphere.blocks;
 
 import com.google.common.collect.Lists;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -33,12 +34,18 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class MonstrometerBlock extends BaseEntityBlock {
+    public static final MapCodec<MonstrometerBlock> CODEC = MonstrometerBlock.simpleCodec(MonstrometerBlock::new);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty CHARGED = BooleanProperty.create("charged");
 
     public MonstrometerBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false).setValue(CHARGED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -128,25 +135,24 @@ public class MonstrometerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack stack = player.getItemInHand(hand);
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (itemStack.is(GBlocks.LUMIERE_BLOCK.asItem())) {
+            if (!isCharged(blockState)) {
+                setCharged(blockState, level, blockPos);
 
-        if (stack.is(GBlocks.LUMIERE_BLOCK.asItem())) {
-            if (!isCharged(state)) {
-                setCharged(state, world, pos);
-                if (!player.getAbilities().instabuild) stack.shrink(1);
-                world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                return InteractionResult.SUCCESS;
+                if (!player.getAbilities().instabuild) itemStack.shrink(1);
+
+                level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
+                return ItemInteractionResult.SUCCESS;
             }
         } else {
-            if (isCharged(state) && !isActive(state)) {
-                activate(state, world, pos);
-                world.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                return InteractionResult.SUCCESS;
+            if (isCharged(blockState) && !isActive(blockState)) {
+                activate(blockState, level, blockPos);
+                level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
+                return ItemInteractionResult.SUCCESS;
             }
         }
-
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override

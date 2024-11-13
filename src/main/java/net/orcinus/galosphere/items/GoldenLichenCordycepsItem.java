@@ -1,7 +1,7 @@
 package net.orcinus.galosphere.items;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,12 +21,12 @@ public class GoldenLichenCordycepsItem extends Item {
 
     @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-        if (this.isEdible()) {
+        if (itemStack.has(DataComponents.FOOD)) {
             boolean flag = livingEntity.getAirSupply() < livingEntity.getMaxAirSupply();
             int airSupply = livingEntity.getAirSupply();
             int i = (livingEntity.getMaxAirSupply() * 3) / 4;
             boolean flag1 = airSupply > i;
-            if (livingEntity instanceof Player player && (flag || flag1 || player.canEat(this.getFoodProperties().canAlwaysEat()))) {
+            if (livingEntity instanceof Player player && (flag || flag1 || player.canEat(itemStack.get(DataComponents.FOOD).canAlwaysEat()))) {
                 if (flag1 && livingEntity instanceof GoldenBreath goldenBreath) {
                     level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), livingEntity.getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0f, 1.0f + (level.random.nextFloat() - level.random.nextFloat()) * 0.4f);
                     livingEntity.gameEvent(GameEvent.EAT);
@@ -44,7 +44,7 @@ public class GoldenLichenCordycepsItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemstack = player.getItemInHand(interactionHand);
-        if (player.getAirSupply() < ((GoldenBreath)player).getMaxGoldenAirSupply() || player.getAirSupply() < player.getMaxAirSupply() || player.canEat(itemstack.getItem().getFoodProperties().canAlwaysEat())) {
+        if (player.getAirSupply() < ((GoldenBreath)player).getMaxGoldenAirSupply() || player.getAirSupply() < player.getMaxAirSupply() || player.canEat(itemstack.get(DataComponents.FOOD).canAlwaysEat())) {
             return ItemUtils.startUsingInstantly(level, player, interactionHand);
         } else {
             return InteractionResultHolder.pass(player.getItemInHand(interactionHand));

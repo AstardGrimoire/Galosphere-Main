@@ -1,15 +1,11 @@
 package net.orcinus.galosphere.entities;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -37,16 +33,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -54,14 +49,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.orcinus.galosphere.crafting.GlintingManager;
 import net.orcinus.galosphere.entities.ai.SparkleAi;
+import net.orcinus.galosphere.entities.navigation.SemiAquaticPathNavigation;
 import net.orcinus.galosphere.init.GBlockTags;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEntityTypes;
@@ -69,8 +62,8 @@ import net.orcinus.galosphere.init.GItemTags;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMemoryModuleTypes;
 import net.orcinus.galosphere.init.GSensorTypes;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.IntFunction;
 
@@ -79,17 +72,13 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     protected static final ImmutableList<? extends SensorType<? extends Sensor<? super Sparkle>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.HURT_BY, GSensorTypes.SPARKLE_TEMPTATIONS, GSensorTypes.NEAREST_POLLINATED_CLUSTER, SensorType.IS_IN_WATER);
     protected static final ImmutableList<? extends MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.PATH, MemoryModuleType.BREED_TARGET, MemoryModuleType.TEMPTING_PLAYER, MemoryModuleType.TEMPTATION_COOLDOWN_TICKS, MemoryModuleType.IS_TEMPTED, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.NEAREST_ATTACKABLE, MemoryModuleType.IS_IN_WATER, MemoryModuleType.IS_PANICKING, GMemoryModuleTypes.NEAREST_POLLINATED_CLUSTER, GMemoryModuleTypes.POLLINATED_COOLDOWN);
     private static final UniformInt REGROWTH_TICKS = UniformInt.of(6000, 12000);
-    private final Map<Block, Block> clustersToGlinted = Util.make(Maps.newHashMap(), map -> {
-        map.put(GBlocks.ALLURITE_CLUSTER, GBlocks.GLINTED_ALLURITE_CLUSTER);
-        map.put(GBlocks.LUMIERE_CLUSTER, GBlocks.GLINTED_LUMIERE_CLUSTER);
-        map.put(Blocks.AMETHYST_CLUSTER, GBlocks.GLINTED_AMETHYST_CLUSTER);
-    });
+    private final Map<Block, Block> clustersToGlinted = GlintingManager.getGlintingTable();
     private int growthTicks;
 
     public Sparkle(EntityType<? extends Sparkle> type, Level world) {
         super(type, world);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 4.0F);
-        this.setPathfindingMalus(BlockPathTypes.TRAPDOOR, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, 4.0F);
+        this.setPathfindingMalus(PathType.TRAPDOOR, -1.0F);
         this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02F, 0.1F, true);
     }
 
@@ -151,11 +140,6 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean isPushedByFluid() {
         return false;
     }
@@ -175,9 +159,9 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CRYSTAL_TYPE, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CRYSTAL_TYPE, 0);
     }
 
     public static boolean checkSparkleSpawnRules(EntityType<? extends LivingEntity> sparkle, LevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
@@ -185,10 +169,9 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData data, @Nullable CompoundTag tag) {
-        CrystalType type = this.getRandomType();
-        this.setVariant(type);
-        return super.finalizeSpawn(world, difficulty, spawnReason, data, tag);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.setVariant(this.getRandomType());
+        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
     @Override
@@ -215,7 +198,7 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
 
     @Override
     protected PathNavigation createNavigation(Level world) {
-        return new SparklePathNavigation(this, world);
+        return new SemiAquaticPathNavigation(this, world);
     }
 
     @Override
@@ -226,39 +209,6 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     @Override
     public CrystalType getVariant() {
         return CrystalType.byId(this.entityData.get(CRYSTAL_TYPE));
-    }
-
-    static class SparklePathNavigation extends AmphibiousPathNavigation {
-
-        public SparklePathNavigation(Sparkle sparkle, Level level) {
-            super(sparkle, level);
-        }
-
-        @Override
-        public boolean canCutCorner(BlockPathTypes blockPathTypes) {
-            return blockPathTypes != BlockPathTypes.WATER_BORDER && super.canCutCorner(blockPathTypes);
-        }
-
-        @Override
-        protected PathFinder createPathFinder(int i) {
-            this.nodeEvaluator = new SparkleNodeEvaluator(true);
-            this.nodeEvaluator.setCanPassDoors(true);
-            return new PathFinder(this.nodeEvaluator, i);
-        }
-    }
-
-    static class SparkleNodeEvaluator extends AmphibiousNodeEvaluator {
-
-        public SparkleNodeEvaluator(boolean bl) {
-            super(bl);
-        }
-
-        @Override
-        @Nullable
-        public Node getStart() {
-            return this.getStartNode(new BlockPos(Mth.floor(this.mob.getBoundingBox().minX), Mth.floor(this.mob.getBoundingBox().minY), Mth.floor(this.mob.getBoundingBox().minZ)));
-        }
-
     }
 
     @Override
@@ -299,9 +249,7 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
         ItemStack stack = player.getItemInHand(hand);
         if (this.getVariant() != CrystalType.NONE && stack.getItem() instanceof PickaxeItem && !this.isBaby()) {
             this.extractShard(stack);
-            stack.hurtAndBreak(1, player, (entity) -> {
-                entity.broadcastBreakEvent(hand);
-            });
+            stack.hurtAndBreak(1, player, Sparkle.getSlotForHand(hand));
             this.gameEvent(GameEvent.SHEAR, player);
             return InteractionResult.SUCCESS;
         }
@@ -323,8 +271,11 @@ public class Sparkle extends Animal implements VariantHolder<Sparkle.CrystalType
     }
 
     private void spawnShard(ItemStack stack) {
-        Item item = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0 ? this.getVariant().getSilktouchItem() : this.getVariant().getItem();
-        int rolls = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack) > 0 ? 1 + EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack) : 1;
+        HolderLookup.RegistryLookup<Enchantment> lookup = this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        Item item = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.SILK_TOUCH), stack) > 0 ? this.getVariant().getSilktouchItem() : this.getVariant().getItem();
+        int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.FORTUNE), stack);
+        int rolls = fortuneLevel > 0 ? Mth.nextInt(random, 0, 2) * fortuneLevel : 1;
+
         for (int i = 0; i < rolls; i++) {
             this.spawnAtLocation(item);
         }

@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.mixin;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.orcinus.galosphere.util.PreservedShulkerBox;
@@ -14,14 +15,14 @@ public class ShulkerBoxBlockEntityMixin implements PreservedShulkerBox {
     @Unique
     private boolean preserved;
 
-    @Inject(at = @At("TAIL"), method = "load")
-    private void G$load(CompoundTag tag, CallbackInfo ci) {
-        this.setPreserved(tag.getBoolean("Preserved"));
+    @Inject(at = @At("TAIL"), method = "loadAdditional")
+    private void G$load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
+        this.setPreserved(compoundTag.getBoolean("Preserved"));
     }
 
     @Inject(at = @At("TAIL"), method = "saveAdditional")
-    private void G$saveAdditional(CompoundTag tag, CallbackInfo ci) {
-        tag.putBoolean("Preserved", this.isPreserved());
+    private void G$saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
+        compoundTag.putBoolean("Preserved", this.isPreserved());
     }
 
     @Override

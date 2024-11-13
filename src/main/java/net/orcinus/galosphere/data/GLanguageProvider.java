@@ -2,43 +2,48 @@ package net.orcinus.galosphere.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.MobBucketItem;
 import net.orcinus.galosphere.init.GBiomes;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEnchantments;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMobEffects;
-import net.orcinus.galosphere.items.SilverSmithingTemplateItem;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public class GLanguageProvider extends FabricLanguageProvider {
-    public GLanguageProvider(FabricDataOutput dataOutput) {
-        super(dataOutput);
+
+    public GLanguageProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+        super(dataOutput, registryLookup);
     }
 
     @Override
-    public void generateTranslations(TranslationBuilder translationBuilder) {
+    public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
         GBlocks.BLOCKS.values().forEach(block -> {
             translationBuilder.add(block, reformat(BuiltInRegistries.BLOCK.getKey(block).getPath()));
         });
-        GItems.ITEMS.values().stream().filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).filter(Predicate.not(SilverSmithingTemplateItem.class::isInstance).and(Predicate.not(GItems.PRESERVED_TEMPLATE::equals))).forEach(item -> {
-            if (item != GItems.PRESERVED_TEMPLATE || item != GItems.SILVER_UPGRADE_SMITHING_TEMPLATE) {
+        GItems.ITEMS.values().stream().filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).forEach(item -> {
+            if (item instanceof MobBucketItem) {
+                translationBuilder.add(item, "Bucket of " + reformat(BuiltInRegistries.ITEM.getKey(item).getPath().replace("_bucket", "")));
+            } else {
                 translationBuilder.add(item, reformat(BuiltInRegistries.ITEM.getKey(item).getPath()));
             }
+        });
+        GEnchantments.ENCHANTMENTS.values().forEach(enchantment -> {
+            translationBuilder.add("enchantment.galosphere." + enchantment.location().getPath(), reformat(enchantment.location().getPath()));
         });
         GEntityTypes.ENTITY_TYPES.values().forEach(entityType -> {
             translationBuilder.add(entityType, reformat(BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath()));
         });
         GMobEffects.MOB_EFFECTS.values().forEach(mobEffect -> {
             translationBuilder.add(mobEffect, reformat(BuiltInRegistries.MOB_EFFECT.getKey(mobEffect).getPath()));
-        });
-        GEnchantments.ENCHANTMENTS.values().forEach(enchantment -> {
-            translationBuilder.add(enchantment, reformat(BuiltInRegistries.ENCHANTMENT.getKey(enchantment).getPath()));
         });
         translationBuilder.add("item.galosphere.preserved", "Preserved");
         translationBuilder.add("item.galosphere.silver_bomb.duration", "Duration");
@@ -75,7 +80,7 @@ public class GLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("subtitles.entity.preserved.emerge", "Preserved emerges");
         translationBuilder.add("subtitles.entity.preserved.hurt", "Preserved hurts");
         translationBuilder.add("subtitles.entity.preserved.idle", "Preserved groans");
-        GBiomes.getIds().stream().map(ResourceLocation::getPath).forEach(path -> {
+        GBiomes.BIOMES.keySet().stream().map(ResourceLocation::getPath).forEach(path -> {
             translationBuilder.add("biome.galosphere." + path, reformat(path));
         });
         translationBuilder.add("galosphere.midnightconfig.title", "Galosphere Config");
@@ -91,14 +96,12 @@ public class GLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("advancements.galosphere.lumiere_compost.title", "Fragility of Light");
         translationBuilder.add("advancements.galosphere.silver_bomb.description", "Construct a Silver Bomb");
         translationBuilder.add("advancements.galosphere.silver_bomb.title", "It's About Drive, It's About Power");
-        translationBuilder.add("advancements.galosphere.silver_ingot.description", "Obtain a Silver Ingot");
-        translationBuilder.add("advancements.galosphere.silver_ingot.title", "Multi-Disciplined");
         translationBuilder.add("advancements.galosphere.sterling_armor.description", "Don a full suit of Sterling Armor");
         translationBuilder.add("advancements.galosphere.sterling_armor.title", "Looking Good, Partner!");
         translationBuilder.add("advancements.galosphere.use_spectre_spyglass.description", "Spectate a Spectre");
         translationBuilder.add("advancements.galosphere.use_spectre_spyglass.title", "Watchdog");
         translationBuilder.add("advancements.galosphere.use_spectre_flare.description", "Use a Spectre Flare");
-        translationBuilder.add("advancements.galosphere.use_spectre_flare.title", "I spy with my little eye");
+        translationBuilder.add("advancements.galosphere.use_spectre_flare.title", "I Spy with My Little Eye");
         translationBuilder.add("advancements.galosphere.warped_teleport.description", "Teleport to a Warped Anchor");
         translationBuilder.add("advancements.galosphere.warped_teleport.title", "What is this Place?");
         translationBuilder.add("advancements.galosphere.activate_pink_salt_chamber.title", "Knock Knock");

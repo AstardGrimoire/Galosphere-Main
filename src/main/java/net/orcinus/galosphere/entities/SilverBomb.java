@@ -23,10 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GParticleTypes;
-import net.orcinus.galosphere.util.CompatUtil;
 
 public class SilverBomb extends ThrowableItemProjectile {
     private static final EntityDataAccessor<Integer> TIME = SynchedEntityData.defineId(SilverBomb.class, EntityDataSerializers.INT);
@@ -41,22 +41,17 @@ public class SilverBomb extends ThrowableItemProjectile {
 
     public SilverBomb(Level world, LivingEntity entity, ItemStack stack) {
         super(GEntityTypes.SIVLER_BOMB, entity, world);
-        if (!stack.isEmpty() && stack.hasTag()) {
-            CompoundTag tag = stack.getTag();
-            if (tag != null) {
-                this.explosion = tag.getInt("Explosion");
-                this.duration = tag.getInt("Duration");
-                this.bouncy = tag.getInt("Bouncy");
-            }
-        }
+        this.explosion = stack.getOrDefault(GDataComponents.EXPLOSION, 1);
+        this.duration = stack.getOrDefault(GDataComponents.DURATION, 1);
+        this.bouncy = stack.getOrDefault(GDataComponents.BOUNCY, 1);
         this.entityData.set(LAST_DURATION, this.duration * 20);
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(TIME, 40);
-        this.entityData.define(LAST_DURATION, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TIME, 40);
+        builder.define(LAST_DURATION, 0);
     }
 
     @Override
@@ -96,7 +91,7 @@ public class SilverBomb extends ThrowableItemProjectile {
     }
 
     @Override
-    protected float getGravity() {
+    protected double getDefaultGravity() {
         return 0.05F;
     }
 
@@ -148,7 +143,7 @@ public class SilverBomb extends ThrowableItemProjectile {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 3) {
-            ItemStack itemstack = this.getItemRaw();
+            ItemStack itemstack = this.getItem();
             for(int i = 0; i < 8; ++i) {
                 this.level().addParticle((itemstack.isEmpty() ? GParticleTypes.SILVER_BOMB : new ItemParticleOption(ParticleTypes.ITEM, itemstack)), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }

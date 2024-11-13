@@ -12,18 +12,18 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.orcinus.galosphere.client.gui.CombustionTableScreen;
 import net.orcinus.galosphere.client.model.BerserkerModel;
-import net.orcinus.galosphere.client.model.PreservedModel;
-import net.orcinus.galosphere.client.model.ImpactModel;
 import net.orcinus.galosphere.client.model.PinkSaltPillarModel;
+import net.orcinus.galosphere.client.model.PreservedModel;
 import net.orcinus.galosphere.client.model.SparkleModel;
 import net.orcinus.galosphere.client.model.SpecterpillarModel;
 import net.orcinus.galosphere.client.model.SpectreModel;
@@ -36,9 +36,9 @@ import net.orcinus.galosphere.client.particles.providers.PinkSaltFallingDustProv
 import net.orcinus.galosphere.client.particles.providers.SilverBombProvider;
 import net.orcinus.galosphere.client.particles.providers.WarpedProvider;
 import net.orcinus.galosphere.client.renderer.BerserkerRenderer;
+import net.orcinus.galosphere.client.renderer.PinkSaltPillarRenderer;
 import net.orcinus.galosphere.client.renderer.PinkSaltShardRenderer;
 import net.orcinus.galosphere.client.renderer.PreservedRenderer;
-import net.orcinus.galosphere.client.renderer.PinkSaltPillarRenderer;
 import net.orcinus.galosphere.client.renderer.SparkleRenderer;
 import net.orcinus.galosphere.client.renderer.SpectatorVisionRenderer;
 import net.orcinus.galosphere.client.renderer.SpecterpillarRenderer;
@@ -123,14 +123,19 @@ public class GalosphereClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(GModelLayers.STERLING_HELMET, SterlingArmorModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(GModelLayers.GILDED_BEADS, GildedBeadsRenderer::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(GModelLayers.PINK_SALT_PILLAR, PinkSaltPillarModel::createBodyLayer);
-        EntityModelLayerRegistry.registerModelLayer(GModelLayers.IMPACT, ImpactModel::createBodyLayer);
         EntityModelLayerRegistry.registerModelLayer(GModelLayers.PRESERVED, PreservedModel::createBodyLayer);
 
         GEvents.clientInit();
         GNetwork.init();
 
-        ItemProperties.register(Items.CROSSBOW, Galosphere.id("glow_flare"), (stack, world, entity, i) -> entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack, GItems.GLOW_FLARE) ? 1 : 0);
-        ItemProperties.register(Items.CROSSBOW, Galosphere.id("spectre_flare"), (stack, world, entity, i) -> entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack, GItems.SPECTRE_FLARE) ? 1 : 0);
+        ItemProperties.register(Items.CROSSBOW, Galosphere.id("glow_flare"), (stack, world, entity, i) -> {
+            ChargedProjectiles chargedProjectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
+            return chargedProjectiles != null && chargedProjectiles.contains(GItems.GLOW_FLARE) ? 1 : 0;
+        });
+        ItemProperties.register(Items.CROSSBOW, Galosphere.id("spectre_flare"), (stack, world, entity, i) -> {
+            ChargedProjectiles chargedProjectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
+            return chargedProjectiles != null && chargedProjectiles.contains(GItems.SPECTRE_FLARE) ? 1.0F : 0.0F;
+        });
         ItemProperties.register(GItems.BAROMETER, Galosphere.id("weather_level"), new ClampedItemPropertyFunction() {
             private double rotation;
             private int ticksBeforeChange;

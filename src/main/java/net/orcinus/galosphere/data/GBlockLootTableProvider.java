@@ -2,11 +2,18 @@ package net.orcinus.galosphere.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.minecraft.advancements.critereon.EnchantmentPredicate;
+import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.ItemSubPredicates;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,19 +28,25 @@ import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.orcinus.galosphere.blocks.PollinatedClusterBlock;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GItems;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 public class GBlockLootTableProvider extends FabricBlockLootTableProvider {
-    public GBlockLootTableProvider(FabricDataOutput dataOutput) {
-        super(dataOutput);
+
+    public GBlockLootTableProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+        super(dataOutput, registryLookup);
     }
 
     @Override
     public void generate() {
+        HolderLookup.RegistryLookup<Enchantment> registryLookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
         this.add(GBlocks.SILVER_ORE, (block) -> createOreDrop(block, GItems.RAW_SILVER));
         this.add(GBlocks.DEEPSLATE_SILVER_ORE, (block) -> createOreDrop(block, GItems.RAW_SILVER));
         this.dropSelf(GBlocks.STRANDED_MEMBRANE_BLOCK);
@@ -55,11 +68,11 @@ public class GBlockLootTableProvider extends FabricBlockLootTableProvider {
         this.dropSelf(GBlocks.AMETHYST_BRICK_STAIRS);
         this.dropSlab(GBlocks.AMETHYST_BRICK_SLAB);
         this.dropSelf(GBlocks.CHISELED_AMETHYST);
-        this.add(GBlocks.ALLURITE_CLUSTER, (block) -> dropAlternativeWithSilkTouch(block, GBlocks.GLINTED_ALLURITE_CLUSTER, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
-        this.add(GBlocks.LUMIERE_CLUSTER, (block) -> dropAlternativeWithSilkTouch(block, GBlocks.GLINTED_LUMIERE_CLUSTER, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
-        this.add(GBlocks.GLINTED_ALLURITE_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
-        this.add(GBlocks.GLINTED_LUMIERE_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
-        this.add(GBlocks.GLINTED_AMETHYST_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(Items.AMETHYST_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(Items.AMETHYST_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
+        this.add(GBlocks.ALLURITE_CLUSTER, (block) -> dropAlternativeWithSilkTouch(block, GBlocks.GLINTED_ALLURITE_CLUSTER, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))))), registries));
+        this.add(GBlocks.LUMIERE_CLUSTER, (block) -> dropAlternativeWithSilkTouch(block, GBlocks.GLINTED_LUMIERE_CLUSTER, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))))), registries));
+        this.add(GBlocks.GLINTED_ALLURITE_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.ALLURITE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
+        this.add(GBlocks.GLINTED_LUMIERE_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(GItems.LUMIERE_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
+        this.add(GBlocks.GLINTED_AMETHYST_CLUSTER, (block) -> createSilkTouchDispatchTable(block, LootItem.lootTableItem(Items.AMETHYST_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(applyExplosionDecay(block, LootItem.lootTableItem(Items.AMETHYST_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)))))));
         this.dropSelf(GBlocks.MONSTROMETER);
         this.dropSelf(GBlocks.LUMIERE_LAMP);
         this.dropSelf(GBlocks.ALLURITE_LAMP);
@@ -88,7 +101,7 @@ public class GBlockLootTableProvider extends FabricBlockLootTableProvider {
         this.dropSelf(GBlocks.BOWL_LICHEN);
         this.dropSelf(GBlocks.CHANDELIER);
         this.add(GBlocks.CHANDELIER, (block) -> createSinglePropConditionTable(block, DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
-        this.addVinesDroptable(GBlocks.LICHEN_CORDYCEPS, GBlocks.LICHEN_CORDYCEPS_PLANT);
+        this.addVinesDroptable(GBlocks.LICHEN_CORDYCEPS, GBlocks.LICHEN_CORDYCEPS_PLANT, registryLookup);
         this.add(GBlocks.GLOW_INK_CLUMPS, this::createMultifaceBlockDrops);
         this.dropPottedContents(GBlocks.POTTED_BOWL_LICHEN);
         this.dropPottedContents(GBlocks.POTTED_LICHEN_ROOTS);
@@ -142,22 +155,22 @@ public class GBlockLootTableProvider extends FabricBlockLootTableProvider {
         this.dropSelf(GBlocks.SHADOW_FRAME);
         this.dropSelf(GBlocks.PINK_SALT_LAMP);
         this.add(GBlocks.PINK_SALT_STRAW, block -> {
-            return createSilkTouchDispatchTable(block, LootItem.lootTableItem(GBlocks.PINK_SALT_STRAW.asItem()).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.1f, 0.14285715f, 0.25f, 1.0f)));
+            return createSilkTouchDispatchTable(block, LootItem.lootTableItem(GBlocks.PINK_SALT_STRAW.asItem()).when(BonusLevelTableCondition.bonusLevelFlatChance(registryLookup.getOrThrow(Enchantments.FORTUNE), 0.1f, 0.14285715f, 0.25f, 1.0f)));
         });
         this.dropSelf(GBlocks.CURED_MEMBRANE_BLOCK);
         this.add(GBlocks.PINK_SALT_CLUSTER, (block) -> {
-            return createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.PINK_SALT_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(this.applyExplosionDecay(block, LootItem.lootTableItem(GItems.PINK_SALT_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))))));
+            return createSilkTouchDispatchTable(block, LootItem.lootTableItem(GItems.PINK_SALT_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(4.0F))).apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE))).when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.CLUSTER_MAX_HARVESTABLES))).otherwise(this.applyExplosionDecay(block, LootItem.lootTableItem(GItems.PINK_SALT_SHARD).apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F))))));
         });
         this.dropSelf(GBlocks.GILDED_BEADS);
         this.dropSelf(GBlocks.PINK_SALT_CHAMBER);
     }
 
-    protected static LootTable.Builder dropAlternativeWithSilkTouch(Block block, Block alternative, LootPoolEntryContainer.Builder<?> builder) {
+    protected static LootTable.Builder dropAlternativeWithSilkTouch(Block block, Block alternative, LootPoolEntryContainer.Builder<?> builder, HolderLookup.Provider registries) {
         LootPool.Builder lootPool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1.0F))
                 .add(
                         LootItem.lootTableItem(alternative)
-                                .when(HAS_SILK_TOUCH)
+                                .when(containsSilkTouch(registries))
                                 .when(LootItemBlockStatePropertyCondition.
                                         hasBlockStateProperties(block).
                                         setProperties(
@@ -165,18 +178,23 @@ public class GBlockLootTableProvider extends FabricBlockLootTableProvider {
                                                         properties().
                                                         hasProperty(PollinatedClusterBlock.POLLINATED, true)
                                         ))
-                                .otherwise(LootItem.lootTableItem(block).when(HAS_SILK_TOUCH))
+                                .otherwise(LootItem.lootTableItem(block).when(containsSilkTouch(registries)))
                                 .otherwise(builder)
                 );
         return LootTable.lootTable().withPool(lootPool);
+    }
+
+    private static LootItemCondition.Builder containsSilkTouch(HolderLookup.Provider registries) {
+        HolderLookup.RegistryLookup<Enchantment> registryLookup = registries.lookupOrThrow(Registries.ENCHANTMENT);
+        return MatchTool.toolMatches(ItemPredicate.Builder.item().withSubPredicate(ItemSubPredicates.ENCHANTMENTS, ItemEnchantmentsPredicate.enchantments(List.of(new EnchantmentPredicate(registryLookup.getOrThrow(Enchantments.SILK_TOUCH), MinMaxBounds.Ints.atLeast(1))))));
     }
 
     public LootTable.Builder createMultifaceBlockDrops(Block block) {
         return LootTable.lootTable().withPool(LootPool.lootPool().add(applyExplosionDecay(block, LootItem.lootTableItem(block).apply(Direction.values(), direction -> SetItemCountFunction.setCount(ConstantValue.exactly(1.0f), true).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(MultifaceBlock.getFaceProperty(direction), true)))).apply(SetItemCountFunction.setCount(ConstantValue.exactly(-1.0f), true)))));
     }
 
-    private void addVinesDroptable(Block block, Block plantBlock) {
-        LootTable.Builder builder = createSilkTouchOrShearsDispatchTable(block, LootItem.lootTableItem(block).when(BonusLevelTableCondition.bonusLevelFlatChance(Enchantments.BLOCK_FORTUNE, 0.33F, 0.55F, 0.77F, 1.0F)));
+    private void addVinesDroptable(Block block, Block plantBlock, HolderLookup.RegistryLookup<Enchantment> registryLookup) {
+        LootTable.Builder builder = createSilkTouchOrShearsDispatchTable(block, LootItem.lootTableItem(block).when(BonusLevelTableCondition.bonusLevelFlatChance(registryLookup.getOrThrow(Enchantments.FORTUNE), 0.33F, 0.55F, 0.77F, 1.0F)));
         this.add(block, builder);
         this.add(plantBlock, builder);
     }

@@ -1,7 +1,7 @@
 package net.orcinus.galosphere.world.gen.processors.pink_salt_shrine;
 
 import com.google.common.collect.Lists;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class RawOreProcessor extends StructureProcessor {
-    public static final Codec<RawOreProcessor> CODEC = Codec.unit(RawOreProcessor::new);
+    public static final MapCodec<RawOreProcessor> CODEC = MapCodec.unit(RawOreProcessor::new);
     private static final List<Block> LIST = Util.make(Lists.newArrayList(), list -> {
         list.add(Blocks.RAW_IRON_BLOCK);
         list.add(Blocks.RAW_COPPER_BLOCK);

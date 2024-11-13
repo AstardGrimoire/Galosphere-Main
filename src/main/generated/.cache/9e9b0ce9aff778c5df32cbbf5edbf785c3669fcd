@@ -1,12 +1,19 @@
-// 1.20.1	2023-12-26T06:19:33.1228712	Galosphere/Tags for minecraft:item
-0cab90c351a5d3e5e08fbe1d13cad944f56837bd data\galosphere\tags\items\sparkle_tempt_items.json
-10598a85b0b258672549eb1cff4a26bad17a80b6 data\c\tags\items\silver_blocks.json
-1e6749814652bb0f3af19a19212d7f3c7f8438d7 data\c\tags\items\silver_ores.json
-d9c83f43db03a7dd51f6c6f3ea72378d3ab9761f data\galosphere\tags\items\non_sinkable_horse_armors.json
-36e1dad2803241c11c646b9737be8af6d67ef8fe data\galosphere\tags\items\bomb_duration_modifiers.json
-ae63090c29bc848a0d9f25201cd7ed80eb253b2c data\galosphere\tags\items\bomb_bouncy_modifiers.json
-e2814ad6d2a5a9e8f23949ea93b4f1fceb7ee8d4 data\galosphere\tags\items\bomb_explosion_modifiers.json
-e88377bcad8e256bd9305f54f049c0b88e80a5a6 data\c\tags\items\silver_ingots.json
-cccc75ad74e8093c6edf4eafece8daf5fe874fae data\minecraft\tags\items\freeze_immune_wearables.json
-168e33b21be2e860a93812aceb4081125dedd35b data\galosphere\tags\items\spectre_tempt_items.json
-10cffefc7c18281390dd0a4ba317d9c95e995740 data\c\tags\items\silver_nuggets.json
+// 1.21	2024-11-14T09:05:01.5558856	Galosphere/Tags for minecraft:item
+281277a7254796698271b7b7c66430404113cc45 data\galosphere\tags\item\saltbound_tablet_enchantable.json
+92a0e8cf12f15341cd2d07e7a517ec9ea22502fd data\galosphere\tags\item\bomb_explosion_modifiers.json
+94e3968a172e40290ed2e06e0304cff0f172b037 data\c\tags\item\foods.json
+2fd5a0c1493fbc4cde6fd1c13d7c5f5feb116865 data\minecraft\tags\item\head_armor.json
+4bed66e32fa89b39dc2f3445ac8698eec0b5c6d5 data\minecraft\tags\item\chest_armor.json
+6bb01ece43dc060b7f6e508c68ea0179c30e853f data\galosphere\tags\item\bomb_duration_modifiers.json
+131a9d399371fb7f94f24cc942d6f7ae5ed16883 data\galosphere\tags\item\spectre_tempt_items.json
+140ec1ca4b33251ba785849283285aae614ae8fe data\galosphere\tags\item\non_sinkable_horse_armors.json
+81db4915f4f80c962cdeb4281b6ee49cff4bea7d data\galosphere\tags\item\sparkle_tempt_items.json
+d22848f4f97f051b3ec5eefda7df36a01718e88a data\c\tags\item\silver_ores.json
+19f81d7f527e2d47038aae64bed1d742a246d9de data\galosphere\tags\item\stonefish_repellent.json
+65fe93d1810f95b0445bfcc92987f6761a3fd050 data\c\tags\item\silver_nuggets.json
+77953532df9dfaebb1305885a11df18f585acef3 data\c\tags\item\silver_blocks.json
+105727dc444ddc319293c250e6c64f197b4ba151 data\galosphere\tags\item\bomb_bouncy_modifiers.json
+0ceaaec06992eb7173faa9cc1f1b2a05ad3c7cab data\c\tags\item\silver_ingots.json
+9e0c106305aa8916a55494ad1fbaa55e9e266b63 data\minecraft\tags\item\foot_armor.json
+61170353873a8d52f6171af462c884eee39e6d5f data\minecraft\tags\item\freeze_immune_wearables.json
+bf2a002d20a0b7e9c446deef94c9e89da3ff2e40 data\minecraft\tags\item\leg_armor.json

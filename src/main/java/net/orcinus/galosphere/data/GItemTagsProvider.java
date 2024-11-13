@@ -2,6 +2,7 @@ package net.orcinus.galosphere.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
@@ -29,7 +30,14 @@ public class GItemTagsProvider extends FabricTagProvider.ItemTagProvider {
         this.getOrCreateTagBuilder(GItemTags.NON_SINKABLES_HORSE_ARMORS).add(GItems.STERLING_HORSE_ARMOR, Items.LEATHER_HORSE_ARMOR);
         this.getOrCreateTagBuilder(GItemTags.SPARKLE_TEMPT_ITEMS).add(Items.GLOW_LICHEN);
         this.getOrCreateTagBuilder(GItemTags.SPECTRE_TEMPT_ITEMS).add(GBlocks.LICHEN_SHELF.asItem());
+        this.getOrCreateTagBuilder(GItemTags.SALTBOUND_TABLET_ENCHANTABLE).add(GItems.SALTBOUND_TABLET);
+        this.getOrCreateTagBuilder(GItemTags.STONEFISH_REPELLENT).addOptionalTag(ItemTags.CLUSTER_MAX_HARVESTABLES);
         this.getOrCreateTagBuilder(ItemTags.FREEZE_IMMUNE_WEARABLES).add(GItems.STERLING_HORSE_ARMOR, GItems.STERLING_HELMET, GItems.STERLING_CHESTPLATE, GItems.STERLING_LEGGINGS, GItems.STERLING_BOOTS);
+        this.getOrCreateTagBuilder(ItemTags.HEAD_ARMOR).add(GItems.STERLING_HELMET);
+        this.getOrCreateTagBuilder(ItemTags.CHEST_ARMOR).add(GItems.STERLING_CHESTPLATE);
+        this.getOrCreateTagBuilder(ItemTags.LEG_ARMOR).add(GItems.STERLING_LEGGINGS);
+        this.getOrCreateTagBuilder(ItemTags.FOOT_ARMOR).add(GItems.STERLING_BOOTS);
+        this.getOrCreateTagBuilder(ConventionalItemTags.FOODS).add(GItems.LICHEN_CORDYCEPS, GItems.GOLDEN_LICHEN_CORDYCEPS, GItems.SALTED_JERKY, GItems.PRESERVED_FLESH);
     }
 
 }

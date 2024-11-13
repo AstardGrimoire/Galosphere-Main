@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "tag": "c:silver_ingots"
+    },
+    "R": {
+      "tag": "c:redstone_dusts"
+    }
+  },
+  "pattern": [
+    "#R#",
+    " # ",
+    " # "
+  ],
+  "result": {
+    "count": 1,
+    "id": "galosphere:silver_balance"
+  }
+}

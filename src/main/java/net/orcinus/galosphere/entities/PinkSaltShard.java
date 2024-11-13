@@ -3,6 +3,9 @@ package net.orcinus.galosphere.entities;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +18,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GSoundEvents;
+import net.orcinus.galosphere.mixin.access.AbstractArrowAccessor;
+import net.orcinus.galosphere.mixin.access.ProjectileAccessor;
 
 public class PinkSaltShard extends AbstractArrow {
     private final int maxTicks = 600;
@@ -28,6 +33,31 @@ public class PinkSaltShard extends AbstractArrow {
         super(GEntityTypes.PINK_SALT_SHARD, level);
         this.setOwner(livingEntity);
         this.setBaseDamage(4.0F);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
+        AbstractArrowAccessor accessor = (AbstractArrowAccessor) this;
+        ProjectileAccessor projectileAccessor = (ProjectileAccessor) this;
+        if (projectileAccessor.getOwnerUUID() != null) {
+            compoundTag.putUUID("Owner", projectileAccessor.getOwnerUUID());
+        }
+        if (projectileAccessor.isLeftOwner()) {
+            compoundTag.putBoolean("LeftOwner", true);
+        }
+        compoundTag.putBoolean("HasBeenShot", projectileAccessor.isHasBeenShot());
+        compoundTag.putShort("life", (short)accessor.getLife());
+        if (accessor.getLastState() != null) {
+            compoundTag.put("inBlockState", NbtUtils.writeBlockState(accessor.getLastState()));
+        }
+        compoundTag.putByte("shake", (byte)this.shakeTime);
+        compoundTag.putBoolean("inGround", this.inGround);
+        compoundTag.putByte("pickup", (byte)this.pickup.ordinal());
+        compoundTag.putDouble("damage", this.getBaseDamage());
+        compoundTag.putBoolean("crit", this.isCritArrow());
+        compoundTag.putByte("PierceLevel", this.getPierceLevel());
+        compoundTag.putString("SoundEvent", BuiltInRegistries.SOUND_EVENT.getKey(this.getHitGroundSoundEvent()).toString());
+        compoundTag.putBoolean("ShotFromCrossbow", this.shotFromCrossbow());
     }
 
     @Override
@@ -61,7 +91,7 @@ public class PinkSaltShard extends AbstractArrow {
     }
 
     @Override
-    protected ItemStack getPickupItem() {
+    protected ItemStack getDefaultPickupItem() {
         return ItemStack.EMPTY;
     }
 

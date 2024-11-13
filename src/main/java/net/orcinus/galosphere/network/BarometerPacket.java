@@ -1,18 +1,32 @@
 package net.orcinus.galosphere.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.GalosphereClient;
 
-public class BarometerPacket implements ClientPlayNetworking.PlayChannelHandler {
+public record BarometerPacket(int time) implements CustomPacketPayload {
+    public static final Type<BarometerPacket> TYPE = new Type<>(Galosphere.id("barometer_info"));
+    public static final StreamCodec<FriendlyByteBuf, BarometerPacket> STREAM_CODEC = CustomPacketPayload.codec(BarometerPacket::write, BarometerPacket::new);
 
-    @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        int clearWeatherTime = buf.readInt();
-        client.execute(() -> GalosphereClient.clearWeatherTime = clearWeatherTime);
+    private BarometerPacket(FriendlyByteBuf buf) {
+        this(buf.readInt());
     }
 
+    public void write(FriendlyByteBuf friendlyByteBuf) {
+        friendlyByteBuf.writeInt(this.time);
+    }
+
+    public void receive(ClientPlayNetworking.Context context) {
+        Minecraft client = context.client();
+        client.execute(() -> GalosphereClient.clearWeatherTime = this.time);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }

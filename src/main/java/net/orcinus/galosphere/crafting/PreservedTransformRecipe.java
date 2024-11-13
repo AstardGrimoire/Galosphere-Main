@@ -1,24 +1,25 @@
 package net.orcinus.galosphere.crafting;
 
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.orcinus.galosphere.Galosphere;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GRecipeSerializers;
 
 public class PreservedTransformRecipe implements SmithingRecipe {
-    private final ResourceLocation ID = new ResourceLocation(Galosphere.MODID, "preserved_transform_recipe");
+    private final ResourceLocation ID = Galosphere.id("preserved_transform_recipe");
 
     public PreservedTransformRecipe() {
     }
@@ -30,13 +31,12 @@ public class PreservedTransformRecipe implements SmithingRecipe {
 
     @Override
     public boolean isBaseIngredient(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getTag();
-        if (tag != null && tag.contains("Preserved")) {
+        boolean preserved = itemStack.has(GDataComponents.PRESERVED);
+        if (preserved) {
             return false;
         }
-        boolean notPreserved = !(tag != null && tag.contains("Preserved"));
-        boolean blockItem = notPreserved && itemStack.getItem() instanceof BlockItem dummy && dummy.getBlock() instanceof ShulkerBoxBlock;
-        return blockItem || itemStack.getCount() == 1 && notPreserved;
+        boolean blockItem = itemStack.getItem() instanceof BlockItem dummy && dummy.getBlock() instanceof ShulkerBoxBlock;
+        return blockItem || itemStack.getCount() == 1;
     }
 
     @Override
@@ -45,28 +45,23 @@ public class PreservedTransformRecipe implements SmithingRecipe {
     }
 
     @Override
-    public boolean matches(Container container, Level level) {
-        boolean templateIngredient = this.isTemplateIngredient(container.getItem(0));
-        boolean baseIngredient = this.isBaseIngredient(container.getItem(1));
-        boolean additionIngredient = this.isAdditionIngredient(container.getItem(2));
+    public boolean matches(SmithingRecipeInput recipeInput, Level level) {
+        boolean templateIngredient = this.isTemplateIngredient(recipeInput.getItem(0));
+        boolean baseIngredient = this.isBaseIngredient(recipeInput.getItem(1));
+        boolean additionIngredient = this.isAdditionIngredient(recipeInput.getItem(2));
         return templateIngredient && baseIngredient && additionIngredient;
     }
 
     @Override
-    public ItemStack assemble(Container container, RegistryAccess registryAccess) {
-        ItemStack itemStack = container.getItem(1).copy();
-        itemStack.getOrCreateTag().putBoolean("Preserved", true);
-        return itemStack;
+    public ItemStack assemble(SmithingRecipeInput recipeInput, HolderLookup.Provider provider) {
+        ItemStack stack = recipeInput.getItem(1).copy();
+        stack.set(GDataComponents.PRESERVED, true);
+        return stack;
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return new ItemStack(Items.IRON_INGOT);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return this.ID;
     }
 
     @Override
@@ -80,18 +75,24 @@ public class PreservedTransformRecipe implements SmithingRecipe {
     }
 
     public static class Serializer implements RecipeSerializer<PreservedTransformRecipe> {
-        @Override
-        public PreservedTransformRecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
+        private static final MapCodec<PreservedTransformRecipe> CODEC = MapCodec.unit(PreservedTransformRecipe::new);
+        public static final StreamCodec<RegistryFriendlyByteBuf, PreservedTransformRecipe> STREAM_CODEC = StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
+
+        private static PreservedTransformRecipe fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
             return new PreservedTransformRecipe();
         }
 
-        @Override
-        public PreservedTransformRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf friendlyByteBuf) {
-            return new PreservedTransformRecipe();
+        private static void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, PreservedTransformRecipe smithingTransformRecipe) {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf friendlyByteBuf, PreservedTransformRecipe preservedTransformRecipe) {
+        public MapCodec<PreservedTransformRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, PreservedTransformRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 

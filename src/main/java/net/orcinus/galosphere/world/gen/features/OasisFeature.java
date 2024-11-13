@@ -5,7 +5,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.StructureManager;
@@ -18,10 +17,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluids;
 import net.orcinus.galosphere.Galosphere;
-import net.orcinus.galosphere.blocks.PinkSaltChamberBlock;
 import net.orcinus.galosphere.init.GBlockTags;
 import net.orcinus.galosphere.init.GBlocks;
-import net.orcinus.galosphere.mixin.access.WorldGenRegionAccessor;
 import net.orcinus.galosphere.world.gen.FastNoise;
 import net.orcinus.galosphere.world.gen.PinkSaltUtil;
 
@@ -50,8 +47,8 @@ public class OasisFeature extends Feature<NoneFeatureConfiguration> {
             for (int z = -zRadius; z <= zRadius; z++) {
                 for (int y = -yRadius; y <= 0; y++) {
                     BlockPos pos = new BlockPos(blockPos.getX() + x, blockPos.getY() + y, blockPos.getZ() + z);
-                    StructureManager structureManager = ((WorldGenRegionAccessor) featurePlaceContext.level()).getStructureManager();
-                    Structure structure = structureManager.registryAccess().registryOrThrow(Registries.STRUCTURE).get(new ResourceLocation(Galosphere.MODID, "pink_salt_shrine"));
+                    StructureManager structureManager = featurePlaceContext.level().getLevel().structureManager();
+                    Structure structure = structureManager.registryAccess().registryOrThrow(Registries.STRUCTURE).get(Galosphere.id("pink_salt_shrine"));
                     boolean flag = structure != null && structureManager.getStructureAt(blockPos, structure).isValid();
                     if (flag) {
                         return false;

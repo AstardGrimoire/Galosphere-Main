@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.orcinus.galosphere.client.renderer.SterlingArmorRenderer;
 import net.orcinus.galosphere.client.renderer.layer.BannerLayer;
 import net.orcinus.galosphere.init.GMobEffects;
@@ -37,7 +38,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 
     @Inject(at = @At("HEAD"), method = "renderHand", cancellable = true)
     private void G$renderHand(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, AbstractClientPlayer abstractClientPlayer, ModelPart modelPart, ModelPart modelPart2, CallbackInfo ci) {
-        ResourceLocation resourceLocation = abstractClientPlayer.getSkinTextureLocation();
+        ResourceLocation resourceLocation = abstractClientPlayer.getSkin().texture();
         if (abstractClientPlayer.hasEffect(GMobEffects.ASTRAL)) {
             PlayerModel<AbstractClientPlayer> playerModel = this.getModel();
             this.setModelProperties(abstractClientPlayer);
@@ -46,10 +47,10 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
             playerModel.swimAmount = 0.0f;
             playerModel.setupAnim(abstractClientPlayer, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
             modelPart.xRot = 0.0f;
-            float alpha = abstractClientPlayer.hasEffect(GMobEffects.ASTRAL) ? 0.35F : 1.0F;
-            modelPart.render(poseStack, multiBufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
+            int newAlpha = FastColor.ARGB32.colorFromFloat(0.35F, 1.0F, 1.0F, 1.0F);
+            modelPart.render(poseStack, multiBufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), i, OverlayTexture.NO_OVERLAY, newAlpha);
             modelPart2.xRot = 0.0f;
-            modelPart2.render(poseStack, multiBufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), i, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, alpha);
+            modelPart2.render(poseStack, multiBufferSource.getBuffer(RenderType.entityTranslucent(resourceLocation)), i, OverlayTexture.NO_OVERLAY, newAlpha);
             ci.cancel();
         }
     }

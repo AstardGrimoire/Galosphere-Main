@@ -6,19 +6,23 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.orcinus.galosphere.init.GBiomes;
 import net.orcinus.galosphere.init.GConfiguredFeatures;
+import net.orcinus.galosphere.init.GEnchantments;
 import net.orcinus.galosphere.init.GPlacedFeatures;
 
 public class GDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        pack.addProvider(GAdvancementsProvider::new);
         pack.addProvider(GConfiguredFeaturesProvider::new);
         pack.addProvider(GPlacedFeaturesProvider::new);
         pack.addProvider(GBiomesProvider::new);
         pack.addProvider(GRecipeProvider::new);
         pack.addProvider(GBlockTagsProvider::new);
         pack.addProvider(GItemTagsProvider::new);
+        pack.addProvider(GEnchantmentTagsProvider::new);
         pack.addProvider(GEntityTypeTagsProvider::new);
+        pack.addProvider(GEnchantmentsProvider::new);
         pack.addProvider(GBiomeTagsProvider::new);
         pack.addProvider(GBlockLootTableProvider::new);
         pack.addProvider(GEntityLootTableProvider::new);
@@ -31,6 +35,7 @@ public class GDataGenerator implements DataGeneratorEntrypoint {
         registryBuilder
                 .add(Registries.BIOME, GBiomes::bootstrap)
                 .add(Registries.CONFIGURED_FEATURE, GConfiguredFeatures::bootstrap)
-                .add(Registries.PLACED_FEATURE, GPlacedFeatures::bootstrap);
+                .add(Registries.PLACED_FEATURE, GPlacedFeatures::bootstrap)
+                .add(Registries.ENCHANTMENT, GEnchantments::bootstrap);
     }
 }

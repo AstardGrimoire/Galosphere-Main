@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:simple_block",
+  "type": "galosphere:simple_waterlogged_block",
   "config": {
     "to_place": {
       "type": "minecraft:weighted_state_provider",
@@ -20,13 +20,22 @@
               "waterlogged": "false"
             }
           },
-          "weight": 50
+          "weight": 14
         },
         {
           "data": {
-            "Name": "minecraft:air"
+            "Name": "minecraft:glow_lichen",
+            "Properties": {
+              "down": "true",
+              "east": "false",
+              "north": "false",
+              "south": "false",
+              "up": "false",
+              "waterlogged": "false",
+              "west": "false"
+            }
           },
-          "weight": 15
+          "weight": 2
         }
       ]
     }

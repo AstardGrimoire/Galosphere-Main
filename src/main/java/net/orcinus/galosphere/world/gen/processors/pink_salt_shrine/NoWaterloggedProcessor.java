@@ -1,6 +1,6 @@
 package net.orcinus.galosphere.world.gen.processors.pink_salt_shrine;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -12,7 +12,7 @@ import net.orcinus.galosphere.init.GStructureProcessorTypes;
 import org.jetbrains.annotations.Nullable;
 
 public class NoWaterloggedProcessor extends StructureProcessor {
-    public static final Codec<NoWaterloggedProcessor> CODEC = Codec.unit(NoWaterloggedProcessor::new);
+    public static final MapCodec<NoWaterloggedProcessor> CODEC = MapCodec.unit(NoWaterloggedProcessor::new);
 
     @Nullable
     @Override

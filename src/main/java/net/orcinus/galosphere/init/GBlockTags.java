@@ -1,9 +1,7 @@
 package net.orcinus.galosphere.init;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.orcinus.galosphere.Galosphere;
 
@@ -19,6 +17,11 @@ public class GBlockTags {
     public static final TagKey<Block> OASIS_REPLACE = create("oasis_replace");
     public static final TagKey<Block> OASIS_GENERATE_ON = create("oasis_generate_on");
     public static final TagKey<Block> OMIT_ASTRAL = create("omit_astral");
+    public static final TagKey<Block> CRYSTAL_CLUSTERS = create("crystal_clusters");
+    public static final TagKey<Block> STONEFISH_PREFER_JUMP_TO = create("stonefish_prefer_jump_to");
+    public static final TagKey<Block> CONVERT_STONE_STONEFISH = create("convert_stone_stonefish");
+    public static final TagKey<Block> CONVERT_DRIPSTONE_STONEFISH = create("convert_dripstone_stonefish");
+    public static final TagKey<Block> CONVERT_DEEPSLATE_STONEFISH = create("convert_deepslate_stonefish");
 
     private static TagKey<Block> create(String id) {
         return TagKey.create(Registries.BLOCK, Galosphere.id(id));

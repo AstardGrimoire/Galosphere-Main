@@ -1,13 +1,13 @@
 package net.orcinus.galosphere;
 
-import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.orcinus.galosphere.config.GalosphereConfig;
+import net.orcinus.galosphere.crafting.GlintingManager;
 import net.orcinus.galosphere.crafting.LumiereReformingManager;
 import net.orcinus.galosphere.entities.Sparkle;
 import net.orcinus.galosphere.entities.Spectre;
@@ -17,7 +17,10 @@ import net.orcinus.galosphere.init.GBlockEntityTypes;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GCreativeModeTabs;
 import net.orcinus.galosphere.init.GCriteriaTriggers;
-import net.orcinus.galosphere.init.GEnchantments;
+import net.orcinus.galosphere.init.GDataComponents;
+import net.orcinus.galosphere.init.GEnchantmentEffectComponents;
+import net.orcinus.galosphere.init.GEntityDataSerializers;
+import net.orcinus.galosphere.init.GEntitySubPredicates;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GEvents;
 import net.orcinus.galosphere.init.GFeatures;
@@ -42,7 +45,6 @@ public class Galosphere implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        MidnightConfig.init(MODID, GalosphereConfig.class);
         GItems.init();
         GBlocks.init();
         GSoundEvents.init();
@@ -51,9 +53,12 @@ public class Galosphere implements ModInitializer {
         GCriteriaTriggers.init();
         GCreativeModeTabs.init();
         GBlockEntityTypes.init();
+        GEntityDataSerializers.init();
         GEntityTypes.init();
+        GDataComponents.init();
+        GEnchantmentEffectComponents.init();
+        GEntitySubPredicates.init();
         GEvents.init();
-        GEnchantments.init();
         GFeatures.init();
         GPotions.init();
         GParticleTypes.init();
@@ -65,14 +70,15 @@ public class Galosphere implements ModInitializer {
         GStructureProcessorTypes.init();
         GVanillaIntegration.init();
 
-        SpawnPlacements.register(GEntityTypes.SPARKLE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Sparkle::checkSparkleSpawnRules);
-        SpawnPlacements.register(GEntityTypes.SPECTRE, SpawnPlacements.Type.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Spectre::checkSpectreSpawnRules);
+        SpawnPlacements.register(GEntityTypes.SPARKLE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Sparkle::checkSparkleSpawnRules);
+        SpawnPlacements.register(GEntityTypes.SPECTRE, SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Spectre::checkSpectreSpawnRules);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new LumiereReformingManager());
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new GlintingManager());
     }
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
 }

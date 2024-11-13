@@ -6,23 +6,19 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.orcinus.galosphere.init.GBiomes;
-import net.orcinus.galosphere.init.GPlacedFeatures;
 
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("UnstableApiUsage")
 public class GBiomesProvider extends FabricDynamicRegistryProvider {
+
     public GBiomesProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
     protected void configure(HolderLookup.Provider registries, Entries entries) {
-        add(registries, entries, GBiomes.CRYSTAL_CANYONS);
-        add(registries, entries, GBiomes.LICHEN_CAVES);
-        add(registries, entries, GBiomes.PINK_SALT_CAVES);
+        GBiomes.BIOMES.values().forEach(biomeResourceKey -> add(registries, entries, biomeResourceKey));
     }
 
     private void add(HolderLookup.Provider registries, Entries entries, ResourceKey<Biome> resourceKey) {

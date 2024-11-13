@@ -1,12 +1,11 @@
 package net.orcinus.galosphere.blocks.blockentities;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
@@ -19,7 +18,7 @@ import net.minecraft.world.level.levelgen.feature.DripstoneUtils;
 import net.orcinus.galosphere.blocks.GlowInkClumpsBlock;
 import net.orcinus.galosphere.init.GBlockEntityTypes;
 import net.orcinus.galosphere.init.GBlocks;
-import net.orcinus.galosphere.init.GNetwork;
+import net.orcinus.galosphere.network.SendParticlesPacket;
 
 public class GlowInkClumpsBlockEntity  extends BlockEntity {
     private static int delay = 0;
@@ -57,10 +56,8 @@ public class GlowInkClumpsBlockEntity  extends BlockEntity {
                                 }
                                 if (delay == 0) {
                                     if (!world.isClientSide()) {
-                                        FriendlyByteBuf buf = PacketByteBufs.create();
-                                        buf.writeBlockPos(offset);
                                         for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel) world, offset)) {
-                                            ServerPlayNetworking.send(serverPlayer, GNetwork.SEND_PARTICLES, buf);
+                                            ServerPlayNetworking.send(serverPlayer, new SendParticlesPacket(offset));
                                         }
                                     }
                                     int age = 0;
@@ -78,15 +75,17 @@ public class GlowInkClumpsBlockEntity  extends BlockEntity {
         }
     }
 
+
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        delay = tag.getInt("delay");
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
+        delay = compoundTag.getInt("delay");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.putInt("delay", delay);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.saveAdditional(compoundTag, provider);
+        compoundTag.putInt("delay", delay);
     }
+
 }
