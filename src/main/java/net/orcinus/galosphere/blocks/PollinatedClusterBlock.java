@@ -15,12 +15,12 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import java.util.function.Supplier;
 
 public class PollinatedClusterBlock extends AmethystClusterBlock {
+    private final Supplier<? extends SimpleParticleType> simpleParticleType;
     public static final BooleanProperty POLLINATED = BooleanProperty.create("pollinated");
-    private final Supplier<? extends SimpleParticleType> particleType;
 
-    public PollinatedClusterBlock(Supplier<? extends SimpleParticleType> particleType, Properties properties) {
+    public PollinatedClusterBlock(Supplier<? extends SimpleParticleType> simpleParticleType, Properties properties) {
         super(7, 3, properties);
-        this.particleType = particleType;
+        this.simpleParticleType = simpleParticleType;
         this.registerDefaultState(this.defaultBlockState().setValue(POLLINATED, false));
     }
 
@@ -47,10 +47,10 @@ public class PollinatedClusterBlock extends AmethystClusterBlock {
             mut.set(i + Mth.nextInt(random, -10, 10), j - random.nextInt(10), k + Mth.nextInt(random, -10, 10));
             BlockState blockstate = world.getBlockState(mut);
             if (!blockstate.isCollisionShapeFullBlock(world, mut)) {
-                world.addParticle(this.particleType.get(), (double) mut.getX() + direction.getStepX() + random.nextDouble(), (double) mut.getY() + direction.getStepY() + random.nextDouble(), (double) mut.getZ() + direction.getStepZ() + random.nextDouble(), velX, velY, velZ);
+                world.addParticle(this.simpleParticleType.get(), (double) mut.getX() + direction.getStepX() + random.nextDouble(), (double) mut.getY() + direction.getStepY() + random.nextDouble(), (double) mut.getZ() + direction.getStepZ() + random.nextDouble(), velX, velY, velZ);
             }
             if (random.nextInt(5) == 0) {
-                world.addParticle(this.particleType.get(), x + direction.getStepX(), y + direction.getStepY(), z + direction.getStepZ(), velX, velY, velZ);
+                world.addParticle(this.simpleParticleType.get(), x + direction.getStepX(), y + direction.getStepY(), z + direction.getStepZ(), velX, velY, velZ);
             }
         }
     }

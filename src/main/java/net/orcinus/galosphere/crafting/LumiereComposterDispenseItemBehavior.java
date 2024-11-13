@@ -1,10 +1,9 @@
 package net.orcinus.galosphere.crafting;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,9 +18,9 @@ public class LumiereComposterDispenseItemBehavior extends OptionalDispenseItemBe
 
     @Override
     public ItemStack execute(BlockSource source, ItemStack stack) {
-        Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-        BlockPos blockpos = source.getPos().relative(direction);
-        Level world = source.getLevel();
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
+        BlockPos blockpos = source.pos().relative(direction);
+        Level world = source.level();
         BlockState state = world.getBlockState(blockpos);
         this.setSuccess(true);
         if (state.is(Blocks.COMPOSTER)) {

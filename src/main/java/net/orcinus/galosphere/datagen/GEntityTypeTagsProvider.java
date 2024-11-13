@@ -25,6 +25,8 @@ public class GEntityTypeTagsProvider extends EntityTypeTagsProvider {
         this.tag(GEntityTypeTags.BERSERKER_INVALID_TARGETS).add(EntityType.ARMOR_STAND).add(GEntityTypes.BERSERKER.get()).add(GEntityTypes.PRESERVED.get());
         this.tag(GEntityTypeTags.PRESERVED_INVALID_TARGETS).add(EntityType.ARMOR_STAND).add(GEntityTypes.BERSERKER.get()).add(GEntityTypes.PRESERVED.get());
         this.tag(EntityTypeTags.IMPACT_PROJECTILES).add(GEntityTypes.SILVER_BOMB.get());
+        this.tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(GEntityTypes.SPARKLE.get());
+        this.tag(EntityTypeTags.UNDEAD).add(GEntityTypes.PRESERVED.get());
         this.tag(EntityTypeTags.FROG_FOOD).add(GEntityTypes.SPECTERPILLAR.get());
     }
 

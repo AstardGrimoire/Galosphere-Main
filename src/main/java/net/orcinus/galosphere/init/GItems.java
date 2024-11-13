@@ -1,13 +1,9 @@
 package net.orcinus.galosphere.init;
 
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.AnimalArmorItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
-import net.minecraft.world.item.SmithingTemplateItem;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -15,7 +11,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.items.ChandelierItem;
-import net.orcinus.galosphere.items.GHorseArmorItem;
 import net.orcinus.galosphere.items.GlowFlareItem;
 import net.orcinus.galosphere.items.GoldenLichenCordycepsItem;
 import net.orcinus.galosphere.items.IconItem;
@@ -56,7 +51,7 @@ public class GItems {
     public static final RegistryObject<Item> STERLING_CHESTPLATE = ITEMS.register("sterling_chestplate", () -> new SterlingArmorItem(ArmorItem.Type.CHESTPLATE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> STERLING_LEGGINGS = ITEMS.register("sterling_leggings", () -> new SterlingArmorItem(ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> STERLING_BOOTS = ITEMS.register("sterling_boots", () -> new SterlingArmorItem(ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> STERLING_HORSE_ARMOR = ITEMS.register("sterling_horse_armor", () -> new GHorseArmorItem(4, "sterling"));
+    public static final RegistryObject<Item> STERLING_HORSE_ARMOR = ITEMS.register("sterling_horse_armor", () -> new AnimalArmorItem(GArmorMaterials.STERLING, AnimalArmorItem.BodyType.EQUESTRIAN, false, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SALTED_JERKY = ITEMS.register("salted_jerky", () -> new Item(new Item.Properties().food(GFoods.SALTED_JERKY)));
     public static final RegistryObject<Item> CURED_MEMBRANE = registerBaseItem("cured_membrane");
     public static final RegistryObject<Item> LICHEN_CORDYCEPS = ITEMS.register("lichen_cordyceps", () -> new LichenCordycepsItem(GBlocks.LICHEN_CORDYCEPS.get(), new Item.Properties().food(GFoods.LICHEN_CORDYCEPS)));
@@ -68,7 +63,7 @@ public class GItems {
 
     public static final RegistryObject<Item> SALTBOUND_TABLET = ITEMS.register("saltbound_tablet", () -> new SaltboundTabletItem(new Item.Properties().stacksTo(1).durability(432)));
     public static final RegistryObject<Item> PRESERVED_TEMPLATE = ITEMS.register("preserved_template", PreservedSmithingTemplateItem::new);
-    public static final RegistryObject<Item> PRESERVED_FLESH = ITEMS.register("preserved_flesh", () -> new PreservedFleshItem(new Item.Properties().stacksTo(1).durability(180).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.1f).meat().build())));
+    public static final RegistryObject<Item> PRESERVED_FLESH = ITEMS.register("preserved_flesh", () -> new PreservedFleshItem(new Item.Properties().stacksTo(1).durability(180).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.1f).build())));
 
     public static RegistryObject<Item> registerBaseItem(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

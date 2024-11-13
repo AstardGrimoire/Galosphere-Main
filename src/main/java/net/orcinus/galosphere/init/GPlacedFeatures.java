@@ -1,20 +1,17 @@
 package net.orcinus.galosphere.init;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.ClampedNormalInt;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.EnvironmentScanPlacement;
@@ -53,7 +50,7 @@ public class GPlacedFeatures {
     public static final ResourceKey<PlacedFeature> OASIS = registerPlacedFeature("oasis");
     public static final ResourceKey<PlacedFeature> BERSERKER = registerPlacedFeature("mobs/berserker");
 
-    public static void bootstrap(BootstapContext<PlacedFeature> bootstapContext) {
+    public static void bootstrap(BootstrapContext<PlacedFeature> bootstapContext) {
         HolderGetter<ConfiguredFeature<?, ?>> holderGetter = bootstapContext.lookup(Registries.CONFIGURED_FEATURE);
         PlacementUtils.register(bootstapContext, LARGE_CEILING_ALLURITE_CRYSTALS, holderGetter.getOrThrow(GConfiguredFeatures.LARGE_ALLURITE_CRYSTAL_FLOOR), CountPlacement.of(UniformInt.of(140, 180)), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
         PlacementUtils.register(bootstapContext, LARGE_CEILING_LUMIERE_CRYSTALS, holderGetter.getOrThrow(GConfiguredFeatures.LARGE_LUMIERE_CRYSTAL_CEILING), CountPlacement.of(UniformInt.of(140, 180)), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
@@ -65,8 +62,8 @@ public class GPlacedFeatures {
         PlacementUtils.register(bootstapContext, LUMIERE_FLOOR_CRYSTALS, holderGetter.getOrThrow(GConfiguredFeatures.LUMIERE_CRYSTAL_FLOOR), CountPlacement.of(UniformInt.of(180, 200)), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());
         PlacementUtils.register(bootstapContext, ORE_SILVER_SMALL, holderGetter.getOrThrow(GConfiguredFeatures.ORE_SILVER_SMALL), commonOrePlacement(10, HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(48))));
         PlacementUtils.register(bootstapContext, BOWL_LICHEN, holderGetter.getOrThrow(GConfiguredFeatures.BOWL_LICHEN), CountPlacement.of(35), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_OR_WATER_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
-        PlacementUtils.register(bootstapContext, LICHEN_VEGETATION, holderGetter.getOrThrow(GConfiguredFeatures.LICHEN_PATCH), CountPlacement.of(125), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
-        PlacementUtils.register(bootstapContext, GRAVEL_PATCH, holderGetter.getOrThrow(GConfiguredFeatures.GRAVEL_PATCH), CountPlacement.of(20), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
+        PlacementUtils.register(bootstapContext, LICHEN_VEGETATION, holderGetter.getOrThrow(GConfiguredFeatures.LICHEN_PATCH), CountPlacement.of(125), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_OR_WATER_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
+        PlacementUtils.register(bootstapContext, GRAVEL_PATCH, holderGetter.getOrThrow(GConfiguredFeatures.GRAVEL_PATCH), CountPlacement.of(20), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_OR_WATER_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
         PlacementUtils.register(bootstapContext, LICHEN_CORDYCEPS_COLUMN, holderGetter.getOrThrow(GConfiguredFeatures.LICHEN_CORDYCEPS), NoiseBasedCountPlacement.of(200, 4, -0.12), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, EnvironmentScanPlacement.scanningFor(Direction.DOWN, BlockPredicate.solid(), BlockPredicate.ONLY_IN_AIR_PREDICATE, 12), RandomOffsetPlacement.vertical(ConstantInt.of(1)), BiomeFilter.biome());
         PlacementUtils.register(bootstapContext, ORE_SILVER_LARGE, holderGetter.getOrThrow(GConfiguredFeatures.ORE_SILVER_LARGE), commonOrePlacement(16, HeightRangePlacement.triangle(VerticalAnchor.absolute(-16), VerticalAnchor.absolute(112))));
         PlacementUtils.register(bootstapContext, PINK_SALT_NOISE_GROUND_PATCH, holderGetter.getOrThrow(GConfiguredFeatures.PINK_SALT_GROUND_NOISE_PATCH), CountPlacement.of(125), InSquarePlacement.spread(), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT, BiomeFilter.biome());

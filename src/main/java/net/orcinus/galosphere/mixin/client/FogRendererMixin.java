@@ -8,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FogType;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.orcinus.galosphere.init.GMobEffects;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +47,7 @@ public class FogRendererMixin {
 
     @Unique
     private static boolean renderShadowPhase(Entity entity) {
-        return entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(GMobEffects.ASTRAL.get());
+        return entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ForgeRegistries.MOB_EFFECTS.getHolder(GMobEffects.ASTRAL.get()).orElseThrow());
     }
 
     @Unique

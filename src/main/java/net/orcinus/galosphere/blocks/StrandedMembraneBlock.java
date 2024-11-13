@@ -3,6 +3,8 @@ package net.orcinus.galosphere.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -75,6 +77,12 @@ public class StrandedMembraneBlock extends Block implements SimpleWaterloggedBlo
         double velY = axis == Direction.Axis.Y ? resistance * step : 0.0D;
         double velZ = axis == Direction.Axis.Z ? resistance * step : 0.0D;
         entity.setDeltaMovement(velX, velY, velZ);
+        if (entity instanceof ItemEntity itemEntity) {
+            itemEntity.setExtendedLifetime();
+        }
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.resetFallDistance();
+        }
         if (!world.isClientSide) {
             world.gameEvent(entity, GameEvent.BLOCK_CHANGE, blockPos);
         }
@@ -114,7 +122,7 @@ public class StrandedMembraneBlock extends Block implements SimpleWaterloggedBlo
     }
 
     @Override
-    public boolean isPathfindable(BlockState p_60475_, BlockGetter p_60476_, BlockPos p_60477_, PathComputationType p_60478_) {
+    protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
         return false;
     }
 }

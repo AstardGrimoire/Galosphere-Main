@@ -1,47 +1,54 @@
 package net.orcinus.galosphere.items;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.base.Suppliers;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.client.model.SterlingArmorModel;
+import net.orcinus.galosphere.init.GArmorMaterials;
 import net.orcinus.galosphere.init.GAttributes;
-import net.orcinus.galosphere.init.GItems;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SterlingArmorItem extends ArmorItem {
-    private static final SterlingArmorMaterial material = new SterlingArmorMaterial();
-    private static final String HELMET_TEXTURE = Galosphere.MODID + ":textures/entity/sterling_helmet.png";
-    private static final String LEGS_TEXTURE = Galosphere.MODID + ":textures/entity/sterling_armor_2.png";
-    private static final String TEXTURE = Galosphere.MODID + ":textures/entity/sterling_armor.png";
+    private static final ResourceLocation HELMET_TEXTURE = Galosphere.id("textures/entity/sterling_helmet.png");
+    private static final ResourceLocation LEGS_TEXTURE = Galosphere.id("textures/entity/sterling_armor_2.png");
+    private static final ResourceLocation TEXTURE = Galosphere.id("textures/entity/sterling_armor.png");
+    private final Supplier<ItemAttributeModifiers> itemAttributeModifiersSupplier;
 
-    public SterlingArmorItem(ArmorItem.Type type, Properties properties) {
-        super(material, type, properties);
+    public SterlingArmorItem(Type type, Properties properties) {
+        super(GArmorMaterials.STERLING, type, properties);
+        this.itemAttributeModifiersSupplier = Suppliers.memoize(() -> {
+            ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+            EquipmentSlotGroup equipmentSlotGroup = EquipmentSlotGroup.bySlot(type.getSlot());
+            ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("armor." + type.getName());
+            ResourceLocation gResourceLocation = Galosphere.id("armor." + type.getName());
+            builder.add(Attributes.ARMOR, new AttributeModifier(resourceLocation, this.getMaterial().value().getDefense(type), AttributeModifier.Operation.ADD_VALUE), equipmentSlotGroup);
+            builder.add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(resourceLocation, this.getMaterial().value().toughness(), AttributeModifier.Operation.ADD_VALUE), equipmentSlotGroup);
+            builder.add(GAttributes.ILLAGER_RESISTANCE.getHolder().orElseThrow(), new AttributeModifier(gResourceLocation, this.getIllagerResistance(type.getSlot()), AttributeModifier.Operation.ADD_VALUE), equipmentSlotGroup);
+            return builder.build();
+        });
     }
 
-    @Nullable
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        String name;
+    public @Nullable ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean inner) {
+        ResourceLocation name;
         switch (slot) {
             case HEAD -> name = HELMET_TEXTURE;
             case LEGS -> name = LEGS_TEXTURE;
@@ -51,15 +58,8 @@ public class SterlingArmorItem extends ArmorItem {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        UUID uuid = UUID.fromString("fb112e48-f201-4a6f-ae86-0f11df4f8e79");
-        UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
-        UUID defaultUUid = ARMOR_MODIFIER_UUID_PER_SLOT[slot.getIndex()];
-        builder.put(Attributes.ARMOR, new AttributeModifier(defaultUUid, "Armor modifier", this.getMaterial().getDefenseForType(this.type), AttributeModifier.Operation.ADDITION));
-        builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(defaultUUid, "Armor toughness", this.getMaterial().getToughness(), AttributeModifier.Operation.ADDITION));
-        builder.put(GAttributes.ILLAGER_RESISTANCE.get(), new AttributeModifier(uuid, "Armor illager resistance", this.getInsurgentResistance(slot), AttributeModifier.Operation.ADDITION));
-        return slot == this.type.getSlot() ? builder.build() : super.getDefaultAttributeModifiers(slot);
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return this.itemAttributeModifiersSupplier.get();
     }
 
     @Override
@@ -74,54 +74,9 @@ public class SterlingArmorItem extends ArmorItem {
         });
     }
 
-    public float getInsurgentResistance(EquipmentSlot slot) {
+    public float getIllagerResistance(EquipmentSlot slot) {
         float[] array = {3, 5, 6, 2};
         return array[slot.getIndex()];
     }
 
-    private static class SterlingArmorMaterial implements ArmorMaterial {
-        private static final int[] HEALTH_PER_SLOT = new int[]{13, 15, 16, 11};
-
-        @Override
-        public int getDurabilityForType(ArmorItem.Type type) {
-            return HEALTH_PER_SLOT[type.getSlot().getIndex()] * 12;
-        }
-
-        @Override
-        public int getDefenseForType(ArmorItem.Type type) {
-            int[] slots = new int[]{2, 5, 4, 1};
-            return slots[type.getSlot().getIndex()];
-        }
-
-        @Override
-        public int getEnchantmentValue() {
-            return 9;
-        }
-
-        @Override
-        public SoundEvent getEquipSound() {
-            return SoundEvents.ARMOR_EQUIP_CHAIN;
-        }
-
-        @Override
-        public Ingredient getRepairIngredient() {
-            return Ingredient.of(GItems.SILVER_INGOT.get());
-        }
-
-        @Override
-        public String getName() {
-            return "sterling";
-        }
-
-        @Override
-        public float getToughness() {
-            return 0.0F;
-        }
-
-        @Override
-        public float getKnockbackResistance() {
-            return 0.0F;
-        }
-
-    }
 }

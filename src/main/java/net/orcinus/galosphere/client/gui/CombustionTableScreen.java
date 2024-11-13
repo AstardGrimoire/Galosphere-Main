@@ -22,17 +22,17 @@ public class CombustionTableScreen extends AbstractContainerScreen<CombustionTab
     }
 
     @Override
+    public void render(GuiGraphics source, int mouseX, int mouseY, float delta) {
+        this.renderBackground(source, mouseX, mouseY, delta);
+        super.render(source, mouseX, mouseY, delta);
+        this.renderTooltip(source, mouseX, mouseY);
+    }
+
+    @Override
     protected void renderBg(GuiGraphics guiGraphics, float p_97788_, int p_97789_, int p_97790_) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
         guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, delta);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
 }

@@ -3,14 +3,13 @@ package net.orcinus.galosphere.blocks.blockentities;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.orcinus.galosphere.blocks.PinkSaltChamberBlock;
@@ -44,15 +42,15 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
-        this.cooldown = compoundTag.getInt("Cooldown");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        this.cooldown = tag.getInt("Cooldown");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
-        compoundTag.putInt("Cooldown", this.cooldown);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        tag.putInt("Cooldown", this.cooldown);
     }
 
     public int getCooldown() {
@@ -94,7 +92,7 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
                 maxCount = UniformInt.of(4, 10).sample(level.getRandom());
             }
             List<Player> list = level.getEntitiesOfClass(Player.class, new AABB(blockPos).inflate(6.0D)).stream().filter(LivingEntity::isAlive).filter(player -> !player.getAbilities().instabuild).toList();
-            list.stream().filter(ServerPlayer.class::isInstance).map(ServerPlayer.class::cast).forEach(GCriteriaTriggers.ACTIVATE_PINK_SALT_CHAMBER::trigger);
+            list.stream().filter(ServerPlayer.class::isInstance).map(ServerPlayer.class::cast).forEach(GCriteriaTriggers.ACTIVATE_PINK_SALT_CHAMBER.get()::trigger);
             list.stream().findAny().ifPresent(player -> {
                 int range = 5;
                 int yRange = 2;
@@ -133,7 +131,7 @@ public class PinkSaltChamberBlockEntity extends BlockEntity {
         if (serverLevel.getDifficulty() == Difficulty.PEACEFUL) {
             serverLevel.setBlock(pos, GBlocks.PINK_SALT_CLUSTER.get().defaultBlockState(), 2);
         } else {
-            Preserved preserved = GEntityTypes.PRESERVED.get().create(serverLevel, null, null, pos, MobSpawnType.TRIGGERED, true, true);
+            Preserved preserved = GEntityTypes.PRESERVED.get().spawn(serverLevel, null, null, pos, MobSpawnType.TRIGGERED, true, true);
             preserved.setPos(pos.getX(), pos.getY(), pos.getZ());
             preserved.setPersistenceRequired();
             preserved.setFromChamber(true);

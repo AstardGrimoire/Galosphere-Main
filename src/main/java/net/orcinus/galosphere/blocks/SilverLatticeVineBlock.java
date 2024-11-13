@@ -9,11 +9,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -72,22 +72,21 @@ public class SilverLatticeVineBlock extends SilverLatticeBlock implements Boneme
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return new ItemStack(GBlocks.SILVER_LATTICE.get());
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        ItemStack stack = player.getItemInHand(interactionHand);
-        if (stack.is(Tags.Items.SHEARS) && blockState.getValue(SPREADABLE)) {
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (itemStack.is(Tags.Items.SHEARS) && blockState.getValue(SPREADABLE)) {
             if (player instanceof ServerPlayer serverPlayer) {
-                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, blockPos, stack);
+                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, blockPos, itemStack);
             }
             level.playSound(player, blockPos, SoundEvents.GROWING_PLANT_CROP, SoundSource.BLOCKS, 1.0f, 1.0f);
             level.setBlockAndUpdate(blockPos, blockState.setValue(SPREADABLE, false));
-            stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(interactionHand));
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        } else if (stack.isEmpty()) {
+            itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(interactionHand));
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        } else if (itemStack.isEmpty()) {
             BlockState lattice = GBlocks.SILVER_LATTICE.get().defaultBlockState().setValue(NORTH, blockState.getValue(NORTH)).setValue(EAST, blockState.getValue(EAST)).setValue(SOUTH, blockState.getValue(SOUTH)).setValue(WEST, blockState.getValue(WEST)).setValue(WATERLOGGED, blockState.getValue(WATERLOGGED));
             if (!player.getInventory().add(new ItemStack(Items.GLOW_BERRIES))) {
                 player.drop(new ItemStack(Items.GLOW_BERRIES), false);
@@ -95,13 +94,13 @@ public class SilverLatticeVineBlock extends SilverLatticeBlock implements Boneme
             BlockState newState = blockState.getValue(BERRIES) ? blockState.setValue(BERRIES, false) : lattice;
             level.setBlockAndUpdate(blockPos, newState);
             level.playSound(null, blockPos, SoundEvents.CAVE_VINES_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader blockGetter, BlockPos blockPos, BlockState blockState, boolean bl) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return !blockState.getValue(BERRIES);
     }
 

@@ -11,13 +11,9 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.orcinus.galosphere.blocks.MonstrometerBlock;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 @OnlyIn(Dist.CLIENT)
 public class ImpactParticle extends TextureSheetParticle {
@@ -49,37 +45,8 @@ public class ImpactParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer consumer, Camera camera, float delta) {
-        renderParticle(consumer, camera, delta, Axis.XP.rotation(Mth.PI / 2));
-        renderParticle(consumer, camera, delta, Axis.XN.rotation(Mth.PI / 2));
-    }
-
-    private void renderParticle(VertexConsumer consumer, Camera camera, float delta, Quaternionf quaternion) {
-        Vec3 vec3 = camera.getPosition();
-        if (vec3.distanceTo(new Vec3(x, y, z)) >= MonstrometerBlock.getParticleViewRange()) return;
-
-        Vector3f[] veca = new Vector3f[]{new Vector3f(-1, -1, 0), new Vector3f(-1, 1, 0), new Vector3f(1, 1, 0), new Vector3f(1, -1, 0)};
-
-        for(int i = 0; i < 4; ++i) {
-            Vector3f vec = veca[i];
-            quaternion.transform(vec);
-            vec.mul(getQuadSize(delta));
-            float f = (float) (Mth.lerp(delta, xo, x) - vec3.x());
-            float f1 = (float) (Mth.lerp(delta, yo, y) - vec3.y());
-            float f2 = (float) (Mth.lerp(delta, zo, z) - vec3.z());
-            vec.add(f, f1, f2);
-        }
-
-        float u0 = getU0();
-        float u1 = getU1();
-        float v0 = getV0();
-        float v1 = getV1();
-
-        int j = getLightColor(delta);
-
-        consumer.vertex(veca[0].x(), veca[0].y(), veca[0].z()).uv(u1, v1).color(rCol, gCol, bCol, this.alpha).uv2(j).endVertex();
-        consumer.vertex(veca[1].x(), veca[1].y(), veca[1].z()).uv(u1, v0).color(rCol, gCol, bCol, this.alpha).uv2(j).endVertex();
-        consumer.vertex(veca[2].x(), veca[2].y(), veca[2].z()).uv(u0, v0).color(rCol, gCol, bCol, this.alpha).uv2(j).endVertex();
-        consumer.vertex(veca[3].x(), veca[3].y(), veca[3].z()).uv(u0, v1).color(rCol, gCol, bCol, this.alpha).uv2(j).endVertex();
+        this.renderRotatedQuad(consumer, camera, Axis.XP.rotation(Mth.PI / 2), delta);
+        this.renderRotatedQuad(consumer, camera, Axis.XN.rotation(Mth.PI / 2), delta);
     }
 
     @Override

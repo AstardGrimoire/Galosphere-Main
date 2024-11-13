@@ -1,0 +1,49 @@
+[14Nov2024 09:44:30.005] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_data, --assetIndex, 5, --assetsDir, C:\Users\Mitch\.gradle\caches\forge_gradle\assets, --gameDir, ., --mod, galosphere, --all, --output, C:\Users\Mitch\Documents\GitHub\Galosphere-Main\src\generated\resources, --existing, C:\Users\Mitch\Documents\GitHub\Galosphere-Main\src\main\resources, -mixin.config=galosphere.mixins.json]
+[14Nov2024 09:44:30.011] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Oracle Corporation Java HotSpot(TM) 64-Bit Server VM 21.0.3+7-LTS-152
+[14Nov2024 09:44:30.013] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.1 starting: java version 21.0.3 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[14Nov2024 09:44:30.142] [main/WARN] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Configuration file C:\Users\Mitch\Documents\GitHub\Galosphere-Main\run-data\config\fml.toml is not correct. Correcting
+[14Nov2024 09:44:30.144] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSkipGLVersions] was corrected from null to []
+[14Nov2024 09:44:30.144] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowLogHelpMessage] was corrected from null to true
+[14Nov2024 09:44:30.145] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSquir] was corrected from null to false
+[14Nov2024 09:44:30.145] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowShowCPU] was corrected from null to false
+[14Nov2024 09:44:30.167] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_data
+[14Nov2024 09:44:30.332] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///C:/Users/Mitch/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=UNKNOWN
+[14Nov2024 09:44:31.774] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[14Nov2024 09:44:32.730] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[14Nov2024 09:44:32.740] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_data' with arguments [--gameDir, ., --assetsDir, C:\Users\Mitch\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, galosphere, --all, --output, C:\Users\Mitch\Documents\GitHub\Galosphere-Main\src\generated\resources, --existing, C:\Users\Mitch\Documents\GitHub\Galosphere-Main\src\main\resources]
+[14Nov2024 09:44:32.776] [main/WARN] [mixin/]: Reference map 'galosphere.refmap.json' for galosphere.mixins.json could not be read. If this is a development environment you can ignore this message
+[14Nov2024 09:44:32.944] [main/WARN] [mixin/]: Mixin environment was unable to detect the current side, sided mixins will not be applied
+[14Nov2024 09:44:39.990] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 51.0.33, for MC 1.21 with MCP 20240613.102039
+[14Nov2024 09:44:39.991] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v51.0.33 Initialized
+[14Nov2024 09:44:40.016] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[14Nov2024 09:44:41.384] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [galosphere]
+[14Nov2024 09:44:41.459] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Mitch/Documents/GitHub/Galosphere-Main/build/fg_cache/net/minecraftforge/forge/1.21-51.0.33_mapped_official_1.21/forge-1.21-51.0.33_mapped_official_1.21.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[14Nov2024 09:44:41.459] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Mitch/Documents/GitHub/Galosphere-Main/build/fg_cache/net/minecraftforge/forge/1.21-51.0.33_mapped_official_1.21/forge-1.21-51.0.33_mapped_official_1.21.jar%230!/data/.mcassetsroot' uses unexpected schema
+[14Nov2024 09:44:41.678] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: galosphere
+[14Nov2024 09:44:42.319] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: galosphere finished after 641 ms
+[14Nov2024 09:44:42.320] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: galosphere
+[14Nov2024 09:44:42.351] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: galosphere finished after 30 ms
+[14Nov2024 09:44:42.351] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Advancements
+[14Nov2024 09:44:42.427] [main/INFO] [net.minecraft.data.DataGenerator/]: Advancements finished after 76 ms
+[14Nov2024 09:44:42.427] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Languages: en_us
+[14Nov2024 09:44:42.436] [main/INFO] [net.minecraft.data.DataGenerator/]: Languages: en_us finished after 7 ms
+[14Nov2024 09:44:42.436] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[14Nov2024 09:44:42.915] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 479 ms
+[14Nov2024 09:44:42.915] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id galosphere
+[14Nov2024 09:44:42.949] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id galosphere finished after 32 ms
+[14Nov2024 09:44:42.949] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id galosphere
+[14Nov2024 09:44:42.972] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id galosphere finished after 23 ms
+[14Nov2024 09:44:42.972] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:entity_type mod id galosphere
+[14Nov2024 09:44:42.983] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:entity_type mod id galosphere finished after 10 ms
+[14Nov2024 09:44:42.983] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:worldgen/biome mod id galosphere
+[14Nov2024 09:44:42.990] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:worldgen/biome mod id galosphere finished after 6 ms
+[14Nov2024 09:44:42.991] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:enchantment mod id vanilla
+[14Nov2024 09:44:42.995] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:enchantment mod id vanilla finished after 3 ms
+[14Nov2024 09:44:42.995] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Registries
+[14Nov2024 09:44:43.032] [main/INFO] [net.minecraft.data.DataGenerator/]: Registries finished after 36 ms
+[14Nov2024 09:44:43.032] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[14Nov2024 09:44:43.195] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 162 ms
+[14Nov2024 09:44:43.195] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Global Loot Modifiers : galosphere
+[14Nov2024 09:44:43.206] [main/INFO] [net.minecraft.data.DataGenerator/]: Global Loot Modifiers : galosphere finished after 11 ms
+[14Nov2024 09:44:43.207] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 1529 ms
+[14Nov2024 09:44:43.573] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 1835, old count: 1141, new count: 1169, removed stale: 667, written: 723

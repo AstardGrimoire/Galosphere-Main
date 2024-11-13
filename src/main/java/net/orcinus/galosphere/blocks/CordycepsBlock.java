@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -28,15 +28,21 @@ import net.orcinus.galosphere.init.GBlocks;
 import org.jetbrains.annotations.Nullable;
 
 public class CordycepsBlock extends GrowingPlantHeadBlock implements EntityBlock {
+    public static final MapCodec<CordycepsBlock> CODEC = CordycepsBlock.simpleCodec(CordycepsBlock::new);
     public static final BooleanProperty BULB = BooleanProperty.create("bulb");
     public static final BooleanProperty ALIVE = BooleanProperty.create("alive");
     public static final IntegerProperty ALIVE_STAGE = IntegerProperty.create("alive_stage", 0, 5);
     protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 6.0D, 12.0D);
     protected static final VoxelShape BULB_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 12.0D, 13.0D);
 
-    public CordycepsBlock(BlockBehaviour.Properties properties) {
+    public CordycepsBlock(Properties properties) {
         super(properties, Direction.UP, SHAPE, false, 0.2);
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(BULB, false).setValue(ALIVE, false).setValue(ALIVE_STAGE, 0));
+    }
+
+    @Override
+    protected MapCodec<? extends GrowingPlantHeadBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -75,7 +81,7 @@ public class CordycepsBlock extends GrowingPlantHeadBlock implements EntityBlock
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader blockGetter, BlockPos blockPos, BlockState blockState, boolean bl) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return !blockState.getValue(ALIVE);
     }
 
@@ -87,7 +93,7 @@ public class CordycepsBlock extends GrowingPlantHeadBlock implements EntityBlock
 
     @Override
     public SoundType getSoundType(BlockState state) {
-        return this.soundType;
+        return soundType;
     }
 
     @Override

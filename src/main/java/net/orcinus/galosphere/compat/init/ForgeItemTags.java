@@ -15,7 +15,7 @@ public class ForgeItemTags {
     public static final TagKey<Item> STORAGE_BLOCKS_RAW_SILVER = bind("storage_blocks/raw_silver");
 
     private static TagKey<Item> bind(String path) {
-        return TagKey.create(Registries.ITEM, new ResourceLocation("forge", path));
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("forge", path));
     }
 
 }

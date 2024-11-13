@@ -6,27 +6,30 @@
   "refmap": "galosphere.refmap.json",
   "mixins": [
     "BlockStateBaseMixin",
+    "BuiltStateMixin",
     "ChorusFruitItemMixin",
     "CrossbowItemMixin",
     "EntityMixin",
     "InventoryMixin",
-    "ServerItemCooldownsMixin",
     "LightningBoltMixin",
     "LivingEntityMixin",
     "LootTableAccessor",
     "OverworldBiomeBuilderMixin",
     "PlayerMixin",
     "PowderSnowBlockMixin",
-    "ProjectileAccessor",
-    "ShulkerBoxBlockEntityMixin",
-    "WorldGenRegionAccessor"
+    "ServerItemCooldownsMixin",
+    "ShulkerBoxBlockEntityMixin"
   ],
   "client": [
     "client.ClientLevelMixin",
     "client.FogRendererMixin",
+    "client.GuiMixin",
     "client.ItemModelShaperMixin",
     "client.ItemRendererMixin",
-    "client.PlayerItemInHandLayerMixin"
+    "client.LivingEntityRendererMixin",
+    "client.ModelBakeryMixin",
+    "client.PlayerItemInHandLayerMixin",
+    "client.PlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

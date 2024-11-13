@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,9 +17,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,9 +37,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.client.SpectatorTickHandler;
 import net.orcinus.galosphere.client.gui.CombustionTableScreen;
-import net.orcinus.galosphere.client.gui.GoldenBreathOverlay;
 import net.orcinus.galosphere.client.gui.SpectatorVisionOverlay;
-import net.orcinus.galosphere.client.gui.SpectreOverlay;
 import net.orcinus.galosphere.client.model.BerserkerModel;
 import net.orcinus.galosphere.client.model.PinkSaltPillarModel;
 import net.orcinus.galosphere.client.model.PreservedModel;
@@ -93,16 +91,20 @@ public class ClientEvents {
         MenuScreens.register(GMenuTypes.COMBUSTION_TABLE.get(), CombustionTableScreen::new);
 
         IEventBus eventBus = MinecraftForge.EVENT_BUS;
-        eventBus.register(new GoldenBreathOverlay());
-        eventBus.register(new SpectreOverlay());
         eventBus.register(new SpectatorVisionOverlay());
         eventBus.register(new CameraEvents());
 
         eventBus.addListener((TickEvent.ClientTickEvent clientTickEvent) -> SpectatorTickHandler.tick());
 
         event.enqueueWork(() -> {
-            ItemProperties.register(Items.CROSSBOW, Galosphere.id("glow_flare"), (stack, world, entity, p_174608_) -> entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack, GItems.GLOW_FLARE.get()) ? 1.0F : 0.0F);
-            ItemProperties.register(Items.CROSSBOW, Galosphere.id("spectre_flare"), (stack, world, entity, p_174608_) -> entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack, GItems.SPECTRE_FLARE.get()) ? 1.0F : 0.0F);
+            ItemProperties.register(Items.CROSSBOW, Galosphere.id("glow_flare"), (itemStack, clientLevel, livingEntity, i) -> {
+                ChargedProjectiles chargedProjectiles = itemStack.get(DataComponents.CHARGED_PROJECTILES);
+                return chargedProjectiles != null && chargedProjectiles.contains(GItems.GLOW_FLARE.get()) ? 1 : 0;
+            });
+            ItemProperties.register(Items.CROSSBOW, Galosphere.id("spectre_flare"), (itemStack, clientLevel, livingEntity, i) -> {
+                ChargedProjectiles chargedProjectiles = itemStack.get(DataComponents.CHARGED_PROJECTILES);
+                return chargedProjectiles != null && chargedProjectiles.contains(GItems.SPECTRE_FLARE.get()) ? 1 : 0;
+            });
             ItemProperties.register(GItems.BAROMETER.get(), Galosphere.id("weather_level"), new ClampedItemPropertyFunction() {
                 private double rotation;
                 private int ticksBeforeChange;
@@ -251,11 +253,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void addLayers(EntityRenderersEvent.AddLayers event) {
-        HorseRenderer horseRenderer = event.getRenderer(EntityType.HORSE);
+        HorseRenderer horseRenderer = event.getEntityRenderer(EntityType.HORSE);
         if (horseRenderer == null) return;
         horseRenderer.addLayer(new HorseBannerLayer(horseRenderer));
         event.getSkins().forEach(skin -> {
-            PlayerRenderer playerRenderer = event.getSkin(skin);
+            PlayerRenderer playerRenderer = event.getPlayerSkin(skin);
             if (playerRenderer == null) return;
             playerRenderer.addLayer(new BannerLayer<>(playerRenderer));
         });

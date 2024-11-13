@@ -42,7 +42,7 @@ public class BerserkerFeature extends Feature<NoneFeatureConfiguration> {
             berserker.setYRot(rot);
             world.setBlock(pos.below(2), GBlocks.PINK_SALT_BRICKS.get().defaultBlockState(), 2);
         }
-        berserker.finalizeSpawn(world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+        berserker.finalizeSpawn(world, world.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
         world.addFreshEntityWithPassengers(berserker);
         return true;
     }

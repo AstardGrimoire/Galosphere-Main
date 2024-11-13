@@ -1,7 +1,6 @@
 package net.orcinus.galosphere.init;
 
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.resources.ResourceLocation;
 import net.orcinus.galosphere.Galosphere;
 
 public class GModelLayers {

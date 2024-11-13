@@ -1,8 +1,8 @@
 package net.orcinus.galosphere.crafting;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,9 +15,9 @@ public class MonstrometerDispenseItemBehavior extends OptionalDispenseItemBehavi
 
     @Override
     public ItemStack execute(BlockSource source, ItemStack stack) {
-        Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
-        BlockPos pos = source.getPos().relative(direction);
-        Level world = source.getLevel();
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
+        BlockPos pos = source.pos().relative(direction);
+        Level world = source.level();
         BlockState state = world.getBlockState(pos);
 
         setSuccess(false);

@@ -47,7 +47,7 @@ public class ChorusFruitItemMixin {
                 for (BlockPos blockPos : poses) {
                     cir.setReturnValue(itemStack);
                     player.getCooldowns().addCooldown((ChorusFruitItem)(Object)this, 20);
-                    GCriteriaTriggers.WARPED_TELEPORT.trigger(player);
+                    GCriteriaTriggers.WARPED_TELEPORT.get().trigger(player);
                     world.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
                     world.playSound(null, blockPos, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0F, 1.0F);
                     player.teleportTo(blockPos.getX() + 0.5D, blockPos.getY() + 0.5D, blockPos.getZ() + 0.5D);

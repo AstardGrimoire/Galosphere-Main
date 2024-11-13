@@ -27,18 +27,18 @@ public class ShadowFrameBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         HolderLookup<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-        this.copiedState = NbtUtils.readBlockState(holderGetter, compoundTag.getCompound("CopiedState"));
-        this.isWaxed = compoundTag.getBoolean("is_waxed");
+        this.copiedState = NbtUtils.readBlockState(holderGetter, tag.getCompound("CopiedState"));
+        this.isWaxed = tag.getBoolean("is_waxed");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
-        compoundTag.put("CopiedState", NbtUtils.writeBlockState(this.copiedState));
-        compoundTag.putBoolean("is_waxed", this.isWaxed);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        tag.put("CopiedState", NbtUtils.writeBlockState(this.copiedState));
+        tag.putBoolean("is_waxed", this.isWaxed);
     }
 
     public BlockState getCopiedState() {
@@ -73,7 +73,7 @@ public class ShadowFrameBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 }

@@ -1,7 +1,5 @@
 package net.orcinus.galosphere.client.gui;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,17 +8,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.orcinus.galosphere.init.GBlocks;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GItemTags;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMenuTypes;
-import net.orcinus.galosphere.util.CompatUtil;
-
-import java.util.Optional;
 
 public class CombustionTableMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
@@ -38,7 +31,7 @@ public class CombustionTableMenu extends AbstractContainerMenu {
     };
 
     public CombustionTableMenu(int id, Inventory inventory, final ContainerLevelAccess access) {
-        super(GMenuTypes.COMBUSTION_TABLE.get(), id);
+        super(GMenuTypes.COMBUSTION_TABLE.get() , id);
         this.access = access;
         this.addSlot(new Slot(this.container, 0, 44, 29) {
             @Override
@@ -87,50 +80,49 @@ public class CombustionTableMenu extends AbstractContainerMenu {
 
     @Override
     public void slotsChanged(Container container) {
-        ItemStack bombStack = this.container.getItem(0);
-        ItemStack exploStat1 = this.container.getItem(1);
-        ItemStack exploStat2 = this.container.getItem(2);
-        ItemStack exploStat3 = this.container.getItem(3);
-        CompoundTag tag = bombStack.getOrCreateTag();
-        int bouncy = tag.getInt("Bouncy");
-        int explosion = tag.getInt("Explosion");
-        int duration = tag.getInt("Duration");
-        boolean initFlag = true;
-        if (bombStack.is(GItems.SILVER_BOMB.get())) {
-            if (!exploStat1.isEmpty() || !exploStat2.isEmpty() || !exploStat3.isEmpty()) {
-                CompoundTag currentTag = bombStack.getTag();
-                int bouncyCount = 0;
-                int durationCount = 0;
-                int explosionCount = 0;
-                if (currentTag != null) {
-                    for (int i = 1; i < 4; i++) {
-                        ItemStack item = this.container.getItem(i);
-                        if (item.is(GItemTags.BOMB_BOUNCY_MODIFIERS)) bouncyCount++;
-                        if (item.is(GItemTags.BOMB_DURATION_MODIFIERS)) durationCount++;
-                        if (item.is(GItemTags.BOMB_EXPLOSION_MODIFIERS)) explosionCount++;
-                        if (bouncy + bouncyCount <= 3 && duration + durationCount <= 3 && explosion + explosionCount <= 3) {
-                            initFlag = true;
-                        }
-                        else {
-                            initFlag = false;
-                            this.resultContainer.removeItemNoUpdate(4);
-                        }
-                    }
-                }
-                ItemStack resultCopy = bombStack.copy();
-                resultCopy.setCount(1);
-                resultCopy.getOrCreateTag().putInt("Explosion", explosion + explosionCount);
-                resultCopy.getOrCreateTag().putInt("Bouncy", bouncy + bouncyCount);
-                resultCopy.getOrCreateTag().putInt("Duration", duration + durationCount);
-                if (initFlag) {
-                    this.resultContainer.setItem(4, resultCopy);
-                }
-            } else {
-                this.resultContainer.removeItemNoUpdate(4);
+        int bouncy = 0;
+        int explosion = 0;
+        int duration = 0;
+
+        boolean empty = true;
+        for (int ingredient = 1; ingredient <= 3; ingredient++) {
+            ItemStack itemStack = this.container.getItem(ingredient);
+            if (!itemStack.isEmpty()) {
+                empty = false;
+                break;
             }
-        } else {
-            this.resultContainer.removeItemNoUpdate(4);
         }
+
+        if (empty) {
+            this.resultContainer.removeItemNoUpdate(4);
+            return;
+        }
+
+        for (int ingredient = 1; ingredient <= 3; ingredient++) {
+            ItemStack itemStack = this.container.getItem(ingredient);
+            if (itemStack.is(GItemTags.BOMB_BOUNCY_MODIFIERS)) bouncy++;
+            if (itemStack.is(GItemTags.BOMB_EXPLOSION_MODIFIERS)) explosion++;
+            if (itemStack.is(GItemTags.BOMB_DURATION_MODIFIERS)) duration++;
+        }
+
+        ItemStack bomb = this.container.getItem(0);
+        int bouncyOrDefault = bomb.getOrDefault(GDataComponents.BOUNCY.get(), 0);
+        int explosionOrDefault = bomb.getOrDefault(GDataComponents.EXPLOSION.get(), 0);
+        int durationOrDefault = bomb.getOrDefault(GDataComponents.DURATION.get(), 0);
+
+        if ((bouncy + bouncyOrDefault) > 3) return;
+        if ((explosion + explosionOrDefault) > 3) return;
+        if ((duration + durationOrDefault) > 3) return;
+
+        ItemStack copy = bomb.copy();
+
+        copy.setCount(1);
+
+        copy.set(GDataComponents.BOUNCY.get(), bouncy + bouncyOrDefault);
+        copy.set(GDataComponents.EXPLOSION.get(), explosion + explosionOrDefault);
+        copy.set(GDataComponents.DURATION.get(), duration + durationOrDefault);
+
+        this.resultContainer.setItem(4, copy);
     }
 
     @Override

@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.GrowingPlantHeadBlock;
-import net.minecraft.world.level.levelgen.feature.DripstoneUtils;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -22,17 +22,17 @@ public class LichenCordycepsColumnFeature extends Feature<NoneFeatureConfigurati
 
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel world = context.level();
-        BlockPos blockPos = context.origin();
         RandomSource random = context.random();
-        boolean flag = world.getBlockState(blockPos.below()).isFaceSturdy(world, blockPos.below(), Direction.UP) && world.isStateAtPosition(blockPos, DripstoneUtils::isEmptyOrWater);
+        BlockPos blockPos = context.origin();
+        boolean flag = world.getBlockState(blockPos.below()).isFaceSturdy(world, blockPos.below(), Direction.UP) && world.isStateAtPosition(blockPos, BlockBehaviour.BlockStateBase::isAir);
         if (!flag) {
             return false;
         } else {
             int length = Mth.nextInt(random, 4, 8);
             BlockPos.MutableBlockPos mutableBlockPos = blockPos.mutable();
             for (int i = 0; i <= length; ++i) {
-                if (world.isStateAtPosition(mutableBlockPos, DripstoneUtils::isEmptyOrWater)) {
-                    if (i == length || !world.isEmptyBlock(mutableBlockPos.above())) {
+                if (world.isStateAtPosition(mutableBlockPos, BlockBehaviour.BlockStateBase::isAir)) {
+                    if (i == length || !world.isStateAtPosition(mutableBlockPos.above(), BlockBehaviour.BlockStateBase::isAir)) {
                         world.setBlock(mutableBlockPos, GBlocks.LICHEN_CORDYCEPS.get().defaultBlockState().setValue(CordycepsBlock.BULB, random.nextBoolean()).setValue(GrowingPlantHeadBlock.AGE, Mth.nextInt(random, 17, 25)), 2);
                         break;
                     }

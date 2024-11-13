@@ -3,8 +3,12 @@ package net.orcinus.galosphere.datagen;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonChargePlayerPhase;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -13,7 +17,11 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.Galosphere;
-import net.orcinus.galosphere.blocks.*;
+import net.orcinus.galosphere.blocks.LichenMossBlock;
+import net.orcinus.galosphere.blocks.PinkSaltChamberBlock;
+import net.orcinus.galosphere.blocks.PinkSaltStrawBlock;
+import net.orcinus.galosphere.blocks.PollinatedClusterBlock;
+import net.orcinus.galosphere.blocks.ShadowFrameBlock;
 import net.orcinus.galosphere.init.GBlocks;
 import org.jetbrains.annotations.NotNull;
 
@@ -172,7 +180,7 @@ public class GBlockstateProvider extends BlockStateProvider {
         this.wallBlock(GBlocks.ROSE_PINK_SALT_BRICK_WALL.get(), "rose_pink_salt_bricks");
         this.wallBlock(GBlocks.PASTEL_PINK_SALT_BRICK_WALL.get(), "pastel_pink_salt_bricks");
         this.getVariantBuilder(GBlocks.GILDED_BEADS.get()).forAllStatesExcept(state -> {
-            return ConfiguredModel.builder().modelFile(models().sign("gilded_beads", new ResourceLocation("block/gold_block"))).build();
+            return ConfiguredModel.builder().modelFile(models().sign("gilded_beads", ResourceLocation.withDefaultNamespace("block/gold_block"))).build();
         }, BlockStateProperties.ROTATION_16, BlockStateProperties.WATERLOGGED, BlockStateProperties.BOTTOM);
         this.getVariantBuilder(GBlocks.SILVER_BALANCE.get()).forAllStatesExcept(state -> {
             return ConfiguredModel.builder().modelFile(models().getExistingFile(Galosphere.id("block/silver_balance"))).build();
@@ -269,7 +277,7 @@ public class GBlockstateProvider extends BlockStateProvider {
 
     private void stairsBlock(Block block, String blockMaterial, boolean flag) {
         String id = flag ? "minecraft" : Galosphere.MODID;
-        ResourceLocation resourceLocation = new ResourceLocation(id, "block/" + blockMaterial);
+        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(id, "block/" + blockMaterial);
         this.stairsBlock((StairBlock) block, resourceLocation);
     }
 
@@ -279,7 +287,7 @@ public class GBlockstateProvider extends BlockStateProvider {
 
     private void slabBlock(Block block, String blockMaterial, boolean flag) {
         String id = flag ? "minecraft" : Galosphere.MODID;
-        ResourceLocation resourceLocation = new ResourceLocation(id, "block/" + blockMaterial);
+        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(id, "block/" + blockMaterial);
         this.slabBlock((SlabBlock) block, resourceLocation, resourceLocation);
     }
 

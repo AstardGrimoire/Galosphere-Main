@@ -2,6 +2,7 @@ package net.orcinus.galosphere.init;
 
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,6 +17,7 @@ import net.orcinus.galosphere.world.gen.features.LichenPatchFeature;
 import net.orcinus.galosphere.world.gen.features.NoisePatchFeature;
 import net.orcinus.galosphere.world.gen.features.OasisFeature;
 import net.orcinus.galosphere.world.gen.features.PinkSaltStrawPatchFeature;
+import net.orcinus.galosphere.world.gen.features.SimpleWaterloggedBlockFeature;
 import net.orcinus.galosphere.world.gen.features.config.CrystalSpikeConfig;
 import net.orcinus.galosphere.world.gen.features.config.NoisePatchConfig;
 import net.orcinus.galosphere.world.gen.features.config.PinkSaltStrawPatchConfig;
@@ -33,5 +35,6 @@ public class GFeatures {
     public static final RegistryObject<Feature<PinkSaltStrawPatchConfig>> PINK_SALT_STRAW_PATCH = FEATURES.register("pink_salt_straw_patch", () -> new PinkSaltStrawPatchFeature(PinkSaltStrawPatchConfig.CODEC));
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> OASIS = FEATURES.register("oasis", () -> new OasisFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> BERSERKER = FEATURES.register("berserker", () -> new BerserkerFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<Feature<SimpleBlockConfiguration>> SIMPLE_WATERLOGGED_BLOCK = FEATURES.register("simple_waterlogged_block", () -> new SimpleWaterloggedBlockFeature(SimpleBlockConfiguration.CODEC));
 
 }

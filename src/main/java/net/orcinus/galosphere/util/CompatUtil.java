@@ -34,19 +34,19 @@ public class CompatUtil {
     }
 
     public Block getCompatBlock(String modid, String name) {
-        return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(modid, name));
+        return ForgeRegistries.BLOCKS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public Item getCompatItem(String modid, String name) {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(modid, name));
+        return ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public SimpleParticleType getCompatParticle(String modid, String name) {
-        return (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(new ResourceLocation(modid, name));
+        return (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public MobEffect getCompatEffect(String modid, String name) {
-        return ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(modid, name));
+        return ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
 }

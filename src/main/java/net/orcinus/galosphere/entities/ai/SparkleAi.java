@@ -45,7 +45,7 @@ public class SparkleAi {
 
     private static void initCoreActivity(Brain<Sparkle> brain) {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
-                new AnimalPanic(2.0F),
+                new AnimalPanic<>(2.0F),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)
@@ -54,7 +54,7 @@ public class SparkleAi {
 
     private static void initIdleActivity(Brain<Sparkle> brain) {
         brain.addActivityWithConditions(Activity.IDLE, ImmutableList.of(
-                        Pair.of(0, new AnimalMakeLove(GEntityTypes.SPARKLE.get(), 1.0F)),
+                        Pair.of(0, new AnimalMakeLove(GEntityTypes.SPARKLE.get(), 1.0F, 2)),
                         Pair.of(1, new FollowTemptation((entity) -> 2.0F)),
                         Pair.of(2, BabyFollowAdult.create(UniformInt.of(5, 16), 1.25f)),
                         Pair.of(3, new WalkToPollinatedCluster()),

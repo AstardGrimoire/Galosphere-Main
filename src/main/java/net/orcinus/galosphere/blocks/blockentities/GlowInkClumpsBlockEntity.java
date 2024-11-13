@@ -2,6 +2,7 @@ package net.orcinus.galosphere.blocks.blockentities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -53,6 +54,7 @@ public class GlowInkClumpsBlockEntity extends BlockEntity {
                                 }
                                 if (delay == 0) {
                                     GNetworkHandler.sendToAllInRangeClients(offset, (ServerLevel) world, 16, new SendParticlesPacket(offset));
+
                                     int age = 0;
                                     if (x == 1 || x == -1 && z == 1 || z == -1) {
                                         age = Math.max(0, originState.getValue(BlockStateProperties.AGE_15) - 3);
@@ -69,14 +71,15 @@ public class GlowInkClumpsBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
         delay = tag.getInt("delay");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
         tag.putInt("delay", delay);
     }
+
 }

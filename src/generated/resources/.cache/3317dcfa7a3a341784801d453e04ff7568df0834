@@ -1,1 +1,7 @@
-// 1.20.1	2023-07-28T16:11:18.578577	Tags for minecraft:worldgen/biome mod id galosphere
+// 1.21	2024-11-14T09:44:43.2534645	Tags for minecraft:worldgen/biome mod id galosphere
+1ef8414c92bc42a85ddc12b8f29c35796f0cbed5 data/forge/tags/worldgen/biome/is_underground.json
+000f7514a5cbca8d6d3340886e6dd2eee091370d data/galosphere/tags/worldgen/biome/has_structure/pink_salt_shrine.json
+1ef8414c92bc42a85ddc12b8f29c35796f0cbed5 data/minecraft/tags/worldgen/biome/has_structure/mineshaft.json
+1ef8414c92bc42a85ddc12b8f29c35796f0cbed5 data/minecraft/tags/worldgen/biome/has_structure/ruined_portal_standard.json
+1ef8414c92bc42a85ddc12b8f29c35796f0cbed5 data/minecraft/tags/worldgen/biome/is_overworld.json
+1ef8414c92bc42a85ddc12b8f29c35796f0cbed5 data/minecraft/tags/worldgen/biome/stronghold_biased_to.json

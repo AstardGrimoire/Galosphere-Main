@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
@@ -12,15 +11,14 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class SoilComposterBlock extends ComposterBlock {
 
@@ -29,17 +27,17 @@ public class SoilComposterBlock extends ComposterBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return new ItemStack(Items.COMPOSTER);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (state.getValue(LEVEL) == 8) {
-            SoilComposterBlock.extractGlowstoneDust(state, world, pos);
-            return InteractionResult.sidedSuccess(world.isClientSide);
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        if (blockState.getValue(LEVEL) == 8) {
+            SoilComposterBlock.extractGlowstoneDust(blockState, level, blockPos);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
 
     public static BlockState extractGlowstoneDust(BlockState state, Level world, BlockPos pos) {

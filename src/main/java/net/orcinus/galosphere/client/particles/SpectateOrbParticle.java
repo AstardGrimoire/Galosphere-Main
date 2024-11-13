@@ -35,6 +35,8 @@ public class SpectateOrbParticle extends SmokeParticle {
     @Override
     public void tick() {
         super.tick();
+        this.oRoll = this.roll;
+        this.roll += 0.05F + (this.random.nextFloat() / 10.0F);
         if (this.isPlayerSpectating()) {
             this.setAlpha(0.0F);
         }

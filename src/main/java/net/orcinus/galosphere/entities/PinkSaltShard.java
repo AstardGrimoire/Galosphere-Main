@@ -66,6 +66,11 @@ public class PinkSaltShard extends AbstractArrow {
     }
 
     @Override
+    protected ItemStack getDefaultPickupItem() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public void handleEntityEvent(byte b) {
         if (b == 3) {
             ParticleOptions particleOptions = new BlockParticleOption(ParticleTypes.BLOCK, GBlocks.PINK_SALT.get().defaultBlockState());

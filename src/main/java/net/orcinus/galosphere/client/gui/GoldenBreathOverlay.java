@@ -1,40 +1,32 @@
 package net.orcinus.galosphere.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.api.GoldenBreath;
 
 @OnlyIn(Dist.CLIENT)
-public class GoldenBreathOverlay {
+public class GoldenBreathOverlay implements LayeredDraw.Layer {
     private static final ResourceLocation GALOSPHERE_ICONS = Galosphere.id("textures/gui/galosphere_icons.png");
 
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public void onPostRender(RenderGuiOverlayEvent.Post event) {
-        if (event.isCanceled()) return;
-
+    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        GuiGraphics guiGraphics = event.getGuiGraphics();
         if (player == null) return;
 
-        if (event.getOverlay().id().equals(VanillaGuiOverlay.PLAYER_HEALTH.id())) {
-            if (!Minecraft.getInstance().options.hideGui && Minecraft.getInstance().gameMode.canHurtPlayer() && Minecraft.getInstance().getCameraEntity() instanceof Player) {
-                RenderSystem.enableBlend();
-                this.renderGoldenAirSupply(guiGraphics, mc.player, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
-                RenderSystem.disableBlend();
-            }
+        if (!mc.options.hideGui && mc.gameMode != null && mc.gameMode.canHurtPlayer() && mc.getCameraEntity() instanceof Player) {
+            RenderSystem.enableBlend();
+            this.renderGoldenAirSupply(guiGraphics, mc.player, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+            RenderSystem.disableBlend();
         }
     }
 

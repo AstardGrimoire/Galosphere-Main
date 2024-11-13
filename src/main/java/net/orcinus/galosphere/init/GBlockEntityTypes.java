@@ -6,7 +6,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.Galosphere;
-import net.orcinus.galosphere.blocks.blockentities.*;
+import net.orcinus.galosphere.blocks.blockentities.CordycepsBlockEntity;
+import net.orcinus.galosphere.blocks.blockentities.GildedBeadsBlockEntity;
+import net.orcinus.galosphere.blocks.blockentities.GlowInkClumpsBlockEntity;
+import net.orcinus.galosphere.blocks.blockentities.MonstrometerBlockEntity;
+import net.orcinus.galosphere.blocks.blockentities.PinkSaltChamberBlockEntity;
+import net.orcinus.galosphere.blocks.blockentities.ShadowFrameBlockEntity;
 
 @Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GBlockEntityTypes {

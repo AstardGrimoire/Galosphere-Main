@@ -103,7 +103,7 @@ public class ChandelierBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
         if (!level.isClientSide) {
             if (player.isCreative()) {
                 ChandelierBlock.preventCreativeDropFromBottomPart(level, blockPos, blockState, player);
@@ -111,7 +111,7 @@ public class ChandelierBlock extends Block implements SimpleWaterloggedBlock {
                 ChandelierBlock.dropResources(blockState, level, blockPos, null, player, player.getMainHandItem());
             }
         }
-        super.playerWillDestroy(level, blockPos, blockState, player);
+        return super.playerWillDestroy(level, blockPos, blockState, player);
     }
 
     @Override

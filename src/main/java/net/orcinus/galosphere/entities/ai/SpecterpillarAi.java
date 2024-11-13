@@ -38,7 +38,7 @@ public class SpecterpillarAi {
 
     private static void initCoreActivity(Brain<Specterpillar> brain) {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
-                new AnimalPanic(0.5F),
+                new AnimalPanic<>(0.5F),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)

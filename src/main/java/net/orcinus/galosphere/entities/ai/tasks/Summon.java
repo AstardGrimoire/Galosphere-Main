@@ -1,10 +1,7 @@
 package net.orcinus.galosphere.entities.ai.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Unit;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -17,7 +14,6 @@ import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
-import net.minecraft.world.entity.player.Player;
 import net.orcinus.galosphere.entities.Berserker;
 import net.orcinus.galosphere.entities.Preserved;
 import net.orcinus.galosphere.init.GEntityTypes;
@@ -26,7 +22,6 @@ import net.orcinus.galosphere.init.GSoundEvents;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class Summon extends Behavior<Berserker> {
@@ -91,8 +86,11 @@ public class Summon extends Behavior<Berserker> {
         }
         brain.eraseMemory(MemoryModuleType.WALK_TARGET);
         List<BlockPos> positions = IntStream.range(0, 5).mapToObj(i -> LandRandomPos.getPos(livingEntity, i * 2, 1)).filter(Objects::nonNull).map(BlockPos::containing).filter(blockPos -> livingEntity.level().getWorldBorder().isWithinBounds(blockPos)).map(BlockPos::below).filter(blockPos -> serverLevel.getBlockState(blockPos).isCollisionShapeFullBlock(serverLevel, blockPos)).toList();
+        if (positions.isEmpty()) {
+            return;
+        }
         BlockPos randomPos = positions.get(serverLevel.getRandom().nextInt(positions.size()));
-        Preserved preserved = GEntityTypes.PRESERVED.get().create(serverLevel, null, null, livingEntity.blockPosition(), MobSpawnType.TRIGGERED, true, true);
+        Preserved preserved = GEntityTypes.PRESERVED.get().spawn(serverLevel, null, null, livingEntity.blockPosition(), MobSpawnType.TRIGGERED, true, true);
         preserved.moveTo(randomPos.getX(), randomPos.getY() + 1, randomPos.getZ(), 0.0f, 0.0f);
         preserved.setHealth(preserved.getMaxHealth() * ((float) livingEntity.getRandom().nextInt(4, 7) / 10));
         serverLevel.addFreshEntityWithPassengers(preserved);

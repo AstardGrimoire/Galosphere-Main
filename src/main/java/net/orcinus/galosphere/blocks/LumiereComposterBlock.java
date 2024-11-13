@@ -7,24 +7,22 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.orcinus.galosphere.init.GCriteriaTriggers;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class LumiereComposterBlock extends ComposterBlock {
 
@@ -33,32 +31,31 @@ public class LumiereComposterBlock extends ComposterBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return new ItemStack(Items.COMPOSTER);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        int i = state.getValue(LEVEL);
-        ItemStack itemstack = player.getItemInHand(hand);
-        if (i < 8 && COMPOSTABLES.containsKey(itemstack.getItem())) {
-            if (i < 7 && !world.isClientSide) {
-                BlockState blockstate = addItem(state, world, pos, itemstack);
-                world.levelEvent(1500, pos, state != blockstate ? 1 : 0);
-                player.awardStat(Stats.ITEM_USED.get(itemstack.getItem()));
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        int i = blockState.getValue(LEVEL);
+        if (i < 8 && COMPOSTABLES.containsKey(itemStack.getItem())) {
+            if (i < 7 && !level.isClientSide) {
+                BlockState blockstate = addItem(blockState, level, blockPos, itemStack);
+                level.levelEvent(1500, blockPos, blockState != blockstate ? 1 : 0);
+                player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
                 if (!player.getAbilities().instabuild) {
-                    itemstack.shrink(1);
+                    itemStack.shrink(1);
                 }
             }
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         } else if (i == 8) {
-            extractGlowstoneDust(state, world, pos);
+            extractGlowstoneDust(blockState, level, blockPos);
             if (player instanceof ServerPlayer serverPlayer) {
-                GCriteriaTriggers.LUMIERE_COMPOST.trigger(serverPlayer);
+                GCriteriaTriggers.LUMIERE_COMPOST.get().trigger(serverPlayer);
             }
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         } else {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
     }
 
@@ -104,9 +101,9 @@ public class LumiereComposterBlock extends ComposterBlock {
     public WorldlyContainer getContainer(BlockState state, LevelAccessor world, BlockPos pos) {
         int i = state.getValue(LEVEL);
         if (i == 8) {
-            return new LumiereComposterBlock.OutputContainer(state, world, pos, new ItemStack(Items.GLOWSTONE_DUST));
+            return new OutputContainer(state, world, pos, new ItemStack(Items.GLOWSTONE_DUST));
         } else {
-            return (i < 7 ? new LumiereComposterBlock.InputContainer(state, world, pos) : new LumiereComposterBlock.EmptyContainer());
+            return (i < 7 ? new InputContainer(state, world, pos) : new EmptyContainer());
         }
     }
 

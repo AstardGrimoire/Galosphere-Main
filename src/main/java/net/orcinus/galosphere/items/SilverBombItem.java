@@ -1,7 +1,7 @@
 package net.orcinus.galosphere.items;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,9 +13,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.entities.SilverBomb;
-import org.jetbrains.annotations.Nullable;
+import net.orcinus.galosphere.init.GDataComponents;
 
 import java.util.List;
 
@@ -45,21 +44,21 @@ public class SilverBombItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tip) {
-        CompoundTag tag = stack.getOrCreateTag();
-        String nameText = "item." + Galosphere.MODID + ".silver_bomb.";
-        if (tag.getInt("Duration") > 0) {
-            list.add((Component.translatable(nameText + "duration")).append(" ").append(String.valueOf(tag.getInt("Duration"))).withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
+        String text = "item.galosphere.silver_bomb.";
+        if (this.getModifierValue(itemStack, GDataComponents.DURATION.get()) > 0) {
+            list.add(Component.translatable(text + "duration").append(" ").append(String.valueOf(this.getModifierValue(itemStack, GDataComponents.DURATION.get()))).withStyle(ChatFormatting.GRAY));
         }
-        if (tag.getInt("Explosion") > 0) {
-            list.add((Component.translatable(nameText + "explosion")).append(" ").append(String.valueOf(tag.getInt("Explosion"))).withStyle(ChatFormatting.GRAY));
+        if (this.getModifierValue(itemStack, GDataComponents.BOUNCY.get()) > 0) {
+            list.add(Component.translatable(text + "bouncy").append(" ").append(String.valueOf(this.getModifierValue(itemStack, GDataComponents.BOUNCY.get()))).withStyle(ChatFormatting.GRAY));
         }
-        if (tag.getInt("Bouncy") > 0) {
-            list.add((Component.translatable(nameText + "bouncy")).append(" ").append(String.valueOf(tag.getInt("Bouncy"))).withStyle(ChatFormatting.GRAY));
+        if (this.getModifierValue(itemStack, GDataComponents.EXPLOSION.get()) > 0) {
+            list.add(Component.translatable(text + "explosion").append(" ").append(String.valueOf(this.getModifierValue(itemStack, GDataComponents.EXPLOSION.get()))).withStyle(ChatFormatting.GRAY));
         }
-        if (tag.getBoolean("Shrapnel")) {
-            list.add((Component.translatable(nameText + "shrapnel")).withStyle(ChatFormatting.GRAY));
-        }
+    }
+
+    private int getModifierValue(ItemStack stack, DataComponentType<Integer> dataComponentType) {
+        return stack.getOrDefault(dataComponentType, 0);
     }
 
 }

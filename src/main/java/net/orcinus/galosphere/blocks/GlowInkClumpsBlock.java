@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.ToIntFunction;
 
 public class GlowInkClumpsBlock extends MultifaceBlock implements SimpleWaterloggedBlock, EntityBlock {
+    public static final MapCodec<GlowInkClumpsBlock> CODEC = GlowInkClumpsBlock.simpleCodec(GlowInkClumpsBlock::new);
     private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final IntegerProperty AGE = BlockStateProperties.AGE_15;
     private final MultifaceSpreader spreader = new MultifaceSpreader(this);
@@ -36,6 +38,11 @@ public class GlowInkClumpsBlock extends MultifaceBlock implements SimpleWaterlog
     public GlowInkClumpsBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false).setValue(AGE, 0));
+    }
+
+    @Override
+    protected MapCodec<? extends MultifaceBlock> codec() {
+        return CODEC;
     }
 
     public static ToIntFunction<BlockState> emission(int light, int diminished) {

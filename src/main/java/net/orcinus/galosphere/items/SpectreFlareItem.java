@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.items;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.orcinus.galosphere.entities.SpectreFlare;
+import net.orcinus.galosphere.init.GCriteriaTriggers;
 
 public class SpectreFlareItem extends Item {
 
@@ -26,6 +28,9 @@ public class SpectreFlareItem extends Item {
             spectreFlare.setPos(player.getX(), player.getEyeY() - (double)0.1f, player.getZ());
             spectreFlare.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1.5f, 1.0f);
             level.addFreshEntity(spectreFlare);
+            if (player instanceof ServerPlayer serverPlayer) {
+                GCriteriaTriggers.USE_SPECTRE_FLARE.get().trigger(serverPlayer);
+            }
         }
         player.awardStat(Stats.ITEM_USED.get(this));
         if (!player.getAbilities().instabuild) {

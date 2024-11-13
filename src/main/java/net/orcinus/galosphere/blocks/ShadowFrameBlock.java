@@ -1,15 +1,14 @@
 package net.orcinus.galosphere.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.HoneycombItem;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -46,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ShadowFrameBlock extends BaseEntityBlock {
+    public static final MapCodec<ShadowFrameBlock> CODEC = ShadowFrameBlock.simpleCodec(ShadowFrameBlock::new);
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL;
@@ -54,6 +54,11 @@ public class ShadowFrameBlock extends BaseEntityBlock {
     public ShadowFrameBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FILLED, false).setValue(WATERLOGGED, false).setValue(LEVEL, 0).setValue(POWERED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Nullable
@@ -107,20 +112,20 @@ public class ShadowFrameBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
-        if (blockState.getValue(FILLED) && blockGetter.getBlockEntity(blockPos) instanceof ShadowFrameBlockEntity shadowFrameBlockEntity) {
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+        if (blockState.getValue(FILLED) && levelReader.getBlockEntity(blockPos) instanceof ShadowFrameBlockEntity shadowFrameBlockEntity) {
             BlockState copiedState = shadowFrameBlockEntity.getCopiedState();
-            return copiedState.getBlock().getCloneItemStack(blockGetter, blockPos, copiedState);
+            return copiedState.getBlock().getCloneItemStack(levelReader, blockPos, copiedState);
         }
-        return super.getCloneItemStack(blockGetter, blockPos, blockState);
+        return super.getCloneItemStack(levelReader, blockPos, blockState);
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         ItemStack stack = player.getItemInHand(interactionHand);
         BlockPlaceContext blockPlaceContext = new BlockPlaceContext(player, interactionHand, stack, blockHitResult);
         if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this) {
-            return InteractionResult.FAIL;
+            return ItemInteractionResult.FAIL;
         }
         if (level.getBlockEntity(blockPos) instanceof ShadowFrameBlockEntity shadowFrameBlockEntity) {
             if (stack.getItem() instanceof HoneycombItem && !shadowFrameBlockEntity.isWaxed()) {
@@ -133,10 +138,10 @@ public class ShadowFrameBlock extends BaseEntityBlock {
                 level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, blockState));
                 level.levelEvent(player, 3003, blockPos, 0);
                 shadowFrameBlockEntity.setWaxed(true);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
             if (shadowFrameBlockEntity.isWaxed()) {
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
             if (!blockState.getValue(FILLED)) {
                 if (stack.getItem() instanceof BlockItem blockItem) {
@@ -148,7 +153,7 @@ public class ShadowFrameBlock extends BaseEntityBlock {
                         }
                         level.playSound(null, blockPos, stateForPlacement.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
                         shadowFrameBlockEntity.interact(stateForPlacement, level, blockPos, blockState);
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
                 }
             } else if (stack.isEmpty()) {
@@ -158,20 +163,15 @@ public class ShadowFrameBlock extends BaseEntityBlock {
                     Block.popResource(level, blockPos, new ItemStack(shadowFrameBlockEntity.getCopiedState().getBlock().asItem()));
                 }
                 shadowFrameBlockEntity.setCopiedState(Blocks.AIR.defaultBlockState());
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return super.useItemOn(itemStack, blockState, level, blockPos, player, interactionHand, blockHitResult);
     }
 
     private boolean canBeFramed(Level level, BlockPlaceContext blockPlaceContext, BlockState stateForPlacement) {
         BlockPos clickedPos = blockPlaceContext.getClickedPos();
         return stateForPlacement != null && !(stateForPlacement.getBlock() instanceof EntityBlock) && Block.isShapeFullBlock(stateForPlacement.getShape(level, clickedPos));
-    }
-
-    @Override
-    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
-        return !state.getValue(FILLED);
     }
 
     @Override
@@ -183,6 +183,11 @@ public class ShadowFrameBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new ShadowFrameBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
+        return !blockState.getValue(FILLED);
     }
 
     @Override

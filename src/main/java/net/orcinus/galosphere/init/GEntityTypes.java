@@ -1,6 +1,5 @@
 package net.orcinus.galosphere.init;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.common.Mod;
@@ -9,15 +8,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.entities.Berserker;
+import net.orcinus.galosphere.entities.GlowFlare;
 import net.orcinus.galosphere.entities.PinkSaltPillar;
 import net.orcinus.galosphere.entities.PinkSaltShard;
 import net.orcinus.galosphere.entities.Preserved;
+import net.orcinus.galosphere.entities.SilverBomb;
+import net.orcinus.galosphere.entities.Sparkle;
 import net.orcinus.galosphere.entities.SpectatorVision;
 import net.orcinus.galosphere.entities.Specterpillar;
 import net.orcinus.galosphere.entities.Spectre;
-import net.orcinus.galosphere.entities.GlowFlare;
-import net.orcinus.galosphere.entities.SilverBomb;
-import net.orcinus.galosphere.entities.Sparkle;
 import net.orcinus.galosphere.entities.SpectreFlare;
 
 @Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

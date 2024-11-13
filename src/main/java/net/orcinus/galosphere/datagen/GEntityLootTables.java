@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.datagen;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.packs.VanillaEntityLoot;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -14,6 +15,10 @@ import net.orcinus.galosphere.init.GItems;
 import java.util.stream.Stream;
 
 public class GEntityLootTables extends VanillaEntityLoot {
+
+    public GEntityLootTables(HolderLookup.Provider provider) {
+        super(provider);
+    }
 
     @Override
     public void generate() {

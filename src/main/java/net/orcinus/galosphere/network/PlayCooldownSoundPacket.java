@@ -1,26 +1,22 @@
 package net.orcinus.galosphere.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-import net.orcinus.galosphere.client.ClientEventsHandler;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.function.Supplier;
+public record PlayCooldownSoundPacket() implements CustomPacketPayload {
+    public static final StreamCodec<FriendlyByteBuf, PlayCooldownSoundPacket> CODEC = CustomPacketPayload.codec(PlayCooldownSoundPacket::write, PlayCooldownSoundPacket::new);
+    public static final Type<PlayCooldownSoundPacket> TYPE = CustomPacketPayload.createType("play_cooldown_sound");
 
-public class PlayCooldownSoundPacket {
-
-    public PlayCooldownSoundPacket() {
+    public PlayCooldownSoundPacket(FriendlyByteBuf buf) {
+        this();
     }
 
-    public static PlayCooldownSoundPacket read(FriendlyByteBuf buf) {
-        return new PlayCooldownSoundPacket();
+    public void write(FriendlyByteBuf buf) {
     }
 
-    public static void write(PlayCooldownSoundPacket packet, FriendlyByteBuf buf) {
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
-
-    public static void handle(PlayCooldownSoundPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(ClientEventsHandler::playCooldownSound);
-        ctx.get().setPacketHandled(true);
-    }
-
 }

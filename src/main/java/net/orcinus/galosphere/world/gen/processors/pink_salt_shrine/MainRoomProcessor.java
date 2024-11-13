@@ -1,6 +1,6 @@
 package net.orcinus.galosphere.world.gen.processors.pink_salt_shrine;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -20,7 +20,7 @@ import net.orcinus.galosphere.init.GStructureProcessorTypes;
 import org.jetbrains.annotations.Nullable;
 
 public class MainRoomProcessor extends StructureProcessor {
-    public static final Codec<MainRoomProcessor> CODEC = Codec.unit(MainRoomProcessor::new);
+    public static final MapCodec<MainRoomProcessor> CODEC = MapCodec.unit(MainRoomProcessor::new);
 
     @Nullable
     @Override

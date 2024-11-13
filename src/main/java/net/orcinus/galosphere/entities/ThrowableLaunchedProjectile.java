@@ -1,6 +1,5 @@
 package net.orcinus.galosphere.entities;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,16 +12,10 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.orcinus.galosphere.mixin.ProjectileAccessor;
 
 public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
     protected static final EntityDataAccessor<Boolean> THROWN = SynchedEntityData.defineId(ThrowableLaunchedProjectile.class, EntityDataSerializers.BOOLEAN);
@@ -36,9 +29,9 @@ public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(THROWN, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(THROWN, false);
     }
 
     @Override
@@ -68,34 +61,18 @@ public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
     @Override
     public void tick() {
         if (this.isThrown()) {
-            ProjectileAccessor accessor = (ProjectileAccessor) this;
             float h;
-            if (!accessor.isHasBeenShot()) {
+            if (!this.hasBeenShot) {
                 this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
-                accessor.setHasBeenShot(true);
+                this.hasBeenShot = true;
             }
-            if (!accessor.isLeftOwner()) {
-                accessor.setLeftOwner(accessor.callCheckLeftOwner());
+            if (!this.leftOwner) {
+                this.leftOwner = this.checkLeftOwner();
             }
             this.baseTick();
             HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-            boolean bl = false;
-            if (hitResult.getType() == HitResult.Type.BLOCK) {
-                BlockPos blockPos = ((BlockHitResult)hitResult).getBlockPos();
-                BlockState blockState = this.level().getBlockState(blockPos);
-                if (blockState.is(Blocks.NETHER_PORTAL)) {
-                    this.handleInsidePortal(blockPos);
-                    bl = true;
-                } else if (blockState.is(Blocks.END_GATEWAY)) {
-                    BlockEntity blockEntity = this.level().getBlockEntity(blockPos);
-                    if (blockEntity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this)) {
-                        TheEndGatewayBlockEntity.teleportEntity(this.level(), blockPos, blockState, this, (TheEndGatewayBlockEntity)blockEntity);
-                    }
-                    bl = true;
-                }
-            }
-            if (hitResult.getType() != HitResult.Type.MISS && !bl) {
-                this.onHit(hitResult);
+            if (hitResult.getType() != HitResult.Type.MISS) {
+                this.hitTargetOrDeflectSelf(hitResult);
             }
             this.checkInsideBlocks();
             Vec3 vec3 = this.getDeltaMovement();
@@ -123,10 +100,10 @@ public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
         }
     }
 
-    public float getGravity() {
-        return 0.03F;
+    @Override
+    protected double getDefaultGravity() {
+        return 0.03D;
     }
-
 
     public void handleLaunchedProjectile() {
     }

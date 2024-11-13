@@ -1,6 +1,6 @@
 package net.orcinus.galosphere.blocks;
 
-import com.sun.jna.platform.win32.WinDef;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
@@ -17,22 +17,24 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.SculkSensorPhase;
 import net.orcinus.galosphere.blocks.blockentities.PinkSaltChamberBlockEntity;
-import net.orcinus.galosphere.entities.Berserker;
 import net.orcinus.galosphere.init.GBlockEntityTypes;
 import net.orcinus.galosphere.init.GBlocks;
 import org.jetbrains.annotations.Nullable;
 
 public class PinkSaltChamberBlock extends BaseEntityBlock {
+    public static final MapCodec<PinkSaltChamberBlock> CODEC = PinkSaltChamberBlock.simpleCodec(PinkSaltChamberBlock::new);
     public static final EnumProperty<ChamberPhase> PHASE = EnumProperty.create("chamber_phase", ChamberPhase.class);
 
     public PinkSaltChamberBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(PHASE, ChamberPhase.INACTIVE));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

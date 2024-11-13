@@ -1,6 +1,7 @@
 package net.orcinus.galosphere.items;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -17,10 +18,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.orcinus.galosphere.api.BottlePickable;
 import net.orcinus.galosphere.entities.Spectre;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GSoundEvents;
-
-import java.util.Optional;
 
 public class SpectreBottleItem extends Item {
 
@@ -42,15 +42,15 @@ public class SpectreBottleItem extends Item {
             if (!playerEntity.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))) {
                 playerEntity.drop(new ItemStack(Items.GLASS_BOTTLE), false);
             }
-            if (stack.getTag() != null && !stack.getTag().isEmpty()) {
-                Optional<Entity> entity1 = EntityType.create(stack.getTag(), world);
-                entity1.ifPresent(entity -> {
-                    entity.setPos(blockPos.getX() + 0.5D, blockPos.getY(), blockPos.getZ() + 0.5D);
-                    serverWorld.addWithUUID(entity);
-                    if (entity instanceof BottlePickable bottlePickable) {
-                        bottlePickable.setFromBottle(true);
-                    }
-                });
+            if (stack.has(GDataComponents.BOTTLE_ENTITY_DATA.get())) {
+                CompoundTag compoundTag = stack.get(GDataComponents.BOTTLE_ENTITY_DATA.get()).copyTag();
+                Entity spectre = EntityType.loadEntityRecursive(compoundTag, world, entity -> entity);
+                if (spectre != null) {
+                    spectre.setPos(blockPos.getX() + 0.5D, blockPos.getY(), blockPos.getZ() + 0.5D);
+                    serverWorld.addWithUUID(spectre);
+
+                    if (spectre instanceof BottlePickable bottlePickable) bottlePickable.setFromBottle(true);
+                }
             } else {
                 Spectre spectre = GEntityTypes.SPECTRE.get().create(world);
                 spectre.setPos(blockPos.getX() + 0.5D, blockPos.getY(), blockPos.getZ() + 0.5D);

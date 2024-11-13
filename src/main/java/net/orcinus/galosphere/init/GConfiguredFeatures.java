@@ -3,17 +3,17 @@ package net.orcinus.galosphere.init;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -55,7 +55,7 @@ public class GConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> OASIS = registerConfiguredFeature("oasis");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BERSERKER = registerConfiguredFeature("mobs/berserker");
 
-    public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext) {
+    public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> bootstapContext) {
         HolderGetter<ConfiguredFeature<?, ?>> holderGetter = bootstapContext.lookup(Registries.CONFIGURED_FEATURE);
         FeatureUtils.register(bootstapContext, LARGE_ALLURITE_CRYSTAL_FLOOR, GFeatures.CRYSTAL_SPIKE.get(), new CrystalSpikeConfig(GBlocks.ALLURITE_BLOCK.get().defaultBlockState(), GBlocks.ALLURITE_CLUSTER.get().defaultBlockState(), GBlocks.GLINTED_ALLURITE_CLUSTER.get().defaultBlockState(), UniformInt.of(4, 7), CaveSurface.FLOOR, 0.25F));
         FeatureUtils.register(bootstapContext, LARGE_LUMIERE_CRYSTAL_FLOOR, GFeatures.CRYSTAL_SPIKE.get(), new CrystalSpikeConfig(GBlocks.LUMIERE_BLOCK.get().defaultBlockState(), GBlocks.LUMIERE_CLUSTER.get().defaultBlockState(), GBlocks.GLINTED_LUMIERE_CLUSTER.get().defaultBlockState(), UniformInt.of(4, 7), CaveSurface.FLOOR, 0.25F));
@@ -68,7 +68,7 @@ public class GConfiguredFeatures {
         FeatureUtils.register(bootstapContext, ORE_SILVER_SMALL, Feature.ORE, new OreConfiguration(List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), GBlocks.SILVER_ORE.get().defaultBlockState()), OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), GBlocks.DEEPSLATE_SILVER_ORE.get().defaultBlockState())), 9));
         FeatureUtils.register(bootstapContext, ORE_SILVER_LARGE, Feature.ORE, new OreConfiguration(List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), GBlocks.SILVER_ORE.get().defaultBlockState()), OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), GBlocks.DEEPSLATE_SILVER_ORE.get().defaultBlockState())), 12));
         FeatureUtils.register(bootstapContext, BOWL_LICHEN, GFeatures.BOWL_LICHEN.get(), FeatureConfiguration.NONE);
-        FeatureUtils.register(bootstapContext, LICHEN_VEGETATION, Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(GBlocks.BOWL_LICHEN.get().defaultBlockState(), 4).add(GBlocks.LICHEN_ROOTS.get().defaultBlockState(), 50).add(Blocks.AIR.defaultBlockState(), 15))));
+        FeatureUtils.register(bootstapContext, LICHEN_VEGETATION, GFeatures.SIMPLE_WATERLOGGED_BLOCK.get(), new SimpleBlockConfiguration(new WeightedStateProvider(SimpleWeightedRandomList.<BlockState>builder().add(GBlocks.BOWL_LICHEN.get().defaultBlockState(), 4).add(GBlocks.LICHEN_ROOTS.get().defaultBlockState(), 14).add(Blocks.GLOW_LICHEN.defaultBlockState().setValue(BlockStateProperties.DOWN, true), 2))));
         FeatureUtils.register(bootstapContext, LICHEN_PATCH, GFeatures.LICHEN_PATCH.get(), new VegetationPatchConfiguration(BlockTags.MOSS_REPLACEABLE, BlockStateProvider.simple(GBlocks.LICHEN_MOSS.get()), PlacementUtils.inlinePlaced(holderGetter.getOrThrow(LICHEN_VEGETATION)), CaveSurface.FLOOR, ConstantInt.of(1), 0.0F, 5, 0.8F, UniformInt.of(4, 7), 0.3F));
         FeatureUtils.register(bootstapContext, GRAVEL_PATCH, Feature.VEGETATION_PATCH, new VegetationPatchConfiguration(GBlockTags.GRAVEL_MAY_REPLACE, BlockStateProvider.simple(Blocks.GRAVEL), PlacementUtils.inlinePlaced(holderGetter.getOrThrow(LICHEN_VEGETATION)), CaveSurface.FLOOR, ConstantInt.of(3), 0.8f, 2, 0.05f, UniformInt.of(4, 7), 0.7f));
         FeatureUtils.register(bootstapContext, LICHEN_CORDYCEPS, GFeatures.LICHEN_CORDYCEPS_COLUMN.get(), FeatureConfiguration.NONE);
@@ -80,7 +80,7 @@ public class GConfiguredFeatures {
         FeatureUtils.register(bootstapContext, BERSERKER, GFeatures.BERSERKER.get(), FeatureConfiguration.NONE);
     }
 
-    public static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(BootstapContext<ConfiguredFeature<?, ?>> bootstapContext, ResourceKey<ConfiguredFeature<?, ?>> resourceKey, F feature, FC featureConfiguration) {
+    public static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(BootstrapContext<ConfiguredFeature<?, ?>> bootstapContext, ResourceKey<ConfiguredFeature<?, ?>> resourceKey, F feature, FC featureConfiguration) {
         bootstapContext.register(resourceKey, new ConfiguredFeature<>(feature, featureConfiguration));
     }
 

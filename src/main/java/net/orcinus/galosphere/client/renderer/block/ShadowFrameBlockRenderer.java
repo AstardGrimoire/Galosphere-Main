@@ -61,7 +61,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
         tesselateBlock(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, ModelData.EMPTY, null);
     }
 
-    public void tesselateBlock(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_, ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
+    public void tesselateBlock(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_, ModelData modelData, RenderType renderType) {
         boolean flag = Minecraft.useAmbientOcclusion() && p_234382_.getLightEmission(p_234380_, p_234383_) == 0 && p_234381_.useAmbientOcclusion(p_234382_, renderType);
         Vec3 vec3 = p_234382_.getOffset(p_234380_, p_234383_);
         p_234384_.translate(vec3.x, vec3.y, vec3.z);
@@ -86,7 +86,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
     public void tesselateWithAO(BlockAndTintGetter p_234391_, BakedModel p_234392_, BlockState p_234393_, BlockPos p_234394_, PoseStack p_234395_, VertexConsumer p_234396_, boolean p_234397_, RandomSource p_234398_, long p_234399_, int p_234400_) {
         tesselateWithAO(p_234391_, p_234392_, p_234393_, p_234394_, p_234395_, p_234396_, p_234397_, p_234398_, p_234399_, p_234400_, ModelData.EMPTY, null);
     }
-    public void tesselateWithAO(BlockAndTintGetter world, BakedModel p_111080_, BlockState state, BlockPos pos, PoseStack p_111083_, VertexConsumer p_111084_, boolean bl, RandomSource p_111086_, long p_111087_, int p_111088_, ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
+    public void tesselateWithAO(BlockAndTintGetter world, BakedModel p_111080_, BlockState state, BlockPos pos, PoseStack p_111083_, VertexConsumer p_111084_, boolean bl, RandomSource p_111086_, long p_111087_, int p_111088_, ModelData modelData, RenderType renderType) {
         float[] afloat = new float[DIRECTIONS.length * 2];
         BitSet bitset = new BitSet(3);
         ModelBlockRenderer.AmbientOcclusionFace modelblockrenderer$ambientocclusionface = new ModelBlockRenderer.AmbientOcclusionFace();
@@ -127,7 +127,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
         tesselateWithoutAO(p_234402_, p_234403_, p_234404_, p_234405_, p_234406_, p_234407_, p_234408_, p_234409_, p_234410_, p_234411_, ModelData.EMPTY, null);
     }
 
-    public void tesselateWithoutAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack p_111095_, VertexConsumer p_111096_, boolean bl, RandomSource p_111098_, long p_111099_, int p_111100_, ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
+    public void tesselateWithoutAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack p_111095_, VertexConsumer p_111096_, boolean bl, RandomSource p_111098_, long p_111099_, int p_111100_, ModelData modelData, RenderType renderType) {
         BitSet bitset = new BitSet(3);
         BlockPos.MutableBlockPos blockpos$mutableblockpos = pos.mutable();
 
@@ -176,7 +176,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
             f2 = 1.0F;
         }
 
-        vertexConsumer.putBulkData(pose, quad, new float[]{p_111030_, p_111031_, p_111032_, p_111033_}, f, f1, f2, new int[]{p_111034_, p_111035_, p_111036_, p_111037_}, p_111038_, true);
+        vertexConsumer.putBulkData(pose, quad, new float[]{p_111030_, p_111031_, p_111032_, p_111033_}, f, f1, f2, 1.0F, new int[]{p_111034_, p_111035_, p_111036_, p_111037_}, p_111038_, true);
     }
 
     private void calculateShape(BlockAndTintGetter world, BlockState state, BlockPos pos, int[] p_111043_, Direction direction, @Nullable float[] p_111045_, BitSet bitSet) {

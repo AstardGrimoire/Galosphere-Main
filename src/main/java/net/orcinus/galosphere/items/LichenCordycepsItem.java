@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.items;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,9 +19,9 @@ public class LichenCordycepsItem extends ItemNameBlockItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-        if (this.isEdible()) {
+        if (itemStack.has(DataComponents.FOOD)) {
             boolean flag = livingEntity.getAirSupply() < livingEntity.getMaxAirSupply();
-            if (livingEntity instanceof Player player && (flag || player.canEat(this.getFoodProperties().canAlwaysEat()))) {
+            if (livingEntity instanceof Player player && (flag || player.canEat(itemStack.get(DataComponents.FOOD).canAlwaysEat()))) {
                 if (flag) {
                     livingEntity.setAirSupply(Math.min(livingEntity.getAirSupply() + 60, livingEntity.getMaxAirSupply()));
                 }
@@ -33,7 +34,7 @@ public class LichenCordycepsItem extends ItemNameBlockItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         ItemStack itemstack = player.getItemInHand(interactionHand);
-        if (player.getAirSupply() < player.getMaxAirSupply() || player.canEat(itemstack.getFoodProperties(player).canAlwaysEat())) {
+        if (player.getAirSupply() < player.getMaxAirSupply() || player.canEat(itemstack.get(DataComponents.FOOD).canAlwaysEat())) {
             return ItemUtils.startUsingInstantly(level, player, interactionHand);
         } else {
             return InteractionResultHolder.pass(player.getItemInHand(interactionHand));

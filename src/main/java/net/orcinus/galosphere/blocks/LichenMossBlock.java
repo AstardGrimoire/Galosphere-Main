@@ -24,12 +24,14 @@ public class LichenMossBlock extends Block {
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (!entity.isSteppingCarefully() && !state.getValue(LIT) && !level.isClientSide) {
-            level.setBlock(pos, state.setValue(LIT, true), 2);
-            level.scheduleTick(pos, this, 100);
+    public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
+        if (!entity.isSteppingCarefully()) {
+            if (!blockState.getValue(LIT) && !level.isClientSide) {
+                level.setBlock(blockPos, blockState.setValue(LIT, true), 2);
+                level.scheduleTick(blockPos, this, 100);
+            }
         }
-        super.stepOn(level, pos, state, entity);
+        super.stepOn(level, blockPos, blockState, entity);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class LichenMossBlock extends Block {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel serverLevel, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel serverLevel, BlockPos pos, RandomSource randomSource) {
         boolean flag = serverLevel.getEntitiesOfClass(Entity.class, new AABB(pos.above())).isEmpty();
         boolean flag1 = state.getValue(LIT) && !serverLevel.hasNeighborSignal(pos) && flag;
         if (flag1) {
@@ -59,8 +61,8 @@ public class LichenMossBlock extends Block {
     }
 
     @Override
-    public boolean isRandomlyTicking(BlockState state) {
-        return state.getValue(LIT);
+    public boolean isRandomlyTicking(BlockState blockState) {
+        return blockState.getValue(LIT);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class LichenMossBlock extends Block {
     }
 
     @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
+    public float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
         return 1.0F;
     }
 
@@ -79,4 +81,5 @@ public class LichenMossBlock extends Block {
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         return this.defaultBlockState().setValue(LIT, blockPlaceContext.getLevel().hasNeighborSignal(blockPlaceContext.getClickedPos()));
     }
+
 }

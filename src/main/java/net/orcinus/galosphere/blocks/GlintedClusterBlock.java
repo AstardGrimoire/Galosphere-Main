@@ -41,5 +41,4 @@ public class GlintedClusterBlock extends AmethystClusterBlock {
             world.addParticle(this.particleType.get(), x + direction.getStepX(), y + direction.getStepY(), z + direction.getStepZ(), velX, velY, velZ);
         }
     }
-
 }

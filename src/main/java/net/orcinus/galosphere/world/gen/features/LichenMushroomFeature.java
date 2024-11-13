@@ -21,7 +21,6 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.orcinus.galosphere.init.GBlocks;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class LichenMushroomFeature extends Feature<NoneFeatureConfiguration> {

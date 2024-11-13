@@ -32,9 +32,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
 
     public SpectreFlare(Level level, @Nullable Entity entity, ItemStack itemStack) {
         super(GEntityTypes.SPECTRE_FLARE.get(), level);
-        if (!itemStack.isEmpty() && itemStack.hasTag()) {
-            this.entityData.set(DATA_ID_FIREWORKS_ITEM, itemStack.copy());
-        }
+        this.entityData.set(DATA_ID_FIREWORKS_ITEM, itemStack.copy());
         this.entityData.set(THROWN, true);
         this.setOwner(entity);
     }
@@ -75,7 +73,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
                 serverPlayer.playNotifySound(GSoundEvents.SPECTRE_MANIPULATE_BEGIN.get(), getSoundSource(), 1, 1);
                 this.level().addFreshEntity(spectatorVision);
                 ((SpectreBoundSpyglass)serverPlayer).setUsingSpectreBoundedSpyglass(true);
-                GNetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SendPerspectivePacket(serverPlayer.getUUID(), spectatorVision.getId()));
+                GNetworkHandler.INSTANCE.send(new SendPerspectivePacket(serverPlayer.getUUID(), spectatorVision.getId()), PacketDistributor.PLAYER.with(serverPlayer));
             }
         }
     }

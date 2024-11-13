@@ -17,12 +17,12 @@ import net.orcinus.galosphere.init.GCriteriaTriggers;
 
 public class SpectreBoundSpyglassItem extends Item {
 
-    public SpectreBoundSpyglassItem(Item.Properties properties) {
+    public SpectreBoundSpyglassItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public int getUseDuration(ItemStack itemStack) {
+    public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
         return 1200;
     }
 
@@ -38,7 +38,7 @@ public class SpectreBoundSpyglassItem extends Item {
         } else {
             if (player instanceof ServerPlayer serverPlayer) {
                 if (!level.isClientSide) {
-                    GCriteriaTriggers.USE_SPECTRE_SPYGLASS.trigger(serverPlayer);
+                    GCriteriaTriggers.USE_SPECTRE_SPYGLASS.get().trigger(serverPlayer);
                 }
                 player.awardStat(Stats.ITEM_USED.get(this));
             }

@@ -11,6 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.orcinus.galosphere.init.GMobEffects;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public class CameraEvents {
 
     @SubscribeEvent
     public void renderBlockScreen(RenderBlockScreenEffectEvent event) {
-        if (event.getOverlayType() == RenderBlockScreenEffectEvent.OverlayType.BLOCK && event.getPlayer().hasEffect(GMobEffects.ASTRAL.get())) {
+        if (event.getOverlayType() == RenderBlockScreenEffectEvent.OverlayType.BLOCK && event.getPlayer().hasEffect(ForgeRegistries.MOB_EFFECTS.getHolder(GMobEffects.ASTRAL.get()).orElseThrow())) {
             event.setCanceled(true);
         }
     }
@@ -50,7 +51,7 @@ public class CameraEvents {
     }
 
     private static boolean renderShadowPhase(Entity entity) {
-        return entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(GMobEffects.ASTRAL.get());
+        return entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ForgeRegistries.MOB_EFFECTS.getHolder(GMobEffects.ASTRAL.get()).orElseThrow());
     }
 
 }

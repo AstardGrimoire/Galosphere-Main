@@ -1,9 +1,9 @@
 modLoader="javafml"
 loaderVersion="[39,)"
-license="All rights reserved"
+license="All Rights Reserved"
 [[mods]]
 modId="galosphere"
-version="1.20.1-1.4.1"
+version="1.21-1.4.2"
 displayName="Galosphere"
 logoFile= "galosphere.png"
 authors="Orcinus"
@@ -27,6 +27,6 @@ Contributors:
 [[dependencies.galosphere]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.21)"
+    versionRange="[1.21,1.22)"
     ordering="NONE"
     side="BOTH"

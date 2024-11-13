@@ -3,21 +3,20 @@ package net.orcinus.galosphere.events;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,12 +24,12 @@ import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
@@ -43,7 +42,9 @@ import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -64,6 +65,7 @@ import net.orcinus.galosphere.entities.Specterpillar;
 import net.orcinus.galosphere.entities.Spectre;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GCriteriaTriggers;
+import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GEntityTypeTags;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
@@ -75,7 +77,6 @@ import net.orcinus.galosphere.util.PreservedShulkerBox;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MobEvents {
@@ -92,15 +93,58 @@ public class MobEvents {
 
     @SubscribeEvent
     public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
-        event.register(GEntityTypes.SPARKLE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Sparkle::checkSparkleSpawnRules, SpawnPlacementRegisterEvent.Operation.AND);
-        event.register(GEntityTypes.SPECTRE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, SpawnPlacementRegisterEvent.Operation.AND);
+        event.register(GEntityTypes.SPARKLE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Sparkle::checkSparkleSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(GEntityTypes.SPECTRE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, SpawnPlacementRegisterEvent.Operation.OR);
+    }
+
+    @SubscribeEvent
+    public void getProjectile(LivingGetProjectileEvent event) {
+        LivingEntity entity = event.getEntity();
+        ItemStack weapon = event.getProjectileWeaponItemStack();
+        if (weapon.is(Items.CROSSBOW)) {
+            ItemStack ammo = ProjectileWeaponItem.getHeldProjectile(entity, itemStack -> true);
+            if (!ammo.isEmpty()) {
+                if (ammo.is(GItems.GLOW_FLARE.get()) || ammo.is(GItems.SPECTRE_FLARE.get())) {
+                    event.setProjectileItemStack(ammo);
+                }
+            } else {
+                if (entity instanceof Player player) {
+                    for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                        ItemStack itemstack1 = player.getInventory().getItem(i);
+                        if (itemstack1.is(GItems.GLOW_FLARE.get()) || itemstack1.is(GItems.SPECTRE_FLARE.get())) {
+                            event.setProjectileItemStack(itemstack1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onArrowLoose(ArrowLooseEvent event) {
+        ItemStack itemStack = event.getBow();
+        Player player = event.getEntity();
+        ChargedProjectiles chargedProjectiles = itemStack.get(DataComponents.CHARGED_PROJECTILES);
+
+        if (chargedProjectiles != null) {
+
+            if (!(player instanceof ServerPlayer serverPlayer)) return;
+
+            List<Item> list = chargedProjectiles.getItems().stream().map(ItemStack::getItem).toList();
+
+            if (list.contains(GItems.GLOW_FLARE.get())) {
+                GCriteriaTriggers.LIGHT_SPREAD.get().trigger(serverPlayer);
+            } else if (list.contains(GItems.SPECTRE_FLARE.get())) {
+                GCriteriaTriggers.USE_SPECTRE_FLARE.get().trigger(serverPlayer);
+            }
+        }
+
     }
 
     @SubscribeEvent
     public void onItemTooltip(ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
-        CompoundTag tag = itemStack.getTag();
-        if (tag != null && tag.contains("Preserved")) {
+        if (itemStack.has(GDataComponents.PRESERVED.get())) {
             event.getToolTip().add(Component.translatable("item.galosphere.preserved").withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
@@ -109,22 +153,23 @@ public class MobEvents {
     public void onPlayerClone(PlayerEvent.Clone event) {
         Player player = event.getEntity();
         if (!(player instanceof ServerPlayer serverPlayer)) return;
-        Predicate<CompoundTag> predicate = compoundTag -> compoundTag != null && compoundTag.contains("Preserved");
-        event.getOriginal().getInventory().items.stream().filter(itemStack -> predicate.test(itemStack.getTag())).forEach(serverPlayer.getInventory()::add);
+        event.getOriginal().getInventory().items.stream().filter(itemStack -> itemStack.has(GDataComponents.PRESERVED.get())).forEach(serverPlayer.getInventory()::add);
     }
 
     @SubscribeEvent
     public void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
         Entity entity = event.getEntity();
+
+        if (entity == null) return;
+
         BlockEntity blockEntity = entity.level().getBlockEntity(event.getPos());
         if (entity instanceof Player player) {
-            CompoundTag tag = player.getMainHandItem().getTag();
-            if (tag != null && tag.contains("Preserved") && blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlock) {
-                ((PreservedShulkerBox) shulkerBoxBlock).setPreserved(true);
-            }
-            if (player.hasEffect(GMobEffects.BLOCK_BANE.get()) && !player.getAbilities().instabuild) {
+            if (player.hasEffect(GMobEffects.BLOCK_BANE.getHolder().get()) && !player.getAbilities().instabuild) {
                 player.hurt(player.level().damageSources().magic(), 3.0F);
                 player.getCooldowns().addCooldown(player.getItemInHand(player.getUsedItemHand()).getItem(), 100);
+            }
+            if (blockEntity instanceof ShulkerBoxBlockEntity && player.getMainHandItem().has(GDataComponents.PRESERVED.get())) {
+                ((PreservedShulkerBox)blockEntity).setPreserved(true);
             }
         }
     }
@@ -138,11 +183,11 @@ public class MobEvents {
         BlockState state = event.getState();
         if (blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity && ((PreservedShulkerBox)shulkerBoxBlockEntity).isPreserved()) {
             ItemStack stack = new ItemStack(ShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) state.getBlock()).getColor()));
-            shulkerBoxBlockEntity.saveToItem(stack);
+            shulkerBoxBlockEntity.saveToItem(stack, world.registryAccess());
             if (shulkerBoxBlockEntity.hasCustomName()) {
-                stack.setHoverName(shulkerBoxBlockEntity.getCustomName());
+                stack.set(DataComponents.CUSTOM_NAME, shulkerBoxBlockEntity.getCustomName());
             }
-            stack.getOrCreateTag().putBoolean("Preserved", true);
+            stack.set(GDataComponents.PRESERVED.get(), true);
             ItemEntity itementity = new ItemEntity(player.level(), (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, stack);
             itementity.setDefaultPickUpDelay();
             world.addFreshEntity(itementity);
@@ -175,7 +220,7 @@ public class MobEvents {
     public void onLivingDeath(LivingDeathEvent event) {
         LivingEntity livingEntity = event.getEntity();
         if (livingEntity instanceof Horse horse && horse instanceof BannerAttachable bannerAttachable) {
-            if (!bannerAttachable.getBanner().isEmpty() && horse.getArmor().is(GItems.STERLING_HORSE_ARMOR.get())) {
+            if (!bannerAttachable.getBanner().isEmpty() && horse.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR.get())) {
                 ItemStack copy = bannerAttachable.getBanner();
                 horse.spawnAtLocation(copy);
                 bannerAttachable.setBanner(ItemStack.EMPTY);
@@ -188,15 +233,15 @@ public class MobEvents {
         LivingEntity entity = event.getEntity();
         DamageSource source = event.getSource();
         float originalAmount = event.getAmount();
-        boolean flag = source.getEntity() instanceof Mob mob && (mob.getMobType() == MobType.ILLAGER || mob.getType().is(GEntityTypeTags.STERLING_IMMUNE_ENTITY_TYPES));
+        boolean flag = source.getEntity() instanceof Mob mob && (mob.getType().is(EntityTypeTags.ILLAGER) || mob.getType().is(GEntityTypeTags.STERLING_IMMUNE_ENTITY_TYPES));
         if (flag) {
-            if (entity instanceof Horse horse && horse.getArmor().is(GItems.STERLING_HORSE_ARMOR.get())) {
+            if (entity instanceof Horse horse && horse.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR.get())) {
                 event.setAmount(originalAmount - 4.0F);
             }
             float illagerReduction = 0.0F;
             for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                if (entity.getItemBySlot(equipmentSlot).getItem() instanceof SterlingArmorItem sterlingArmorItem && equipmentSlot.getType() == EquipmentSlot.Type.ARMOR) {
-                    illagerReduction+=sterlingArmorItem.getInsurgentResistance(equipmentSlot);
+                if (entity.getItemBySlot(equipmentSlot).getItem() instanceof SterlingArmorItem sterlingArmorItem && equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                    illagerReduction+=sterlingArmorItem.getIllagerResistance(equipmentSlot);
                 }
             }
             if (illagerReduction > 0) {
@@ -214,7 +259,7 @@ public class MobEvents {
         Entity target = event.getTarget();
         BannerRendererUtil util = new BannerRendererUtil();
         if (target instanceof Horse horse) {
-            if (horse.getArmor().is(GItems.STERLING_HORSE_ARMOR.get())) {
+            if (horse.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR.get())) {
                 if (((BannerAttachable) horse).getBanner().isEmpty()) {
                     if (util.isTapestryStack(stack) || stack.getItem() instanceof BannerItem) {
                         if (!horse.level().isClientSide()) {
@@ -253,7 +298,7 @@ public class MobEvents {
         if (entity instanceof BannerAttachable bannerEntity) {
             if (!bannerEntity.getBanner().isEmpty()) {
                 if (entity instanceof Horse horse) {
-                    if (!((BannerAttachable)horse).getBanner().isEmpty() && !horse.getArmor().is(GItems.STERLING_HORSE_ARMOR.get())) {
+                    if (!((BannerAttachable)horse).getBanner().isEmpty() && !horse.getBodyArmorItem().is(GItems.STERLING_HORSE_ARMOR.get())) {
                         ItemStack copy = ((BannerAttachable) horse).getBanner();
                         horse.spawnAtLocation(copy);
                         ((BannerAttachable) horse).setBanner(ItemStack.EMPTY);
@@ -272,9 +317,9 @@ public class MobEvents {
                 goldenBreath.setGoldenAirSupply(goldenBreath.decreaseGoldenAirSupply(entity, (int) goldenBreath.getGoldenAirSupply()));
             }
         }
-        if (SpectreBoundSpyglass.canUseSpectreBoundedSpyglass(useItem) && useItem.getTag() != null) {
+        if (SpectreBoundSpyglass.canUseSpectreBoundedSpyglass(useItem)) {
             if (!entity.level().isClientSide) {
-                Entity spectreBound = ((ServerLevel)entity.level()).getEntity(useItem.getTag().getUUID("SpectreBoundUUID"));
+                Entity spectreBound = ((ServerLevel)entity.level()).getEntity(useItem.get(GDataComponents.SPECTRE_BOUND.get()).uuid());
                 Optional.ofNullable(spectreBound).filter(Spectre.class::isInstance).map(Spectre.class::cast).filter(Spectre::isAlive).ifPresent(spectre -> {
                     if (entity instanceof Player player && spectre.getManipulatorUUID() != player.getUUID()) {
                         boolean withinDistance = Math.sqrt(Math.pow((player.getX() - spectre.getX()), 2) + Math.pow((player.getZ() - spectre.getZ()), 2)) < 110;
@@ -310,7 +355,7 @@ public class MobEvents {
             poses.sort(Comparator.comparingDouble(pearlPos::distSqr));
             for (BlockPos blockPos : poses) {
                 event.setCanceled(true);
-                GCriteriaTriggers.WARPED_TELEPORT.trigger(player);
+                GCriteriaTriggers.WARPED_TELEPORT.get().trigger(player);
                 pearl.level().gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
                 pearl.level().playSound(null, blockPos, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0F, 1.0F);
                 player.teleportTo(blockPos.getX() + 0.5D, blockPos.getY() + 0.5D, blockPos.getZ() + 0.5D);

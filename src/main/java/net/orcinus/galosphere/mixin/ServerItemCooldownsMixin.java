@@ -22,7 +22,7 @@ public class ServerItemCooldownsMixin {
     @Inject(at = @At("TAIL"), method = "onCooldownEnded")
     private void G$removeCooldown(Item item, CallbackInfo ci) {
         if (item.equals(GItems.SALTBOUND_TABLET.get())) {
-            GNetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> this.player), new PlayCooldownSoundPacket());
+            GNetworkHandler.INSTANCE.send(new PlayCooldownSoundPacket(), PacketDistributor.PLAYER.with(this.player));
         }
     }
 

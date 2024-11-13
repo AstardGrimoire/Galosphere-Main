@@ -1,7 +1,7 @@
 package net.orcinus.galosphere.crafting;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -13,8 +13,8 @@ public class WarpedAnchorDispenseItemBehavior extends OptionalDispenseItemBehavi
 
     @Override
     protected ItemStack execute(BlockSource source, ItemStack stack) {
-        BlockPos blockpos = source.getPos().above();
-        Level world = source.getLevel();
+        BlockPos blockpos = source.pos().above();
+        Level world = source.level();
         BlockState state = world.getBlockState(blockpos);
         WarpedAnchorBlock block = (WarpedAnchorBlock) GBlocks.WARPED_ANCHOR.get();
         this.setSuccess(true);
@@ -31,4 +31,5 @@ public class WarpedAnchorDispenseItemBehavior extends OptionalDispenseItemBehavi
             return super.execute(source, stack);
         }
     }
+
 }

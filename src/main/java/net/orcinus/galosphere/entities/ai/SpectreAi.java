@@ -49,7 +49,7 @@ public class SpectreAi {
 
     private static void initIdleActivity(Brain<Spectre> brain) {
         brain.addActivity(Activity.IDLE, ImmutableList.of(
-                Pair.of(0, new AnimalMakeLove(GEntityTypes.SPECTRE.get(), 1.0F)),
+                Pair.of(0, new AnimalMakeLove(GEntityTypes.SPECTRE.get(), 1.0F, 2)),
                 Pair.of(1, new FollowTemptation(livingEntity -> 1.25F)),
                 Pair.of(2, new RunOne<>(
                         ImmutableList.of(

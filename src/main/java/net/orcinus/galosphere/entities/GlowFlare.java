@@ -27,6 +27,7 @@ public class GlowFlare extends ThrowableLaunchedProjectile {
 
     public GlowFlare(Level world, ItemStack stack, Entity entity, double x, double y, double z, boolean shotAtAngle) {
         super(world, stack, entity, x, y, z, shotAtAngle);
+        this.setOwner(entity);
     }
 
     public GlowFlare(Level world, double x, double y, double z) {
@@ -37,9 +38,7 @@ public class GlowFlare extends ThrowableLaunchedProjectile {
 
     public GlowFlare(Level level, @Nullable Entity entity, ItemStack itemStack) {
         super(GEntityTypes.GLOW_FLARE.get(), level);
-        if (!itemStack.isEmpty() && itemStack.hasTag()) {
-            this.entityData.set(DATA_ID_FIREWORKS_ITEM, itemStack.copy());
-        }
+        this.entityData.set(this.DATA_ID_FIREWORKS_ITEM, itemStack.copy());
         this.entityData.set(THROWN, true);
         this.setOwner(entity);
     }
@@ -71,5 +70,4 @@ public class GlowFlare extends ThrowableLaunchedProjectile {
             this.discard();
         }
     }
-
 }

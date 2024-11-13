@@ -12,7 +12,7 @@ public class ForgeBlockTags {
     public static final TagKey<Block> STORAGE_BLOCKS_RAW_SILVER = bind("storage_blocks/raw_silver");
 
     private static TagKey<Block> bind(String path) {
-        return TagKey.create(Registries.BLOCK, new ResourceLocation("forge", path));
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("forge", path));
     }
 
 }

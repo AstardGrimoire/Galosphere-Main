@@ -11,7 +11,6 @@ import net.orcinus.galosphere.effects.GMobEffect;
 
 @Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GMobEffects {
-
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, Galosphere.MODID);
 
     public static final RegistryObject<MobEffect> ASTRAL = MOB_EFFECTS.register("astral", () -> new GMobEffect(MobEffectCategory.BENEFICIAL, 12891319));

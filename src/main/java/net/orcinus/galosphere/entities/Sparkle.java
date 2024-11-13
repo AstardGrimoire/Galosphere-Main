@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -38,6 +40,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -47,7 +50,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.orcinus.galosphere.entities.ai.SparkleAi;
 import net.orcinus.galosphere.init.GBlockTags;
@@ -77,8 +80,8 @@ public class Sparkle extends Animal {
 
     public Sparkle(EntityType<? extends Sparkle> type, Level world) {
         super(type, world);
-        this.setPathfindingMalus(BlockPathTypes.WATER, 4.0F);
-        this.setPathfindingMalus(BlockPathTypes.TRAPDOOR, -1.0F);
+        this.setPathfindingMalus(PathType.WATER, 4.0F);
+        this.setPathfindingMalus(PathType.TRAPDOOR, -1.0F);
         this.moveControl = new SmoothSwimmingMoveControl(this, 85, 10, 0.02F, 0.1F, true);
     }
 
@@ -118,7 +121,7 @@ public class Sparkle extends Animal {
     }
 
     @Override
-    public float getStepHeight() {
+    public float maxUpStep() {
         return 1.0F;
     }
 
@@ -134,11 +137,6 @@ public class Sparkle extends Animal {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
-    @Override
     public boolean isPushedByFluid() {
         return false;
     }
@@ -148,9 +146,9 @@ public class Sparkle extends Animal {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CRYSTAL_TYPE, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CRYSTAL_TYPE, 0);
     }
 
     public static boolean checkSparkleSpawnRules(EntityType<? extends LivingEntity> sparkle, LevelAccessor world, MobSpawnType reason, BlockPos pos, RandomSource random) {
@@ -158,10 +156,10 @@ public class Sparkle extends Animal {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData data, @Nullable CompoundTag tag) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData data) {
         CrystalType type = this.getRandomType();
         this.setCrystalType(type);
-        return super.finalizeSpawn(world, difficulty, spawnReason, data, tag);
+        return super.finalizeSpawn(world, difficulty, spawnReason, data);
     }
 
     @Override
@@ -237,9 +235,7 @@ public class Sparkle extends Animal {
         ItemStack stack = player.getItemInHand(hand);
         if (this.getCrystaltype() != CrystalType.NONE && stack.getItem() instanceof PickaxeItem && !this.isBaby()) {
             this.extractShard(stack);
-            stack.hurtAndBreak(1, player, (entity) -> {
-                entity.broadcastBreakEvent(hand);
-            });
+            stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             this.gameEvent(GameEvent.SHEAR, player);
             return InteractionResult.SUCCESS;
         }
@@ -261,8 +257,11 @@ public class Sparkle extends Animal {
     }
 
     private void spawnShard(ItemStack stack) {
-        Item item = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.SILK_TOUCH, stack) > 0 ? this.getCrystaltype().getSilktouchItem() : this.getCrystaltype().getItem();
-        int rolls = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack) > 0 ? 1 + EnchantmentHelper.getTagEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack) : 1;
+        HolderLookup.RegistryLookup<Enchantment> lookup = this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        Item item = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.SILK_TOUCH), stack) > 0 ? this.getCrystaltype().getSilktouchItem() : this.getCrystaltype().getItem();
+        int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.FORTUNE), stack);
+        int rolls = fortuneLevel > 0 ? Mth.nextInt(random, 0, 2) * fortuneLevel : 1;
+
         for (int i = 0; i < rolls; i++) {
             this.spawnAtLocation(item);
         }
@@ -310,10 +309,9 @@ public class Sparkle extends Animal {
         }
 
         @Override
-        public boolean canCutCorner(BlockPathTypes blockPathTypes) {
-            return blockPathTypes != BlockPathTypes.WATER_BORDER && super.canCutCorner(blockPathTypes);
+        public boolean canCutCorner(PathType pathType) {
+            return pathType != PathType.WATER_BORDER && super.canCutCorner(pathType);
         }
-
     }
 
 }

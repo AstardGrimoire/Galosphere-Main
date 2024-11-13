@@ -10,7 +10,10 @@ import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.init.GBiomeModifiers;
 import net.orcinus.galosphere.init.GBiomes;
 import net.orcinus.galosphere.init.GConfiguredFeatures;
+import net.orcinus.galosphere.init.GEnchantments;
 import net.orcinus.galosphere.init.GPlacedFeatures;
+import net.orcinus.galosphere.init.GStructures;
+import net.orcinus.galosphere.init.GTemplatePools;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +23,10 @@ public class GDatapackBuiltinEntriesProvider extends DatapackBuiltinEntriesProvi
             .add(Registries.CONFIGURED_FEATURE, GConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, GPlacedFeatures::bootstrap)
             .add(Registries.BIOME, GBiomes::bootstrap)
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, GBiomeModifiers::bootstrap);
+            .add(Registries.TEMPLATE_POOL, GTemplatePools::bootstrap)
+            .add(Registries.STRUCTURE, GStructures::bootstrap)
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, GBiomeModifiers::bootstrap)
+            .add(Registries.ENCHANTMENT, GEnchantments::bootstrap);
 
     public GDatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(Galosphere.MODID));

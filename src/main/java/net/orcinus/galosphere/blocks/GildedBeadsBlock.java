@@ -1,5 +1,6 @@
 package net.orcinus.galosphere.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -27,6 +28,7 @@ import net.orcinus.galosphere.blocks.blockentities.GildedBeadsBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class GildedBeadsBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
+    public static final MapCodec<GildedBeadsBlock> CODEC = GildedBeadsBlock.simpleCodec(GildedBeadsBlock::new);
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty BOTTOM = BlockStateProperties.BOTTOM;
@@ -35,6 +37,11 @@ public class GildedBeadsBlock extends BaseEntityBlock implements SimpleWaterlogg
     public GildedBeadsBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(BOTTOM, true).setValue(ROTATION, 0).setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

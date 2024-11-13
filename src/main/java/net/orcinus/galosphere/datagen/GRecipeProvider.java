@@ -1,24 +1,27 @@
 package net.orcinus.galosphere.datagen;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.BlastingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
@@ -31,19 +34,19 @@ import net.orcinus.galosphere.init.GItems;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public class GRecipeProvider extends RecipeProvider {
     private static final ImmutableList<ItemLike> SILVER_SMELTABLES = ImmutableList.of(GBlocks.SILVER_ORE.get().asItem(), GBlocks.DEEPSLATE_SILVER_ORE.get().asItem(), GItems.RAW_SILVER.get());
 
-    public GRecipeProvider(PackOutput packoutput) {
-        super(packoutput);
+    public GRecipeProvider(PackOutput packoutput, CompletableFuture<HolderLookup.Provider> completableFuture) {
+        super(packoutput, completableFuture);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(RecipeOutput consumer) {
         GBlockFamilies.getAllFamilies().forEach((blockFamily) -> {
-            generateRecipes(consumer, blockFamily);
+            generateRecipes(consumer, blockFamily, FeatureFlags.VANILLA_SET);
         });
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, GBlocks.SILVER_BALANCE.get()).pattern("#R#").pattern(" # ").pattern(" # ").define('#', GItems.SILVER_INGOT.get()).define('R', Items.REDSTONE).unlockedBy("has_silver_ingot", has(GItems.SILVER_INGOT.get())).save(consumer);
         SmithingTransformRecipeBuilder.smithing(Ingredient.of(GItems.PRESERVED_TEMPLATE.get()), Ingredient.of(GItems.PRESERVED_FLESH.get()), Ingredient.of(GItems.PINK_SALT_SHARD.get()), RecipeCategory.MISC, GItems.SALTBOUND_TABLET.get()).unlocks("has_preserved_template", has(GItems.PRESERVED_TEMPLATE.get())).save(consumer, Galosphere.id(getItemName(GItems.SALTBOUND_TABLET.get()) + "_smithing"));
@@ -69,13 +72,13 @@ public class GRecipeProvider extends RecipeProvider {
                 .pattern(" # ")
                 .unlockedBy("has_cured_membrane_block", has(GBlocks.CURED_MEMBRANE_BLOCK.get())).save(consumer);
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, GBlocks.SHADOW_FRAME.get(), 8)
-                .define('S', GItems.SILVER_INGOT.get())
+                .define('S', ForgeItemTags.SILVER_INGOT)
                 .define('#', GItems.CURED_MEMBRANE.get())
                 .pattern("S#S")
                 .pattern("#S#")
                 .pattern("S#S")
                 .unlockedBy("has_cured_membrane", has(GItems.CURED_MEMBRANE.get())).save(consumer);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, GBlocks.PINK_SALT_LAMP.get()).define('#', GBlocks.PINK_SALT_CLUSTER.get()).define('S', GItems.SILVER_INGOT.get()).pattern("#").pattern("S").unlockedBy("has_pink_salt_cluster", has(GBlocks.PINK_SALT_CLUSTER.get())).save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, GBlocks.PINK_SALT_LAMP.get()).define('#', GBlocks.PINK_SALT_CLUSTER.get()).define('S', ForgeItemTags.SILVER_INGOT).pattern("#").pattern("S").unlockedBy("has_pink_salt_cluster", has(GBlocks.PINK_SALT_CLUSTER.get())).save(consumer);
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, GItems.SALTED_JERKY.get()).define('S', GItems.PINK_SALT_SHARD.get()).define('#', Items.ROTTEN_FLESH).pattern(" S ").pattern("S#S").pattern(" S ").unlockedBy("has_pink_salt_shard", has(GItems.PINK_SALT_SHARD.get())).save(consumer);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GItems.CURED_MEMBRANE.get()).define('S', GItems.PINK_SALT_SHARD.get()).define('#', Items.PHANTOM_MEMBRANE).pattern(" S ").pattern("S#S").pattern(" S ").unlockedBy("has_pink_salt_shard", has(GItems.PINK_SALT_SHARD.get())).save(consumer);
         twoXtwo(consumer, GBlocks.CURED_MEMBRANE_BLOCK.get(), GItems.CURED_MEMBRANE.get());
@@ -139,7 +142,7 @@ public class GRecipeProvider extends RecipeProvider {
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GItems.BAROMETER.get())
-                .define('#', GItems.SILVER_INGOT.get())
+                .define('#', ForgeItemTags.SILVER_INGOT)
                 .define('@', Items.REDSTONE)
                 .pattern(" # ")
                 .pattern("#@#")
@@ -148,7 +151,7 @@ public class GRecipeProvider extends RecipeProvider {
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GBlocks.SILVER_LATTICE.get(), 16)
-                .define('#', GItems.SILVER_INGOT.get())
+                .define('#', ForgeItemTags.SILVER_INGOT)
                 .pattern("###")
                 .pattern("###")
                 .unlockedBy("has_silver_ingot", has(GItems.SILVER_INGOT.get()))
@@ -419,20 +422,20 @@ public class GRecipeProvider extends RecipeProvider {
 
     }
 
-    protected static void nineBlockStorageRecipesWithCustomPacking(Consumer<FinishedRecipe> p_176563_, ItemLike p_176564_, ItemLike p_176565_, String p_176566_, String p_176567_) {
+    protected static void nineBlockStorageRecipesWithCustomPacking(RecipeOutput p_176563_, ItemLike p_176564_, ItemLike p_176565_, String p_176566_, String p_176567_) {
         nineBlockStorageRecipes(p_176563_, p_176564_, p_176565_, p_176566_, p_176567_, getItemName(p_176564_), null);
     }
 
-    protected static void nineBlockStorageRecipes(Consumer<FinishedRecipe> consumer, ItemLike p_176570_, ItemLike p_176571_, String p_176572_, @Nullable String p_176573_, String name, @Nullable String p_176575_) {
+    protected static void nineBlockStorageRecipes(RecipeOutput consumer, ItemLike p_176570_, ItemLike p_176571_, String p_176572_, @Nullable String p_176573_, String name, @Nullable String p_176575_) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, p_176570_, 9).requires(p_176571_).group(p_176575_).unlockedBy(getHasName(p_176571_), has(p_176571_)).save(consumer, Galosphere.id(name));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, p_176571_).define('#', p_176570_).pattern("###").pattern("###").pattern("###").group(p_176573_).unlockedBy(getHasName(p_176570_), has(p_176570_)).save(consumer, Galosphere.id(p_176572_));
     }
 
-    protected static void stonecutterResultFromBase(Consumer<FinishedRecipe> consumer, ItemLike result, ItemLike ingredient) {
+    protected static void stonecutterResultFromBase(RecipeOutput consumer, ItemLike result, ItemLike ingredient) {
         stonecutterResultFromBase(consumer, result, ingredient, 1);
     }
 
-    protected static void stonecutterResultFromBase(Consumer<FinishedRecipe> consumer, ItemLike result, ItemLike ingredient, int count) {
+    protected static void stonecutterResultFromBase(RecipeOutput consumer, ItemLike result, ItemLike ingredient, int count) {
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(ingredient), RecipeCategory.BUILDING_BLOCKS, result, count).unlockedBy(getHasName(ingredient), has(ingredient)).save(consumer, Galosphere.id(getConversionRecipeName(result, ingredient) + "_stonecutting"));
     }
 
@@ -440,7 +443,7 @@ public class GRecipeProvider extends RecipeProvider {
         return getItemName(result) + "_from_" + getItemName(ingredient);
     }
 
-    private void chiseled(Consumer<FinishedRecipe> consumer, Item slab, Item result) {
+    private void chiseled(RecipeOutput consumer, Item slab, Item result) {
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result, 1)
                 .define('#', slab)
                 .pattern("#")
@@ -449,18 +452,18 @@ public class GRecipeProvider extends RecipeProvider {
                 .save(consumer);
     }
 
-    private void shaplessOne(Consumer<FinishedRecipe> consumer, Item result, Item item, int count) {
+    private void shaplessOne(RecipeOutput consumer, Item result, Item item, int count) {
         ShapelessRecipeBuilder.
                 shapeless(RecipeCategory.MISC, result, count)
                 .requires(item)
                 .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(item).getPath(), has(item)).save(consumer);
     }
 
-    private void twoXtwo(Consumer<FinishedRecipe> consumer, ItemLike result, ItemLike item) {
+    private void twoXtwo(RecipeOutput consumer, ItemLike result, ItemLike item) {
         twoXtwo(consumer, result, item.asItem(), 4);
     }
 
-    private void twoXtwo(Consumer<FinishedRecipe> consumer, ItemLike result, Item item, int count) {
+    private void twoXtwo(RecipeOutput consumer, ItemLike result, Item item, int count) {
         ShapedRecipeBuilder.
                 shaped(RecipeCategory.BUILDING_BLOCKS, result, count)
                 .define('S', item)
@@ -469,7 +472,7 @@ public class GRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(item).getPath(), has(item)).save(consumer);
     }
 
-    private void threeXthree(Consumer<FinishedRecipe> consumer, ItemLike result, Item item) {
+    private void threeXthree(RecipeOutput consumer, ItemLike result, Item item) {
         ShapedRecipeBuilder.
                 shaped(RecipeCategory.MISC, result)
                 .define('S', item)
@@ -479,7 +482,7 @@ public class GRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(item).getPath(), has(item)).save(consumer);
     }
 
-    private void stairsBlock(Consumer<FinishedRecipe> consumer, ItemLike result, Item item) {
+    private void stairsBlock(RecipeOutput consumer, ItemLike result, Item item) {
         ShapedRecipeBuilder.
                 shaped(RecipeCategory.BUILDING_BLOCKS, result, 4)
                 .define('#', item)
@@ -489,7 +492,7 @@ public class GRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(item).getPath(), has(item)).save(consumer);
     }
 
-    private void slabBlock(Consumer<FinishedRecipe> consumer, ItemLike result, Item item) {
+    private void slabBlock(RecipeOutput consumer, ItemLike result, Item item) {
         ShapedRecipeBuilder.
                 shaped(RecipeCategory.BUILDING_BLOCKS, result, 6)
                 .define('#', item)
@@ -497,21 +500,31 @@ public class GRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(item).getPath(), has(item)).save(consumer);
     }
 
-    protected static void oreSmelting(Consumer<FinishedRecipe> consumer, List<ItemLike> items, ItemLike p_176594_, float p_176595_, int p_176596_, String p_176597_) {
-        oreCooking(consumer, RecipeSerializer.SMELTING_RECIPE, items, p_176594_, p_176595_, p_176596_, p_176597_, "_from_smelting");
+    protected static void oreSmelting(RecipeOutput consumer, List<ItemLike> items, ItemLike p_176594_, float p_176595_, int p_176596_, String p_176597_) {
+        oreCooking(consumer, RecipeSerializer.SMELTING_RECIPE, SmeltingRecipe::new, items, p_176594_, p_176595_, p_176596_, p_176597_, "_from_smelting");
     }
 
-    protected static void oreBlasting(Consumer<FinishedRecipe> consumer, List<ItemLike> items, ItemLike p_176628_, float p_176629_, int p_176630_, String p_176631_) {
-        oreCooking(consumer, RecipeSerializer.BLASTING_RECIPE, items, p_176628_, p_176629_, p_176630_, p_176631_, "_from_blasting");
+    protected static void oreBlasting(RecipeOutput consumer, List<ItemLike> items, ItemLike p_176628_, float p_176629_, int p_176630_, String p_176631_) {
+        oreCooking(consumer, RecipeSerializer.BLASTING_RECIPE, BlastingRecipe::new, items, p_176628_, p_176629_, p_176630_, p_176631_, "_from_blasting");
     }
 
-    protected static void oreCooking(Consumer<FinishedRecipe> consumer, RecipeSerializer<? extends AbstractCookingRecipe> serializer, List<ItemLike> itemLike, ItemLike item, float experience, int time, String group, String name) {
+    protected static <T extends AbstractCookingRecipe> void oreCooking(
+            RecipeOutput consumer,
+            RecipeSerializer<T> serializer,
+            AbstractCookingRecipe.Factory<T> factory,
+            List<ItemLike> itemLike,
+            ItemLike item,
+            float experience,
+            int time,
+            String group,
+            String name
+    ) {
         for (ItemLike itemlike : itemLike) {
-            SimpleCookingRecipeBuilder.generic(Ingredient.of(itemlike), RecipeCategory.MISC, item, experience, time, serializer).group(group).unlockedBy(getHasName(itemlike), has(itemlike)).save(consumer, Galosphere.id(getItemName(item) + name + "_" + getItemName(itemlike)));
+            SimpleCookingRecipeBuilder.generic(Ingredient.of(itemlike), RecipeCategory.MISC, item, experience, time, serializer, factory).group(group).unlockedBy(getHasName(itemlike), has(itemlike)).save(consumer, Galosphere.id(getItemName(item) + name + "_" + getItemName(itemlike)));
         }
     }
 
-    private static void smithing(Consumer<FinishedRecipe> consumer, Item armorItem, Item result, TagKey<Item> ingotItem) {
+    private static void smithing(RecipeOutput consumer, Item armorItem, Item result, TagKey<Item> ingotItem) {
         SmithingTransformRecipeBuilder.smithing(Ingredient.of(GItems.SILVER_UPGRADE_SMITHING_TEMPLATE.get()), Ingredient.of(armorItem), Ingredient.of(ingotItem), RecipeCategory.COMBAT, result).unlocks("has_silver_ingot", has(Items.NETHERITE_INGOT)).save(consumer, Galosphere.id(getItemName(result) + "_smithing"));
     }
 

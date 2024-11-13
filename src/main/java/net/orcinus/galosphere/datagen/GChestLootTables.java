@@ -1,9 +1,11 @@
 package net.orcinus.galosphere.datagen;
 
-import net.minecraft.data.loot.packs.VanillaChestLoot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -13,15 +15,15 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GBuiltinLootTables;
-import net.orcinus.galosphere.init.GEnchantments;
-import net.orcinus.galosphere.init.GItems;
+import net.orcinus.galosphere.init.GEnchantmentTags;
 
 import java.util.function.BiConsumer;
 
-public class GChestLootTables extends VanillaChestLoot {
+public record GChestLootTables(HolderLookup.Provider registries) implements LootTableSubProvider {
 
     @Override
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> biConsumer) {
+    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> biConsumer) {
+        HolderLookup.RegistryLookup<Enchantment> enchantment = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
         biConsumer.accept(GBuiltinLootTables.PINK_SALT_SHRINE_CHEST, LootTable.lootTable()
                 .withPool(LootPool.lootPool().setRolls(UniformGenerator.between(5.0F, 10.0F))
                         .add(LootItem.lootTableItem(GBlocks.PINK_SALT_CHAMBER.get().asItem())
@@ -44,7 +46,9 @@ public class GChestLootTables extends VanillaChestLoot {
                         .add(LootItem.lootTableItem(Items.BOOK)
                                 .setWeight(1)
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1.0F)))
-                                .apply(new EnchantRandomlyFunction.Builder().withEnchantment(GEnchantments.SUSTAIN.get()).withEnchantment(GEnchantments.ENFEEBLE.get()).withEnchantment(GEnchantments.RUPTURE.get()).withEnchantment(Enchantments.UNBREAKING)))
+                                .apply(EnchantRandomlyFunction.randomEnchantment()
+                                        .withOneOf(enchantment.getOrThrow(GEnchantmentTags.PINK_SALT_SHRINE_LOOT))
+                                ))
                 )
         );
         biConsumer.accept(GBuiltinLootTables.PINK_SALT_SHRINE_LIBRARY_CHEST, LootTable.lootTable()
@@ -57,7 +61,9 @@ public class GChestLootTables extends VanillaChestLoot {
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F)))
                         ).add(LootItem.lootTableItem(Items.BOOK)
                                 .setWeight(1)
-                                .apply(new EnchantRandomlyFunction.Builder().withEnchantment(GEnchantments.SUSTAIN.get()).withEnchantment(GEnchantments.ENFEEBLE.get()).withEnchantment(GEnchantments.RUPTURE.get()).withEnchantment(Enchantments.UNBREAKING)))
+                                .apply(new EnchantRandomlyFunction.Builder()
+                                        .withOneOf(enchantment.getOrThrow(GEnchantmentTags.PINK_SALT_SHRINE_LOOT))
+                                ))
                 ));
     }
 

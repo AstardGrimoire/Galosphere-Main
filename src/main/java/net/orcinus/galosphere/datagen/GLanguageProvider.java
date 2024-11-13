@@ -1,6 +1,8 @@
 package net.orcinus.galosphere.datagen;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -13,7 +15,6 @@ import net.orcinus.galosphere.init.GEnchantments;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMobEffects;
-import net.orcinus.galosphere.items.SilverSmithingTemplateItem;
 
 import java.util.function.Predicate;
 
@@ -25,13 +26,14 @@ public class GLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        GBiomes.BIOMES.stream().map(ResourceKey::location).map(ResourceLocation::getPath).forEach(s -> {
+            this.add("biome.galosphere." + s, reformat(s));
+        });
         GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
             this.add(block, reformat(ForgeRegistries.BLOCKS.getKey(block).getPath()));
         });
-        GItems.ITEMS.getEntries().stream().map(RegistryObject::get).filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).filter(Predicate.not(SilverSmithingTemplateItem.class::isInstance).and(Predicate.not(GItems.PRESERVED_TEMPLATE.get()::equals))).forEach(item -> {
-            if (item != GItems.PRESERVED_TEMPLATE.get() || item != GItems.SILVER_UPGRADE_SMITHING_TEMPLATE.get()) {
-                this.add(item, reformat(ForgeRegistries.ITEMS.getKey(item).getPath()));
-            }
+        GItems.ITEMS.getEntries().stream().map(RegistryObject::get).filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).forEach(item -> {
+            this.add(item, reformat(ForgeRegistries.ITEMS.getKey(item).getPath()));
         });
         GEntityTypes.ENTITY_TYPES.getEntries().stream().map(RegistryObject::get).forEach(entityType -> {
             this.add(entityType, reformat(ForgeRegistries.ENTITY_TYPES.getKey(entityType).getPath()));
@@ -39,9 +41,10 @@ public class GLanguageProvider extends LanguageProvider {
         GMobEffects.MOB_EFFECTS.getEntries().stream().map(RegistryObject::get).forEach(mobEffect -> {
             this.add(mobEffect, reformat(ForgeRegistries.MOB_EFFECTS.getKey(mobEffect).getPath()));
         });
-        GEnchantments.ENCHANTMENTS.getEntries().stream().map(RegistryObject::get).forEach(enchantment -> {
-            this.add(enchantment, reformat(ForgeRegistries.ENCHANTMENTS.getKey(enchantment).getPath()));
+        GEnchantments.ENCHANTMENTS.keySet().forEach(resourceLocation -> {
+            this.add("enchantment.galosphere." + resourceLocation.getPath(), reformat(resourceLocation.getPath()));
         });
+        this.add("item.minecraft.tipped_arrow.effect.astral", "Arrow of Astral");
         this.add("item.galosphere.preserved", "Preserved");
         this.add("item.galosphere.silver_bomb.duration", "Duration");
         this.add("item.galosphere.silver_bomb.explosion", "Explosion");
@@ -77,9 +80,6 @@ public class GLanguageProvider extends LanguageProvider {
         this.add("subtitles.item.saltbound_tablet.prepare_attack", "Saltbound Tablet charges up");
         this.add("subtitles.item.saltbound_tablet.cast_attack", "Saltbound Tablet fires");
         this.add("subtitles.item.saltbound_tablet.cooldown_over", "Saltbound Tablet recharged");
-        GBiomes.getIds().forEach(resourceLocation -> {
-            this.add("biome.galosphere." + resourceLocation.getPath(), reformat(resourceLocation.getPath()));
-        });
         this.add("galosphere.midnightconfig.title", "Galosphere Config");
         this.add("galosphere.midnightconfig.slowBuddingAmethystDestroySpeed", "Slowed Budding Amethyst Destroy Speed");
         this.add("galosphere.midnightconfig.pillagerDropSilverIngot", "Pillager Drop Silver Ingots");
@@ -99,7 +99,7 @@ public class GLanguageProvider extends LanguageProvider {
         this.add("advancements.galosphere.use_spectre_spyglass.description", "Spectate a Spectre");
         this.add("advancements.galosphere.use_spectre_spyglass.title", "Watchdog");
         this.add("advancements.galosphere.use_spectre_flare.description", "Use a Spectre Flare");
-        this.add("advancements.galosphere.use_spectre_flare.title", "I spy with my little eye");
+        this.add("advancements.galosphere.use_spectre_flare.title", "I Spy With My Little Eye");
         this.add("advancements.galosphere.warped_teleport.description", "Teleport to a Warped Anchor");
         this.add("advancements.galosphere.warped_teleport.title", "What is this Place?");
         this.add("advancements.galosphere.activate_pink_salt_chamber.title", "Knock Knock");

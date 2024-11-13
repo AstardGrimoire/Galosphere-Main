@@ -1,32 +1,23 @@
 package net.orcinus.galosphere.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-import net.orcinus.galosphere.events.ClientEvents;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.function.Supplier;
+public record BarometerPacket(int weatherTicks) implements CustomPacketPayload {
+    public static final StreamCodec<FriendlyByteBuf, BarometerPacket> CODEC = CustomPacketPayload.codec(BarometerPacket::write, BarometerPacket::new);
+    public static final Type<BarometerPacket> TYPE = CustomPacketPayload.createType("send_barometer_info");
 
-public class BarometerPacket {
-    private final int weatherTicks;
-
-    public BarometerPacket(int weatherTicks) {
-        this.weatherTicks = weatherTicks;
+    public BarometerPacket(FriendlyByteBuf buf) {
+        this(buf.readInt());
     }
 
-    public static BarometerPacket read(FriendlyByteBuf buf) {
-        int weatherTicks = buf.readInt();
-        return new BarometerPacket(weatherTicks);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeInt(this.weatherTicks);
     }
 
-    public static void write(BarometerPacket packet, FriendlyByteBuf buf) {
-        buf.writeInt(packet.weatherTicks);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
-
-    public static void handle(BarometerPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ClientEvents.clearWeatherTime = packet.weatherTicks;
-        });
-        ctx.get().setPacketHandled(true);
-    }
-
 }
