@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "#": {
-      "tag": "forge:ingots/copper"
+      "tag": "c:ingots/copper"
     },
     "@": {
       "item": "galosphere:bottle_of_spectre"
     },
     "C": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     }
   },
   "pattern": [

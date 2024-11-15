@@ -14,10 +14,11 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.orcinus.galosphere.api.BannerAttachable;
 import net.orcinus.galosphere.init.GItems;
+import net.orcinus.galosphere.mixin.access.AbstractHorseAccessor;
 
 @OnlyIn(Dist.CLIENT)
 public class HorseBannerLayer extends RenderLayer<Horse, HorseModel<Horse>> {
@@ -38,7 +39,8 @@ public class HorseBannerLayer extends RenderLayer<Horse, HorseModel<Horse>> {
                         poseStack.scale(1.0F, 1.0F, 1.0F);
                         if (!(item instanceof ArmorItem) || ((ArmorItem) item).getEquipmentSlot() != EquipmentSlot.HEAD) {
                             poseStack.translate(0.0D, 0.35D, 0.3D);
-                            if (entity.standAnimO > 0.0F) {
+                            AbstractHorseAccessor accessor = (AbstractHorseAccessor) entity;
+                            if (accessor.getStandAnimO() > 0.0F) {
                                 poseStack.translate(0.0D, 0.35D, 0.35D);
                             }
                             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));

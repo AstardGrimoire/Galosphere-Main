@@ -8,9 +8,9 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.api.GoldenBreath;
 
@@ -39,7 +39,7 @@ public class GoldenBreathOverlay implements LayeredDraw.Layer {
 
         float y = ((GoldenBreath) player).getMaxGoldenAirSupply();
         float z = Math.min(((GoldenBreath) player).getGoldenAirSupply(), y);
-        if (z < y && player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) {
+        if (z < y && player.isEyeInFluidType(Fluids.WATER.getFluidType())) {
             int ab = Mth.ceil((double)(z - 2) * 4.0 / (double)y);
             int ac = Mth.ceil((double)z * 4.0 / (double)y) - ab;
             for (int ad = 0; ad < ab + ac; ++ad) {

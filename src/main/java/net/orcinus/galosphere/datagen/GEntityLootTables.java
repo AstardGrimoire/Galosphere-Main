@@ -8,10 +8,10 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
 
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class GEntityLootTables extends VanillaEntityLoot {
@@ -31,6 +31,6 @@ public class GEntityLootTables extends VanillaEntityLoot {
 
     @Override
     protected Stream<EntityType<?>> getKnownEntityTypes() {
-        return GEntityTypes.ENTITY_TYPES.getEntries().stream().map(RegistryObject::get);
+        return GEntityTypes.ENTITY_TYPES.getEntries().stream().map(Supplier::get);
     }
 }

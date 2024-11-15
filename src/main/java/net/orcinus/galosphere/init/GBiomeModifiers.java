@@ -11,9 +11,9 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.common.world.BiomeModifiers;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.orcinus.galosphere.Galosphere;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,14 +32,14 @@ public class GBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_LARGE_SILVER_ORES = register("add_large_silver_ores");
 
     public static void bootstrap(BootstrapContext<BiomeModifier> bootstapContext) {
-        bootstapContext.register(ADD_CRYSTAL_CANYONS_FEATURES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), getPlacedFeature(bootstapContext, GPlacedFeatures.ALLURITE_CEILING_CRYSTALS, GPlacedFeatures.ALLURITE_FLOOR_CRYSTALS, GPlacedFeatures.LARGE_CEILING_ALLURITE_CRYSTALS, GPlacedFeatures.LARGE_FLOOR_ALLURITE_CRYSTALS, GPlacedFeatures.LUMIERE_FLOOR_CRYSTALS, GPlacedFeatures.LUMIERE_CEILING_CRYSTALS, GPlacedFeatures.LARGE_CEILING_LUMIERE_CRYSTALS, GPlacedFeatures.LARGE_FLOOR_LUMIERE_CRYSTALS), GenerationStep.Decoration.VEGETAL_DECORATION));
-        bootstapContext.register(ADD_CRYSTAL_CANYONS_SPAWNS, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), List.of(new MobSpawnSettings.SpawnerData(GEntityTypes.SPARKLE.get(), 30, 4, 6), new MobSpawnSettings.SpawnerData(EntityType.GLOW_SQUID, 10, 4, 6))));
-        bootstapContext.register(ADD_LICHEN_CAVES_FEATURES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.LICHEN_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.BOWL_LICHEN, GPlacedFeatures.LICHEN_VEGETATION, GPlacedFeatures.LICHEN_CORDYCEPS_COLUMN, GPlacedFeatures.GRAVEL_PATCH), GenerationStep.Decoration.VEGETAL_DECORATION));
-        bootstapContext.register(ADD_LICHEN_CAVES_SPAWNS, new ForgeBiomeModifiers.AddSpawnsBiomeModifier(getBiome(bootstapContext, GBiomes.LICHEN_CAVES), List.of(new MobSpawnSettings.SpawnerData(GEntityTypes.SPECTRE.get(), 20, 8, 8))));
-        bootstapContext.register(ADD_SILVER_ORES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, BiomeTags.IS_OVERWORLD), getPlacedFeature(bootstapContext, GPlacedFeatures.ORE_SILVER_SMALL), GenerationStep.Decoration.UNDERGROUND_ORES));
-        bootstapContext.register(ADD_LARGE_SILVER_ORES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), getPlacedFeature(bootstapContext, GPlacedFeatures.ORE_SILVER_LARGE), GenerationStep.Decoration.UNDERGROUND_ORES));
-        bootstapContext.register(ADD_PINK_SALT_CAVES_FEATURES, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.PINK_SALT_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.PINK_SALT_NOISE_CEILING_PATCH, GPlacedFeatures.PINK_SALT_NOISE_GROUND_PATCH, GPlacedFeatures.PINK_SALT_STRAW_CEILING_PATCH, GPlacedFeatures.PINK_SALT_STRAW_FLOOR_PATCH), GenerationStep.Decoration.VEGETAL_DECORATION));
-        bootstapContext.register(ADD_PINK_SALT_CAVES_MODIFICATIONS, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.PINK_SALT_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.OASIS), GenerationStep.Decoration.LOCAL_MODIFICATIONS));
+        bootstapContext.register(ADD_CRYSTAL_CANYONS_FEATURES, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), getPlacedFeature(bootstapContext, GPlacedFeatures.ALLURITE_CEILING_CRYSTALS, GPlacedFeatures.ALLURITE_FLOOR_CRYSTALS, GPlacedFeatures.LARGE_CEILING_ALLURITE_CRYSTALS, GPlacedFeatures.LARGE_FLOOR_ALLURITE_CRYSTALS, GPlacedFeatures.LUMIERE_FLOOR_CRYSTALS, GPlacedFeatures.LUMIERE_CEILING_CRYSTALS, GPlacedFeatures.LARGE_CEILING_LUMIERE_CRYSTALS, GPlacedFeatures.LARGE_FLOOR_LUMIERE_CRYSTALS), GenerationStep.Decoration.VEGETAL_DECORATION));
+        bootstapContext.register(ADD_CRYSTAL_CANYONS_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), List.of(new MobSpawnSettings.SpawnerData(GEntityTypes.SPARKLE.get(), 30, 4, 6), new MobSpawnSettings.SpawnerData(EntityType.GLOW_SQUID, 10, 4, 6))));
+        bootstapContext.register(ADD_LICHEN_CAVES_FEATURES, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.LICHEN_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.BOWL_LICHEN, GPlacedFeatures.LICHEN_VEGETATION, GPlacedFeatures.LICHEN_CORDYCEPS_COLUMN, GPlacedFeatures.GRAVEL_PATCH), GenerationStep.Decoration.VEGETAL_DECORATION));
+        bootstapContext.register(ADD_LICHEN_CAVES_SPAWNS, new BiomeModifiers.AddSpawnsBiomeModifier(getBiome(bootstapContext, GBiomes.LICHEN_CAVES), List.of(new MobSpawnSettings.SpawnerData(GEntityTypes.SPECTRE.get(), 20, 8, 8))));
+        bootstapContext.register(ADD_SILVER_ORES, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, BiomeTags.IS_OVERWORLD), getPlacedFeature(bootstapContext, GPlacedFeatures.ORE_SILVER_SMALL), GenerationStep.Decoration.UNDERGROUND_ORES));
+        bootstapContext.register(ADD_LARGE_SILVER_ORES, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.CRYSTAL_CANYONS), getPlacedFeature(bootstapContext, GPlacedFeatures.ORE_SILVER_LARGE), GenerationStep.Decoration.UNDERGROUND_ORES));
+        bootstapContext.register(ADD_PINK_SALT_CAVES_FEATURES, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.PINK_SALT_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.PINK_SALT_NOISE_CEILING_PATCH, GPlacedFeatures.PINK_SALT_NOISE_GROUND_PATCH, GPlacedFeatures.PINK_SALT_STRAW_CEILING_PATCH, GPlacedFeatures.PINK_SALT_STRAW_FLOOR_PATCH), GenerationStep.Decoration.VEGETAL_DECORATION));
+        bootstapContext.register(ADD_PINK_SALT_CAVES_MODIFICATIONS, new BiomeModifiers.AddFeaturesBiomeModifier(getBiome(bootstapContext, GBiomes.PINK_SALT_CAVES), getPlacedFeature(bootstapContext, GPlacedFeatures.OASIS), GenerationStep.Decoration.LOCAL_MODIFICATIONS));
     }
 
     @NotNull
@@ -64,7 +64,7 @@ public class GBiomeModifiers {
 
     @NotNull
     private static ResourceKey<BiomeModifier> register(String name) {
-        return ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, Galosphere.id(name));
+        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Galosphere.id(name));
     }
 
 }

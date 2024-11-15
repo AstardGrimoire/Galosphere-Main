@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightningRodBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.orcinus.galosphere.blocks.LumiereBlock;
 import net.orcinus.galosphere.init.GBlocks;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +22,8 @@ public class LightningBoltMixin {
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LightningBolt;clearCopperOnLightningStrike(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"), method = "tick")
     private void G$tick(CallbackInfo ci) {
         LightningBolt $this = (LightningBolt)(Object)this;
-        chargeLumiereOnLightningStrike(((LightningBolt)(Object)this).level(), $this.getStrikePosition());
+        Vec3 vec3 = $this.position();
+        chargeLumiereOnLightningStrike(((LightningBolt)(Object)this).level(), BlockPos.containing(vec3.x, vec3.y - 1.0E-6, vec3.z));
     }
 
     private static void chargeLumiereOnLightningStrike(Level world, BlockPos pos) {

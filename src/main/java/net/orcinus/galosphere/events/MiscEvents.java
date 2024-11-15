@@ -29,15 +29,15 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.brewing.BrewingRecipeRegisterEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
+import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.api.BannerAttachable;
 import net.orcinus.galosphere.blocks.LumiereComposterBlock;
@@ -49,46 +49,26 @@ import net.orcinus.galosphere.crafting.PickaxeDispenseItemBehavior;
 import net.orcinus.galosphere.crafting.WarpedAnchorDispenseItemBehavior;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GItems;
-import net.orcinus.galosphere.init.GNetworkHandler;
 import net.orcinus.galosphere.init.GPotions;
 import net.orcinus.galosphere.init.GSoundEvents;
-import net.orcinus.galosphere.mixin.LootTableAccessor;
+import net.orcinus.galosphere.mixin.access.LootTableAccessor;
 import net.orcinus.galosphere.network.BarometerPacket;
 import net.orcinus.galosphere.util.BannerRendererUtil;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Galosphere.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class MiscEvents {
 
-//    @SubscribeEvent
-//    public void onParallelDispatched(ParallelDispatchEvent event) {
-//        event.enqueueWork(() -> {
-//            try {
-//                Class<?> aClass = Class.forName("terrablender.api.Region");
-//                if (aClass != null) {
-//                    try {
-//                        Class<?> clazz = Class.forName("orcinus.galosphere.compat.integration.terrablender.GalosphereRegion");
-//                        ((GalosphereRegion) clazz.getConstructor().newInstance()).init(event);
-//                    } catch (ReflectiveOperationException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//            } catch (ClassNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//    }
-
     @SubscribeEvent
-    public void registerBrewingRecipes(BrewingRecipeRegisterEvent event) {
+    public static void registerBrewingRecipes(RegisterBrewingRecipesEvent event) {
         PotionBrewing.Builder builder = event.getBuilder();
-        builder.addMix(Potions.AWKWARD, GItems.CURED_MEMBRANE.get(), GPotions.ASTRAL.getHolder().get());
-        builder.addMix(GPotions.ASTRAL.getHolder().get(), Items.REDSTONE, GPotions.LONG_ASTRAL.getHolder().get());
+        builder.addMix(Potions.AWKWARD, GItems.CURED_MEMBRANE.get(), GPotions.ASTRAL);
+        builder.addMix(GPotions.ASTRAL, Items.REDSTONE, GPotions.LONG_ASTRAL);
     }
 
     @SubscribeEvent
-    public void onLootTableLoad(LootTableLoadEvent event) {
+    public static void onLootTableLoad(LootTableLoadEvent event) {
         ResourceLocation name = event.getName();
         LootTable table = event.getTable();
         List<LootPool> pools = ((LootTableAccessor)table).getPools();
@@ -101,24 +81,19 @@ public class MiscEvents {
     }
 
     @SubscribeEvent
-    public void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.level instanceof ServerLevel serverLevel) {
+    public static void onWorldTick(LevelTickEvent.Pre event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getPlayers(serverPlayer -> true).forEach(serverPlayer -> {
                 ServerLevelData levelData = (ServerLevelData) serverLevel.getLevelData();
                 int rainTime = levelData.getClearWeatherTime() > 0 ? levelData.getClearWeatherTime() : levelData.getRainTime();
                 int i = rainTime;
-                GNetworkHandler.INSTANCE.send(new BarometerPacket(i), PacketDistributor.PLAYER.with(serverPlayer));
+                PacketDistributor.sendToPlayer(serverPlayer, new BarometerPacket(i));
             });
         }
     }
 
     @SubscribeEvent
-    public void onResourceLoad(AddReloadListenerEvent event) {
-        event.addListener(new LumiereReformingManager());
-    }
-
-    @SubscribeEvent
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         ItemStack stack = event.getItemStack();
         Player player = event.getEntity();
         InteractionHand hand = event.getHand();
@@ -132,7 +107,6 @@ public class MiscEvents {
             ((BannerAttachable) player).setBanner(ItemStack.EMPTY);
         }
         if (state.getBlock() == Blocks.COMPOSTER) {
-            InteractionHand offHand = InteractionHand.OFF_HAND;
             if (stack.getItem() == GItems.LUMIERE_SHARD.get()) {
                 if (state.getValue(ComposterBlock.LEVEL) > 0 && state.getValue(ComposterBlock.LEVEL) < 8) {
                     event.setCanceled(true);
@@ -149,7 +123,7 @@ public class MiscEvents {
     }
 
     @SubscribeEvent
-    public void onRightClick(PlayerInteractEvent.RightClickItem event) {
+    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         ItemStack stack = event.getItemStack();
         Player player = event.getEntity();
         InteractionHand hand = event.getHand();
@@ -171,7 +145,7 @@ public class MiscEvents {
     }
 
     @SubscribeEvent
-    public void onTagsUpdated(TagsUpdatedEvent event) {
+    public static void onTagsUpdated(TagsUpdatedEvent event) {
         DispenserBlock.registerBehavior(GBlocks.ALLURITE_BLOCK.get().asItem(), new MonstrometerDispenseItemBehavior());
         DispenserBlock.registerBehavior(GBlocks.ALLURITE_BLOCK.get().asItem(), new WarpedAnchorDispenseItemBehavior());
         DispenserBlock.registerBehavior(GItems.LUMIERE_SHARD.get(), new LumiereComposterDispenseItemBehavior());

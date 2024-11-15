@@ -1,6 +1,7 @@
 package net.orcinus.galosphere.datagen;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AmethystClusterBlock;
@@ -10,12 +11,10 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.blocks.LichenMossBlock;
 import net.orcinus.galosphere.blocks.PinkSaltChamberBlock;
@@ -26,6 +25,7 @@ import net.orcinus.galosphere.init.GBlocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class GBlockstateProvider extends BlockStateProvider {
 
@@ -230,9 +230,9 @@ public class GBlockstateProvider extends BlockStateProvider {
     }
 
     private void wallBlock(Block block, String name) {
-        String path = ForgeRegistries.BLOCKS.getKey(block).getPath();
+        String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
         this.wallBlock((WallBlock) block, Galosphere.id("block/" + name));
-        this.itemModels().getBuilder(path).parent(this.models().wallInventory(path + "_inventory", blockTexture(ForgeRegistries.BLOCKS.getValue(modLoc(name)))));
+        this.itemModels().getBuilder(path).parent(this.models().wallInventory(path + "_inventory", blockTexture(BuiltInRegistries.BLOCK.get(modLoc(name)))));
     }
 
     private void pollinatedCluster(@NotNull Block block) {
@@ -253,7 +253,7 @@ public class GBlockstateProvider extends BlockStateProvider {
             } else if (facing == Direction.SOUTH) {
                 rotationY *= 2;
             }
-            String path = ForgeRegistries.BLOCKS.getKey(block).getPath();
+            String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
             if (state.hasProperty(PollinatedClusterBlock.POLLINATED) && state.getValue(PollinatedClusterBlock.POLLINATED)) {
                 path = "glinted_" + path;
             }
@@ -265,10 +265,10 @@ public class GBlockstateProvider extends BlockStateProvider {
         }, BlockStateProperties.WATERLOGGED);
     }
 
-    private void crossBlock(RegistryObject<Block> block) {
+    private void crossBlock(Supplier<Block> block) {
         this.getVariantBuilder(block.get())
                 .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(models().cross(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block.get())).getPath(), Galosphere.id("block/" + ForgeRegistries.BLOCKS.getKey(block.get()).getPath())).renderType("cutout")).build());
+                        .modelFile(models().cross(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block.get())).getPath(), Galosphere.id("block/" + BuiltInRegistries.BLOCK.getKey(block.get()).getPath())).renderType("cutout")).build());
     }
 
     private void stairsBlock(Block block, String blockMaterial) {

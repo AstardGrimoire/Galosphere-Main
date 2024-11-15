@@ -7,10 +7,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.compat.init.ForgeBlockTags;
 import net.orcinus.galosphere.init.GBlockTags;
@@ -18,6 +17,7 @@ import net.orcinus.galosphere.init.GBlocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class GBlockTagsProvider extends BlockTagsProvider {
 
@@ -55,9 +55,9 @@ public class GBlockTagsProvider extends BlockTagsProvider {
                 GBlocks.SHADOW_FRAME.get(),
                 GBlocks.SILVER_BALANCE.get()
         );
-        GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).filter(StairBlock.class::isInstance).forEach(block -> this.tag(BlockTags.STAIRS).add(block));
-        GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).filter(SlabBlock.class::isInstance).forEach(block -> this.tag(BlockTags.SLABS).add(block));
-        GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).filter(WallBlock.class::isInstance).forEach(block -> this.tag(BlockTags.WALLS).add(block));
+        GBlocks.BLOCKS.getEntries().stream().map(Supplier::get).filter(StairBlock.class::isInstance).forEach(block -> this.tag(BlockTags.STAIRS).add(block));
+        GBlocks.BLOCKS.getEntries().stream().map(Supplier::get).filter(SlabBlock.class::isInstance).forEach(block -> this.tag(BlockTags.SLABS).add(block));
+        GBlocks.BLOCKS.getEntries().stream().map(Supplier::get).filter(WallBlock.class::isInstance).forEach(block -> this.tag(BlockTags.WALLS).add(block));
         this.tag(BlockTags.DIRT).add(GBlocks.LICHEN_MOSS.get());
 
         this.tag(GBlockTags.CRYSTAL_SPIKES_BLOCKS).add(GBlocks.ALLURITE_BLOCK.get(), GBlocks.LUMIERE_BLOCK.get());

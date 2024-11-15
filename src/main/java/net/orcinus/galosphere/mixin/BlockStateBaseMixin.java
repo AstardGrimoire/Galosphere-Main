@@ -16,7 +16,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.orcinus.galosphere.init.GBlockTags;
 import net.orcinus.galosphere.init.GMobEffects;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,7 +32,7 @@ public class BlockStateBaseMixin {
         if (collisionContext instanceof EntityCollisionContext entityCollisionContext && entityCollisionContext.getEntity() instanceof LivingEntity livingEntity && ((BlockBehaviour.BlockStateBase)(Object)this).isSolid()) {
             boolean above = livingEntity.getY() > blockPos.getY() + cir.getReturnValue().max(Direction.Axis.Y) - (livingEntity.onGround() ? 0.5F : 0.001F);
             boolean flag = !above || livingEntity.isShiftKeyDown();
-            if (livingEntity.hasEffect(ForgeRegistries.MOB_EFFECTS.getHolder(GMobEffects.ASTRAL.get()).orElseThrow()) && flag && !blockGetter.getBlockState(blockPos).is(GBlockTags.OMIT_ASTRAL)) {
+            if (livingEntity.hasEffect(GMobEffects.ASTRAL) && flag && !blockGetter.getBlockState(blockPos).is(GBlockTags.OMIT_ASTRAL)) {
                 cir.setReturnValue(Shapes.empty());
             }
         }
@@ -41,7 +40,7 @@ public class BlockStateBaseMixin {
 
     @Inject(at = @At("RETURN"), method = "entityInside", cancellable = true)
     private void G$entityInside(Level level, BlockPos blockPos, Entity entity, CallbackInfo ci) {
-        if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(ForgeRegistries.MOB_EFFECTS.getHolder(GMobEffects.ASTRAL.get()).orElseThrow()) && !level.getBlockState(blockPos).is(GBlockTags.OMIT_ASTRAL)) {
+        if (entity instanceof LivingEntity livingEntity && livingEntity.hasEffect(GMobEffects.ASTRAL) && !level.getBlockState(blockPos).is(GBlockTags.OMIT_ASTRAL)) {
             ci.cancel();
             if (level instanceof ServerLevel serverLevel && ((BlockBehaviour.BlockStateBase)(Object)this).isSolid()) {
                 boolean bl = entity.xOld != entity.getX() || entity.zOld != entity.getZ();

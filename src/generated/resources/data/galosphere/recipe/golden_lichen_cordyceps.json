@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "#": {
-      "tag": "forge:nuggets/gold"
+      "tag": "c:nuggets/gold"
     },
     "@": {
       "item": "galosphere:lichen_cordyceps"

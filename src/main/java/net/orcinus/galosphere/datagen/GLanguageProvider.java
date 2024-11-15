@@ -1,13 +1,12 @@
 package net.orcinus.galosphere.datagen;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemNameBlockItem;
-import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.init.GBiomes;
 import net.orcinus.galosphere.init.GBlocks;
@@ -17,6 +16,7 @@ import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMobEffects;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class GLanguageProvider extends LanguageProvider {
 
@@ -29,17 +29,17 @@ public class GLanguageProvider extends LanguageProvider {
         GBiomes.BIOMES.stream().map(ResourceKey::location).map(ResourceLocation::getPath).forEach(s -> {
             this.add("biome.galosphere." + s, reformat(s));
         });
-        GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-            this.add(block, reformat(ForgeRegistries.BLOCKS.getKey(block).getPath()));
+        GBlocks.BLOCKS.getEntries().stream().map(Supplier::get).forEach(block -> {
+            this.add(block, reformat(BuiltInRegistries.BLOCK.getKey(block).getPath()));
         });
-        GItems.ITEMS.getEntries().stream().map(RegistryObject::get).filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).forEach(item -> {
-            this.add(item, reformat(ForgeRegistries.ITEMS.getKey(item).getPath()));
+        GItems.ITEMS.getEntries().stream().map(Supplier::get).filter(Predicate.not(BlockItem.class::isInstance).or(ItemNameBlockItem.class::isInstance)).forEach(item -> {
+            this.add(item, reformat(BuiltInRegistries.ITEM.getKey(item).getPath()));
         });
-        GEntityTypes.ENTITY_TYPES.getEntries().stream().map(RegistryObject::get).forEach(entityType -> {
-            this.add(entityType, reformat(ForgeRegistries.ENTITY_TYPES.getKey(entityType).getPath()));
+        GEntityTypes.ENTITY_TYPES.getEntries().stream().map(Supplier::get).forEach(entityType -> {
+            this.add(entityType, reformat(BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath()));
         });
-        GMobEffects.MOB_EFFECTS.getEntries().stream().map(RegistryObject::get).forEach(mobEffect -> {
-            this.add(mobEffect, reformat(ForgeRegistries.MOB_EFFECTS.getKey(mobEffect).getPath()));
+        GMobEffects.MOB_EFFECTS.getEntries().stream().map(Supplier::get).forEach(mobEffect -> {
+            this.add(mobEffect, reformat(BuiltInRegistries.MOB_EFFECT.getKey(mobEffect).getPath()));
         });
         GEnchantments.ENCHANTMENTS.keySet().forEach(resourceLocation -> {
             this.add("enchantment.galosphere." + resourceLocation.getPath(), reformat(resourceLocation.getPath()));

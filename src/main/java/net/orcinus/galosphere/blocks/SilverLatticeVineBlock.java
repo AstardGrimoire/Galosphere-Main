@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 import net.orcinus.galosphere.init.GBlocks;
 
 public class SilverLatticeVineBlock extends SilverLatticeBlock implements BonemealableBlock {
@@ -78,7 +78,7 @@ public class SilverLatticeVineBlock extends SilverLatticeBlock implements Boneme
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        if (itemStack.is(Tags.Items.SHEARS) && blockState.getValue(SPREADABLE)) {
+        if (itemStack.is(Tags.Items.TOOLS_SHEAR) && blockState.getValue(SPREADABLE)) {
             if (player instanceof ServerPlayer serverPlayer) {
                 CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, blockPos, itemStack);
             }

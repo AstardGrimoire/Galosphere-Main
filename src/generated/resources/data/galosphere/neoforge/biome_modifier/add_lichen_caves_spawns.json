@@ -1,5 +1,5 @@
 {
-  "type": "forge:add_features",
+  "type": "neoforge:add_features",
   "biomes": "galosphere:lichen_caves",
   "features": [
     "galosphere:bowl_lichen",

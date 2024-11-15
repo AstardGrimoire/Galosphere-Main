@@ -1,13 +1,13 @@
-// 1.21	2024-11-14T09:44:43.2154417	Tags for minecraft:item mod id galosphere
-bf2ad799074f5c44acee490bdf3d3ae81d56997b data/forge/tags/item/ingots.json
+// 1.21	2024-11-15T20:17:54.8712378	Tags for minecraft:item mod id galosphere
+bf2ad799074f5c44acee490bdf3d3ae81d56997b data/c/tags/item/ingots.json
+f9a637e96c99d2b17b5183761d2dbcc66f1e2a62 data/c/tags/item/nuggets.json
+021e86d55679a27d4519fa177cd4425c51105d50 data/c/tags/item/ores.json
+a3c07e3e70f2a3617cc80fceac947d9055c7a002 data/c/tags/item/raw_materials.json
+97eb1b03810e22a976b10e158ad5eda01f2f6b3e data/c/tags/item/storage_blocks.json
 0ceaaec06992eb7173faa9cc1f1b2a05ad3c7cab data/forge/tags/item/ingots/silver.json
-f9a637e96c99d2b17b5183761d2dbcc66f1e2a62 data/forge/tags/item/nuggets.json
 65fe93d1810f95b0445bfcc92987f6761a3fd050 data/forge/tags/item/nuggets/silver.json
-021e86d55679a27d4519fa177cd4425c51105d50 data/forge/tags/item/ores.json
 d22848f4f97f051b3ec5eefda7df36a01718e88a data/forge/tags/item/ores/silver.json
-a3c07e3e70f2a3617cc80fceac947d9055c7a002 data/forge/tags/item/raw_materials.json
 c13b75b77619e89812295c5dd959ec842a62ce65 data/forge/tags/item/raw_materials/silver.json
-97eb1b03810e22a976b10e158ad5eda01f2f6b3e data/forge/tags/item/storage_blocks.json
 eb2ffa9945e725ede9bd398e5699b69c647fc634 data/forge/tags/item/storage_blocks/raw_silver.json
 77953532df9dfaebb1305885a11df18f585acef3 data/forge/tags/item/storage_blocks/silver.json
 105727dc444ddc319293c250e6c64f197b4ba151 data/galosphere/tags/item/bomb_bouncy_modifiers.json

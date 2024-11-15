@@ -4,10 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.orcinus.galosphere.Galosphere;
 
 public record SendParticlesPacket(BlockPos blockPos) implements CustomPacketPayload {
     public static final StreamCodec<FriendlyByteBuf, SendParticlesPacket> CODEC = CustomPacketPayload.codec(SendParticlesPacket::write, SendParticlesPacket::new);
-    public static final Type<SendParticlesPacket> TYPE = CustomPacketPayload.createType("send_particles");
+    public static final Type<SendParticlesPacket> TYPE = new CustomPacketPayload.Type<>(Galosphere.id("send_particles"));
 
     private SendParticlesPacket(FriendlyByteBuf buf) {
         this(buf.readBlockPos());

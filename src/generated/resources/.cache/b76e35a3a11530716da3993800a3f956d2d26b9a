@@ -1,12 +1,12 @@
-// 1.21	2024-11-14T09:44:43.2592129	Tags for minecraft:block mod id galosphere
-021e86d55679a27d4519fa177cd4425c51105d50 data/forge/tags/block/ores.json
+// 1.21	2024-11-15T20:17:54.8921802	Tags for minecraft:block mod id galosphere
+021e86d55679a27d4519fa177cd4425c51105d50 data/c/tags/block/ores.json
+97eb1b03810e22a976b10e158ad5eda01f2f6b3e data/c/tags/block/storage_blocks.json
 d22848f4f97f051b3ec5eefda7df36a01718e88a data/forge/tags/block/ores/silver.json
-97eb1b03810e22a976b10e158ad5eda01f2f6b3e data/forge/tags/block/storage_blocks.json
 eb2ffa9945e725ede9bd398e5699b69c647fc634 data/forge/tags/block/storage_blocks/raw_silver.json
 77953532df9dfaebb1305885a11df18f585acef3 data/forge/tags/block/storage_blocks/silver.json
 a4c38c691f57054d2c41ac4d23e34dc6b5502285 data/galosphere/tags/block/crystal_spikes_blocks.json
 da7e3a3aff636508080ebfd47741b3deb5e9a67c data/galosphere/tags/block/gravel_may_replace.json
-83ca7e1e1763ade96beb51911060d0bdf3c6c916 data/galosphere/tags/block/oasis_replace.json
+6ce7e23348e682a629dceeba6f5b7c48418fcf50 data/galosphere/tags/block/oasis_replace.json
 09fdde12678b6e3e74157b60e85d414950693787 data/galosphere/tags/block/obfuscates_sound_waves.json
 cfab2ab481bf476a645d326b87627918009b9e50 data/galosphere/tags/block/omit_astral.json
 b037357c8ac7af3a6e55f5b28aab5bb4a50a211e data/galosphere/tags/block/pink_salt_blocks.json

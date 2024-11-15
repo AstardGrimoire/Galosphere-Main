@@ -2,10 +2,10 @@ package net.orcinus.galosphere.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.orcinus.galosphere.api.Spectatable;
 
 @OnlyIn(Dist.CLIENT)

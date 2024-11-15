@@ -17,6 +17,7 @@ import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GSoundEvents;
+import net.orcinus.galosphere.mixin.access.FireworkRocketEntityAccessor;
 import org.jetbrains.annotations.Nullable;
 
 public class GlowFlare extends ThrowableLaunchedProjectile {
@@ -38,7 +39,7 @@ public class GlowFlare extends ThrowableLaunchedProjectile {
 
     public GlowFlare(Level level, @Nullable Entity entity, ItemStack itemStack) {
         super(GEntityTypes.GLOW_FLARE.get(), level);
-        this.entityData.set(this.DATA_ID_FIREWORKS_ITEM, itemStack.copy());
+        this.entityData.set(FireworkRocketEntityAccessor.getDATA_ID_FIREWORKS_ITEM(), itemStack.copy());
         this.entityData.set(THROWN, true);
         this.setOwner(entity);
     }
@@ -47,7 +48,7 @@ public class GlowFlare extends ThrowableLaunchedProjectile {
     public void tick() {
         super.tick();
         Level world = this.level();
-        if (world.isClientSide && this.life % 2 < 2) {
+        if (world.isClientSide) {
             world.addParticle(ParticleTypes.GLOW, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
         }
     }

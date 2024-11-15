@@ -3,6 +3,7 @@ package net.orcinus.galosphere.datagen;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.util.ProblemReporter;
@@ -29,8 +30,4 @@ public class GLootTableProvider extends LootTableProvider {
         );
     }
 
-    @Override
-    protected void validate(Registry<LootTable> map, ValidationContext validationcontext, ProblemReporter report) {
-        map.forEach(lootTable -> lootTable.validate(validationcontext));
-    }
 }

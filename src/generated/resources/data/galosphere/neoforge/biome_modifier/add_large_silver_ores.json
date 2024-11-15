@@ -1,5 +1,5 @@
 {
-  "type": "forge:add_features",
+  "type": "neoforge:add_features",
   "biomes": "galosphere:crystal_canyons",
   "features": "galosphere:ore_silver_large",
   "step": "underground_ores"

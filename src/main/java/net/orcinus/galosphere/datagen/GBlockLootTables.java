@@ -25,12 +25,12 @@ import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableConditio
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.registries.RegistryObject;
 import net.orcinus.galosphere.blocks.PollinatedClusterBlock;
 import net.orcinus.galosphere.init.GBlocks;
 import net.orcinus.galosphere.init.GItems;
 
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GBlockLootTables extends BlockLootSubProvider {
@@ -187,12 +187,12 @@ public class GBlockLootTables extends BlockLootSubProvider {
         this.add(plantBlock, builder);
     }
 
-    private void dropSlab(RegistryObject<Block> slab) {
+    private void dropSlab(Supplier<Block> slab) {
         this.add(slab.get(), this::createSlabItemTable);
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return GBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
+        return GBlocks.BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
     }
 }

@@ -1,11 +1,11 @@
 package net.orcinus.galosphere.datagen;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.init.GBlocks;
 
@@ -161,7 +161,7 @@ public class GItemModelProvider extends ItemModelProvider {
     }
 
     private void blockItem(Block block) {
-        blockItem(ForgeRegistries.BLOCKS.getKey(block).getPath());
+        blockItem(BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     private void blockItem(String parent) {

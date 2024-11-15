@@ -2,8 +2,8 @@ package net.orcinus.galosphere.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.orcinus.galosphere.api.Spectatable;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
 

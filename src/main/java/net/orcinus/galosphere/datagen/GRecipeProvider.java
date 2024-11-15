@@ -24,8 +24,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.compat.init.ForgeItemTags;
 import net.orcinus.galosphere.init.GBlockFamilies;
@@ -533,6 +532,6 @@ public class GRecipeProvider extends RecipeProvider {
     }
 
     protected static String getItemName(ItemLike item) {
-        return ForgeRegistries.ITEMS.getKey(item.asItem()).getPath();
+        return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
     }
 }

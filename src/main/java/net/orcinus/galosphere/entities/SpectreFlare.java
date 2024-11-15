@@ -12,12 +12,12 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.DripstoneUtils;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
-import net.orcinus.galosphere.init.GNetworkHandler;
 import net.orcinus.galosphere.init.GSoundEvents;
+import net.orcinus.galosphere.mixin.access.FireworkRocketEntityAccessor;
 import net.orcinus.galosphere.network.SendPerspectivePacket;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
 
     public SpectreFlare(Level level, @Nullable Entity entity, ItemStack itemStack) {
         super(GEntityTypes.SPECTRE_FLARE.get(), level);
-        this.entityData.set(DATA_ID_FIREWORKS_ITEM, itemStack.copy());
+        this.entityData.set(FireworkRocketEntityAccessor.getDATA_ID_FIREWORKS_ITEM(), itemStack.copy());
         this.entityData.set(THROWN, true);
         this.setOwner(entity);
     }
@@ -40,7 +40,8 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
     @Override
     public void handleLaunchedProjectile() {
         Level world = this.level();
-        if (!world.isClientSide && this.life > this.lifetime) {
+        FireworkRocketEntityAccessor accessor = (FireworkRocketEntityAccessor) this;
+        if (!world.isClientSide && accessor.getLife() > accessor.getLifetime()) {
             this.spawnSpectatorVision(this.position());
             world.broadcastEntityEvent(this, (byte)17);
             this.gameEvent(GameEvent.EXPLODE, this.getOwner());
@@ -73,7 +74,7 @@ public class SpectreFlare extends ThrowableLaunchedProjectile {
                 serverPlayer.playNotifySound(GSoundEvents.SPECTRE_MANIPULATE_BEGIN.get(), getSoundSource(), 1, 1);
                 this.level().addFreshEntity(spectatorVision);
                 ((SpectreBoundSpyglass)serverPlayer).setUsingSpectreBoundedSpyglass(true);
-                GNetworkHandler.INSTANCE.send(new SendPerspectivePacket(serverPlayer.getUUID(), spectatorVision.getId()), PacketDistributor.PLAYER.with(serverPlayer));
+                PacketDistributor.sendToPlayer(serverPlayer, new SendPerspectivePacket(serverPlayer.getUUID(), spectatorVision.getId()));
             }
         }
     }

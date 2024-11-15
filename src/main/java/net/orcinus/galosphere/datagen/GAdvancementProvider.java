@@ -13,8 +13,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeAdvancementProvider;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.criterion.GCriterion;
 import net.orcinus.galosphere.init.GBlocks;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public class GAdvancementProvider extends ForgeAdvancementProvider {
+public class GAdvancementProvider extends AdvancementProvider {
 
     public GAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper) {
         super(output, registries, existingFileHelper, List.of(new GAdvancementGenerator()));
@@ -59,7 +59,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.LUMIERE_COMPOST.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("husbandry/lumiere_compost"));
+                    .save(consumer, Galosphere.id("husbandry/lumiere_compost").toString());
         }
 
         private void generateAdventures(Consumer<AdvancementHolder> consumer, HolderLookup.Provider provider) {
@@ -80,7 +80,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.ACTIVATE_PINK_SALT_CHAMBER.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/activate_pink_salt_chamber"));
+                    .save(consumer, Galosphere.id("adventure/activate_pink_salt_chamber").toString());
 
             Advancement.Builder.advancement()
                     .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
@@ -99,7 +99,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             InventoryChangeTrigger.TriggerInstance.hasItems(GBlocks.ALLURITE_LAMP.get(), GBlocks.LUMIERE_LAMP.get(), GBlocks.AMETHYST_LAMP.get())
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/crystal_lamps"));
+                    .save(consumer, Galosphere.id("adventure/crystal_lamps").toString());
 
 //            Advancement.Builder.advancement()
 //                    .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
@@ -121,7 +121,6 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
 //                    )
 //                    .requirements(AdvancementRequirements.Strategy.AND)
 //                    .save(consumer, Galosphere.id("adventure/find_pink_salt_shrine"));
-
             Advancement.Builder.advancement()
                     .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
                     .display(
@@ -139,7 +138,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.LIGHT_SPREAD.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/light_spread"));
+                    .save(consumer, Galosphere.id("adventure/light_spread").toString());
 
             Advancement.Builder.advancement()
                     .parent(Galosphere.id("adventure/silver_ingot"))
@@ -158,7 +157,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             InventoryChangeTrigger.TriggerInstance.hasItems(GItems.SILVER_BOMB.get())
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/silver_bomb"));
+                    .save(consumer, Galosphere.id("adventure/silver_bomb").toString());
 
             Advancement.Builder.advancement()
                     .parent(Galosphere.id("adventure/silver_ingot"))
@@ -183,7 +182,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                     )
                     .rewards(AdvancementRewards.Builder.experience(100))
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/sterling_armor"));
+                    .save(consumer, Galosphere.id("adventure/sterling_armor").toString());
 
             Advancement.Builder.advancement()
                     .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
@@ -202,7 +201,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             SummonedEntityTrigger.TriggerInstance.summonedEntity(EntityPredicate.Builder.entity().of(GEntityTypes.BERSERKER.get()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/summon_berserker"));
+                    .save(consumer, Galosphere.id("adventure/summon_berserker").toString());
 
             Advancement.Builder.advancement()
                     .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
@@ -221,7 +220,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.USE_SPECTRE_FLARE.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/use_spectre_flare"));
+                    .save(consumer, Galosphere.id("adventure/use_spectre_flare").toString());
 
             Advancement.Builder.advancement()
                     .parent(ResourceLocation.withDefaultNamespace("adventure/root"))
@@ -240,7 +239,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.USE_SPECTRE_SPYGLASS.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/use_spectre_spyglass"));
+                    .save(consumer, Galosphere.id("adventure/use_spectre_spyglass").toString());
 
             Advancement.Builder.advancement()
                     .parent(Galosphere.id("adventure/silver_ingot"))
@@ -259,7 +258,7 @@ public class GAdvancementProvider extends ForgeAdvancementProvider {
                             GCriteriaTriggers.WARPED_TELEPORT.get().createCriterion(new GCriterion.TriggerInstance(Optional.empty()))
                     )
                     .requirements(AdvancementRequirements.Strategy.AND)
-                    .save(consumer, Galosphere.id("adventure/warped_teleport"));
+                    .save(consumer, Galosphere.id("adventure/warped_teleport").toString());
         }
 
     }

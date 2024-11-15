@@ -3,17 +3,16 @@ package net.orcinus.galosphere.init;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.orcinus.galosphere.Galosphere;
 
-@Mod.EventBusSubscriber(modid = Galosphere.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+import java.util.function.Supplier;
+
 public class GCreativeModeTabs {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Galosphere.MODID);
 
-    public static final RegistryObject<CreativeModeTab> GALOSPHERE = CREATIVE_MODE_TABS.register("galosphere", () -> CreativeModeTab.builder()
+    public static final Supplier<CreativeModeTab> GALOSPHERE = CREATIVE_MODE_TABS.register("galosphere", () -> CreativeModeTab.builder()
             .icon(GItems.ICON_ITEM.get()::getDefaultInstance)
             .title(Component.translatable("itemGroup.galosphere.galosphere"))
             .displayItems((itemDisplayParameters, output) -> {

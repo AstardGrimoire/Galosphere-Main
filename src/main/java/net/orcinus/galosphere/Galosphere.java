@@ -1,16 +1,15 @@
 package net.orcinus.galosphere;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.orcinus.galosphere.config.GalosphereConfig;
-import net.orcinus.galosphere.events.MiscEvents;
-import net.orcinus.galosphere.events.MobEvents;
 import net.orcinus.galosphere.init.GAttributes;
 import net.orcinus.galosphere.init.GBlockEntityTypes;
 import net.orcinus.galosphere.init.GBlocks;
@@ -25,7 +24,6 @@ import net.orcinus.galosphere.init.GLootModifiers;
 import net.orcinus.galosphere.init.GMemoryModuleTypes;
 import net.orcinus.galosphere.init.GMenuTypes;
 import net.orcinus.galosphere.init.GMobEffects;
-import net.orcinus.galosphere.init.GNetworkHandler;
 import net.orcinus.galosphere.init.GParticleTypes;
 import net.orcinus.galosphere.init.GPlacedFeatures;
 import net.orcinus.galosphere.init.GPotions;
@@ -43,12 +41,10 @@ public class Galosphere {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "galosphere";
 
-    public Galosphere() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        IEventBus eventBus = MinecraftForge.EVENT_BUS;
+    public Galosphere(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GalosphereConfig.COMMON);
+        modContainer.registerConfig(ModConfig.Type.COMMON, GalosphereConfig.COMMON);
 
         GAttributes.ATTRIBTUES.register(modEventBus);
         GBlocks.BLOCKS.register(modEventBus);
@@ -71,18 +67,19 @@ public class Galosphere {
         GSensorTypes.SENSOR_TYPES.register(modEventBus);
         GSoundEvents.SOUND_EVENTS.register(modEventBus);
 
-        eventBus.register(this);
-        eventBus.register(new MobEvents());
-        eventBus.register(new MiscEvents());
-
+        NeoForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             GPlacedFeatures.init();
             GVanillaIntegration.init();
-            GNetworkHandler.init();
         });
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+
     }
 
     public static ResourceLocation id(String path) {

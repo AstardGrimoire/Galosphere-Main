@@ -8,6 +8,7 @@
     "item": "galosphere:silver_ore"
   },
   "result": {
+    "count": 1,
     "id": "galosphere:silver_ingot"
   }
 }

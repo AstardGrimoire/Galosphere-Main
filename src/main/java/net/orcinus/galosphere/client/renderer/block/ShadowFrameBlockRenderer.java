@@ -24,13 +24,15 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import net.orcinus.galosphere.blocks.ShadowFrameBlock;
 import net.orcinus.galosphere.blocks.blockentities.ShadowFrameBlockEntity;
 import net.orcinus.galosphere.init.GBlocks;
+import net.orcinus.galosphere.mixin.access.AmbientOcclusionFaceAccessor;
+import net.orcinus.galosphere.mixin.access.ModelBlockRendererAccessor;
 
 import javax.annotation.Nullable;
 import java.util.BitSet;
@@ -44,7 +46,7 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
 
     public ShadowFrameBlockRenderer(BlockEntityRendererProvider.Context context) {
         this.blockRenderer = context.getBlockRenderDispatcher();
-        this.blockColors = this.blockRenderer.getModelRenderer().blockColors;
+        this.blockColors = ((ModelBlockRendererAccessor)this.blockRenderer.getModelRenderer()).getBlockColors();
     }
 
     @Override
@@ -57,26 +59,30 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
         this.tesselateBlock(blockEntity.getLevel(), bakedmodel, state, blockEntity.getBlockPos(), poseStack, vertexconsumer, false, RandomSource.create(), state.getSeed(blockEntity.getBlockPos()), j);
     }
 
-    public void tesselateBlock(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_) {
-        tesselateBlock(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, ModelData.EMPTY, null);
+    public void tesselateBlock(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_) {
+        tesselateBlock(level, model, state, pos, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, ModelData.EMPTY, null);
     }
 
-    public void tesselateBlock(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_, ModelData modelData, RenderType renderType) {
-        boolean flag = Minecraft.useAmbientOcclusion() && p_234382_.getLightEmission(p_234380_, p_234383_) == 0 && p_234381_.useAmbientOcclusion(p_234382_, renderType);
-        Vec3 vec3 = p_234382_.getOffset(p_234380_, p_234383_);
+    public void tesselateBlock(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_, ModelData modelData, RenderType renderType) {
+        boolean flag = Minecraft.useAmbientOcclusion() && switch(model.useAmbientOcclusion(state, modelData, renderType)) {
+            case TRUE -> true;
+            case DEFAULT -> state.getLightEmission(level, pos) == 0;
+            case FALSE -> false;
+        };
+        Vec3 vec3 = state.getOffset(level, pos);
         p_234384_.translate(vec3.x, vec3.y, vec3.z);
 
         try {
             if (flag) {
-                this.tesselateWithAO(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
+                this.tesselateWithAO(level, model, state, pos, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
             } else {
-                this.tesselateWithoutAO(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
+                this.tesselateWithoutAO(level, model, state, pos, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
             }
 
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.forThrowable(throwable, "Tesselating block model");
             CrashReportCategory crashreportcategory = crashreport.addCategory("Block model being tesselated");
-            CrashReportCategory.populateBlockDetails(crashreportcategory, p_234380_, p_234383_, p_234382_);
+            CrashReportCategory.populateBlockDetails(crashreportcategory, level, pos, state);
             crashreportcategory.setDetail("Using AO", flag);
             throw new ReportedException(crashreport);
         }
@@ -122,11 +128,6 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
         return bl && !Block.shouldRenderFace(state, world, pos, direction, blockpos$mutableblockpos);
     }
 
-    @Deprecated
-    public void tesselateWithoutAO(BlockAndTintGetter p_234402_, BakedModel p_234403_, BlockState p_234404_, BlockPos p_234405_, PoseStack p_234406_, VertexConsumer p_234407_, boolean p_234408_, RandomSource p_234409_, long p_234410_, int p_234411_) {
-        tesselateWithoutAO(p_234402_, p_234403_, p_234404_, p_234405_, p_234406_, p_234407_, p_234408_, p_234409_, p_234410_, p_234411_, ModelData.EMPTY, null);
-    }
-
     public void tesselateWithoutAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack p_111095_, VertexConsumer p_111096_, boolean bl, RandomSource p_111098_, long p_111099_, int p_111100_, ModelData modelData, RenderType renderType) {
         BitSet bitset = new BitSet(3);
         BlockPos.MutableBlockPos blockpos$mutableblockpos = pos.mutable();
@@ -152,11 +153,12 @@ public class ShadowFrameBlockRenderer implements BlockEntityRenderer<ShadowFrame
     }
 
     private void renderModelFaceAO(BlockAndTintGetter world, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer vertexConsumer, List<BakedQuad> list, float[] p_111019_, BitSet p_111020_, ModelBlockRenderer.AmbientOcclusionFace p_111021_, int p_111022_) {
+        AmbientOcclusionFaceAccessor accessor = (AmbientOcclusionFaceAccessor) p_111021_;
         for (BakedQuad bakedquad : list) {
             this.calculateShape(world, state, pos, bakedquad.getVertices(), bakedquad.getDirection(), p_111019_, p_111020_);
-            if (!ForgeHooksClient.calculateFaceWithoutAO(world, state, pos, bakedquad, p_111020_.get(0), p_111021_.brightness, p_111021_.lightmap))
+            if (!ClientHooks.calculateFaceWithoutAO(world, state, pos, bakedquad, p_111020_.get(0), accessor.getBrightness(), accessor.getLightmap()))
                 p_111021_.calculate(world, state, pos, bakedquad.getDirection(), p_111019_, p_111020_, bakedquad.isShade());
-            this.putQuadData(world, state, pos, vertexConsumer, poseStack.last(), bakedquad, p_111021_.brightness[0], p_111021_.brightness[1], p_111021_.brightness[2], p_111021_.brightness[3], p_111021_.lightmap[0], p_111021_.lightmap[1], p_111021_.lightmap[2], p_111021_.lightmap[3], p_111022_);
+            this.putQuadData(world, state, pos, vertexConsumer, poseStack.last(), bakedquad, accessor.getBrightness()[0], accessor.getBrightness()[1], accessor.getBrightness()[2], accessor.getBrightness()[3], accessor.getLightmap()[0], accessor.getLightmap()[1], accessor.getLightmap()[2], accessor.getLightmap()[3], p_111022_);
         }
 
     }

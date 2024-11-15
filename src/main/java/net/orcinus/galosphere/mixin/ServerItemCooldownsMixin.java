@@ -3,9 +3,8 @@ package net.orcinus.galosphere.mixin;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ServerItemCooldowns;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.orcinus.galosphere.init.GItems;
-import net.orcinus.galosphere.init.GNetworkHandler;
 import net.orcinus.galosphere.network.PlayCooldownSoundPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +21,7 @@ public class ServerItemCooldownsMixin {
     @Inject(at = @At("TAIL"), method = "onCooldownEnded")
     private void G$removeCooldown(Item item, CallbackInfo ci) {
         if (item.equals(GItems.SALTBOUND_TABLET.get())) {
-            GNetworkHandler.INSTANCE.send(new PlayCooldownSoundPacket(), PacketDistributor.PLAYER.with(this.player));
+            PacketDistributor.sendToPlayer(this.player, new PlayCooldownSoundPacket());
         }
     }
 

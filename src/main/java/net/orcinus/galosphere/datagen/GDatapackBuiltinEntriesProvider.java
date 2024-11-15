@@ -4,8 +4,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.init.GBiomeModifiers;
 import net.orcinus.galosphere.init.GBiomes;
@@ -25,7 +25,7 @@ public class GDatapackBuiltinEntriesProvider extends DatapackBuiltinEntriesProvi
             .add(Registries.BIOME, GBiomes::bootstrap)
             .add(Registries.TEMPLATE_POOL, GTemplatePools::bootstrap)
             .add(Registries.STRUCTURE, GStructures::bootstrap)
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, GBiomeModifiers::bootstrap)
+            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GBiomeModifiers::bootstrap)
             .add(Registries.ENCHANTMENT, GEnchantments::bootstrap);
 
     public GDatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

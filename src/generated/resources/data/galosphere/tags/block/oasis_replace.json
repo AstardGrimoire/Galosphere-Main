@@ -4,6 +4,6 @@
     "#minecraft:dirt",
     "#minecraft:base_stone_overworld",
     "#minecraft:flowers",
-    "#forge:ores"
+    "#c:ores"
   ]
 }

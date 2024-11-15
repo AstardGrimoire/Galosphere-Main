@@ -1,4 +1,4 @@
-package net.orcinus.galosphere.network;
+package net.orcinus.galosphere.network.handler;
 
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -7,15 +7,19 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.orcinus.galosphere.events.ClientEvents;
 import net.orcinus.galosphere.init.GSoundEvents;
+import net.orcinus.galosphere.network.BarometerPacket;
+import net.orcinus.galosphere.network.PlayCooldownSoundPacket;
+import net.orcinus.galosphere.network.SendParticlesPacket;
+import net.orcinus.galosphere.network.SendPerspectivePacket;
 
 import java.util.Optional;
 
 public class ClientEventsHandler {
 
-    public static void handleSendParticles(SendParticlesPacket packet, CustomPayloadEvent.Context ctx) {
+    public static void handleSendParticles(SendParticlesPacket packet, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             Optional.ofNullable(minecraft.level).ifPresent(world -> {
@@ -33,17 +37,15 @@ public class ClientEventsHandler {
                 world.playLocalSound(packet.blockPos(), GSoundEvents.GLOW_FLARE_SPREAD.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
             });
         });
-        ctx.setPacketHandled(true);
     }
 
-    public static void sendBarometerInfo(BarometerPacket packet, CustomPayloadEvent.Context ctx) {
+    public static void sendBarometerInfo(BarometerPacket packet, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             ClientEvents.clearWeatherTime = packet.weatherTicks();
         });
-        ctx.setPacketHandled(true);
     }
 
-    public static void sendPerspective(SendPerspectivePacket packet, CustomPayloadEvent.Context ctx) {
+    public static void sendPerspective(SendPerspectivePacket packet, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft client = Minecraft.getInstance();
             Optional.ofNullable(client.level).flatMap(world -> Optional.ofNullable(world.getPlayerByUUID(packet.uuid())).filter(player -> player.equals(client.player)).flatMap(player -> Optional.ofNullable(client.level.getEntity(packet.id())))).ifPresent(entity -> {
@@ -53,10 +55,9 @@ public class ClientEventsHandler {
                 }
             });
         });
-        ctx.setPacketHandled(true);
     }
 
-    public static void playCooldownSound(PlayCooldownSoundPacket packet, CustomPayloadEvent.Context ctx) {
+    public static void playCooldownSound(PlayCooldownSoundPacket packet, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             Minecraft instance = Minecraft.getInstance();
             LocalPlayer player = instance.player;
@@ -64,6 +65,5 @@ public class ClientEventsHandler {
                 instance.getSoundManager().play(SimpleSoundInstance.forUI(GSoundEvents.SALTBOUND_TABLET_COOLDOWN_OVER.get(), 1.0F));
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

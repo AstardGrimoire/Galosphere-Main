@@ -16,6 +16,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.orcinus.galosphere.mixin.access.ProjectileAccessor;
 
 public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
     protected static final EntityDataAccessor<Boolean> THROWN = SynchedEntityData.defineId(ThrowableLaunchedProjectile.class, EntityDataSerializers.BOOLEAN);
@@ -62,12 +63,13 @@ public abstract class ThrowableLaunchedProjectile extends FireworkRocketEntity {
     public void tick() {
         if (this.isThrown()) {
             float h;
-            if (!this.hasBeenShot) {
+            ProjectileAccessor accessor = (ProjectileAccessor) this;
+            if (!accessor.isHasBeenShot()) {
                 this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
-                this.hasBeenShot = true;
+                accessor.setHasBeenShot(true);
             }
-            if (!this.leftOwner) {
-                this.leftOwner = this.checkLeftOwner();
+            if (!accessor.isLeftOwner()) {
+                accessor.setLeftOwner(accessor.callCheckLeftOwner());
             }
             this.baseTick();
             HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);

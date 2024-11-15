@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 import net.orcinus.galosphere.init.GDataComponents;
 import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItems;
@@ -135,7 +136,7 @@ public class SilverBomb extends ThrowableItemProjectile {
     }
 
     private void bombExplode(CompatUtil compatUtil) {
-        boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
+        boolean flag = EventHooks.canEntityGrief(this.level(), this.getOwner());
         this.level().explode(this, null, new ExplosionDamageCalculator() {
             @Override
             public boolean shouldBlockExplode(Explosion explosion, BlockGetter world, BlockPos pos, BlockState state, float p_46098_) {

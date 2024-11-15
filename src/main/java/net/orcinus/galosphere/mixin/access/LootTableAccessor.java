@@ -1,4 +1,4 @@
-package net.orcinus.galosphere.mixin;
+package net.orcinus.galosphere.mixin.access;
 
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;

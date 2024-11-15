@@ -4,7 +4,9 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "galosphere:pink_salt_shrine/temple_top",
-        "processors": "minecraft:empty",
+        "processors": {
+          "processors": []
+        },
         "projection": "rigid"
       },
       "weight": 1

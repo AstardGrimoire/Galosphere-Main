@@ -71,7 +71,7 @@ public class Berserker extends Monster {
     private static final EntityDataAccessor<Integer> STATIONARY_TICKS = SynchedEntityData.defineId(Berserker.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SHEDDING = SynchedEntityData.defineId(Berserker.class, EntityDataSerializers.BOOLEAN);
     private final List<Holder<MobEffect>> selectedEffects = Util.make(Lists.newArrayList(), list -> {
-        list.add(GMobEffects.BLOCK_BANE.getHolder().orElseThrow());
+        list.add(GMobEffects.BLOCK_BANE);
         list.add(MobEffects.DIG_SLOWDOWN);
     });
     public AnimationState roarAnimationState = new AnimationState();

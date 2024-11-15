@@ -13,12 +13,17 @@
     "InventoryMixin",
     "LightningBoltMixin",
     "LivingEntityMixin",
-    "LootTableAccessor",
     "OverworldBiomeBuilderMixin",
     "PlayerMixin",
     "PowderSnowBlockMixin",
     "ServerItemCooldownsMixin",
-    "ShulkerBoxBlockEntityMixin"
+    "ShulkerBoxBlockEntityMixin",
+    "access.AbstractHorseAccessor",
+    "access.AmbientOcclusionFaceAccessor",
+    "access.FireworkRocketEntityAccessor",
+    "access.LootTableAccessor",
+    "access.ModelBlockRendererAccessor",
+    "access.ProjectileAccessor"
   ],
   "client": [
     "client.ClientLevelMixin",

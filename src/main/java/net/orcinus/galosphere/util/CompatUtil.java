@@ -1,12 +1,12 @@
 package net.orcinus.galosphere.util;
 
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fml.ModList;
 
 public class CompatUtil {
 
@@ -34,19 +34,19 @@ public class CompatUtil {
     }
 
     public Block getCompatBlock(String modid, String name) {
-        return ForgeRegistries.BLOCKS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
+        return BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public Item getCompatItem(String modid, String name) {
-        return ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public SimpleParticleType getCompatParticle(String modid, String name) {
-        return (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
+        return (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
     public MobEffect getCompatEffect(String modid, String name) {
-        return ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.fromNamespaceAndPath(modid, name));
+        return BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.fromNamespaceAndPath(modid, name));
     }
 
 }

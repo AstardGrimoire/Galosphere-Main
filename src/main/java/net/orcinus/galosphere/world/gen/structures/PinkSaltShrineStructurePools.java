@@ -5,7 +5,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.Pools;
-import net.minecraft.data.worldgen.ProcessorLists;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -25,7 +24,7 @@ public class PinkSaltShrineStructurePools {
                 new StructureTemplatePool(
                         holderGetter.getOrThrow(Pools.EMPTY),
                         List.of(
-                                Pair.of(StructurePoolElement.single("galosphere:pink_salt_shrine/temple_top", holderGetter1.getOrThrow(ProcessorLists.EMPTY)), 1)
+                                Pair.of(StructurePoolElement.single("galosphere:pink_salt_shrine/temple_top"), 1)
                         ),
                         StructureTemplatePool.Projection.RIGID
                 )

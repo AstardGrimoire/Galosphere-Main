@@ -9,9 +9,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.orcinus.galosphere.Galosphere;
 import net.orcinus.galosphere.compat.init.ForgeItemTags;
 import net.orcinus.galosphere.init.GBlocks;
@@ -20,6 +19,7 @@ import net.orcinus.galosphere.init.GItems;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class GItemTagsProvider extends ItemTagsProvider {
 
@@ -29,8 +29,8 @@ public class GItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider p_256380_) {
-        GItems.ITEMS.getEntries().stream().map(RegistryObject::get).filter(BlockItem.class::isInstance).map(BlockItem.class::cast).map(BlockItem::getBlock).filter(StairBlock.class::isInstance).forEach(block -> this.tag(ItemTags.STAIRS).add(block.asItem()));
-        GItems.ITEMS.getEntries().stream().map(RegistryObject::get).filter(BlockItem.class::isInstance).map(BlockItem.class::cast).map(BlockItem::getBlock).filter(SlabBlock.class::isInstance).forEach(block -> this.tag(ItemTags.SLABS).add(block.asItem()));
+        GItems.ITEMS.getEntries().stream().map(Supplier::get).filter(BlockItem.class::isInstance).map(BlockItem.class::cast).map(BlockItem::getBlock).filter(StairBlock.class::isInstance).forEach(block -> this.tag(ItemTags.STAIRS).add(block.asItem()));
+        GItems.ITEMS.getEntries().stream().map(Supplier::get).filter(BlockItem.class::isInstance).map(BlockItem.class::cast).map(BlockItem::getBlock).filter(SlabBlock.class::isInstance).forEach(block -> this.tag(ItemTags.SLABS).add(block.asItem()));
         this.tag(ItemTags.FREEZE_IMMUNE_WEARABLES).add(GItems.STERLING_HELMET.get(), GItems.STERLING_CHESTPLATE.get(), GItems.STERLING_LEGGINGS.get(), GItems.STERLING_BOOTS.get(), GItems.STERLING_HORSE_ARMOR.get());
 
         this.tag(GItemTags.BOMB_BOUNCY_MODIFIERS).add(Items.SLIME_BALL);

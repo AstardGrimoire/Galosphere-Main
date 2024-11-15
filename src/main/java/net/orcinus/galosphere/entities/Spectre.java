@@ -52,9 +52,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.orcinus.galosphere.api.BottlePickable;
 import net.orcinus.galosphere.api.Spectatable;
 import net.orcinus.galosphere.api.SpectreBoundSpyglass;
@@ -65,7 +65,6 @@ import net.orcinus.galosphere.init.GEntityTypes;
 import net.orcinus.galosphere.init.GItemTags;
 import net.orcinus.galosphere.init.GItems;
 import net.orcinus.galosphere.init.GMemoryModuleTypes;
-import net.orcinus.galosphere.init.GNetworkHandler;
 import net.orcinus.galosphere.init.GParticleTypes;
 import net.orcinus.galosphere.init.GSensorTypes;
 import net.orcinus.galosphere.init.GSoundEvents;
@@ -375,7 +374,7 @@ public class Spectre extends Animal implements FlyingAnimal, BottlePickable, Spe
             player.zza = 0.0F;
             ((SpectreBoundSpyglass)player).setUsingSpectreBoundedSpyglass(true);
             this.setManipulatorUUID(player.getUUID());
-            GNetworkHandler.INSTANCE.send(new SendPerspectivePacket(player.getUUID(), this.getId()), PacketDistributor.PLAYER.with((ServerPlayer) player));
+            PacketDistributor.sendToPlayer((ServerPlayer) player, new SendPerspectivePacket(player.getUUID(), this.getId()));
             this.playSound(GSoundEvents.SPECTRE_MANIPULATE_BEGIN.get(), 1.0F, 1.0F);
         }
     }

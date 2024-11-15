@@ -51,7 +51,7 @@ public class GBiomes {
         BiomeDefaultFeatures.addSurfaceFreezing(biomeBuilder);
         BiomeDefaultFeatures.addPlainGrass(biomeBuilder);
         BiomeDefaultFeatures.addDefaultOres(biomeBuilder);
-        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_PINK_SALT_CAVES.getHolder().orElseThrow());
+        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_PINK_SALT_CAVES);
         return biome(true, 0.5f, 0.5f, mobBuilder, biomeBuilder, music);
     }
 
@@ -67,7 +67,7 @@ public class GBiomes {
         BiomeDefaultFeatures.addSurfaceFreezing(biomeBuilder);
         BiomeDefaultFeatures.addPlainGrass(biomeBuilder);
         BiomeDefaultFeatures.addDefaultOres(biomeBuilder);
-        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_LICHEN_CAVES.getHolder().orElseThrow());
+        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_LICHEN_CAVES);
         return biome(true, 0.5f, 0.5f, mobBuilder, biomeBuilder, music);
     }
 
@@ -83,7 +83,7 @@ public class GBiomes {
         BiomeDefaultFeatures.addSurfaceFreezing(biomeBuilder);
         BiomeDefaultFeatures.addPlainGrass(biomeBuilder);
         BiomeDefaultFeatures.addDefaultOres(biomeBuilder);
-        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_CRYSTAL_CANYONS.getHolder().orElseThrow());
+        Music music = Musics.createGameMusic(GSoundEvents.MUSIC_CRYSTAL_CANYONS);
         return biome(true, 0.5f, 0.5f, mobBuilder, biomeBuilder, music);
     }
 
