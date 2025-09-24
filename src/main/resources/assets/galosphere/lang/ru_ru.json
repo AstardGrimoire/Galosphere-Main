@@ -1,5 +1,5 @@
 {
-  "advancements.galosphere.activate_pink_salt_chamber.description": "Пробудите соляной алтарь",
+  "advancements.galosphere.activate_pink_salt_chamber.description": "Пробудите розовый рассадник",
   "advancements.galosphere.activate_pink_salt_chamber.title": "Есть кто дома?",
   "advancements.husbandry.crystal_lamps.title": "Баланс... Как и должно быть",
   "advancements.husbandry.crystal_lamps.description": "Соберите в инвентаре все виды кристальных ламп",
@@ -21,7 +21,7 @@
   "advancements.galosphere.use_spectre_flare.title": "Это не наш шпион!",
   "advancements.story.use_spectre_spyglass.description": "Поглядите на мир глазами спектра",
   "advancements.story.use_spectre_spyglass.title": "Чёрно-белое",
-  "advancements.story.warped_teleport.title": "Операция перехват",
+  "advancements.story.warped_teleport.title": "Операция 'Перехват'",
   "advancements.story.warped_teleport.description": "Телепортируйтесь к якорю искажения",
   "attribute.name.generic.illager_resistance": "Сопротивление атакам разбойников",
   "biome.galosphere.crystal_canyons": "Кристальные каньоны",
@@ -237,11 +237,11 @@
   "subtitles.entity.spectre.ambient": "Спектр чирикает",
   "subtitles.entity.spectre.death": "Спектр погибает",
   "subtitles.entity.spectre.hurt": "Спектр ранен",
-  "subtitles.entity.spectre.lock_to_spyglass": "Привязывание подзорной трубы к спектру",
-  "subtitles.entity.spectre.receive_item": "Спектр получает предмет"
-  "subtitles.item.saltbound_tablet.cast_attack": "Шипы выпущены",
+  "subtitles.entity.spectre.lock_to_spyglass": "Подзорная труба привязана к спектру",
+  "subtitles.entity.spectre.receive_item": "Спектр получает предмет",
+  "subtitles.item.saltbound_tablet.cast_attack": "Соляной шип выпущен",
   "subtitles.item.saltbound_tablet.cooldown_over": "Соляная табличка готова к атаке",
-  "subtitles.item.saltbound_tablet.prepare_attack": "Соляная табличка готовится выпустить шипы",
+  "subtitles.item.saltbound_tablet.prepare_attack": "Игрок готовится выпустить шипы",
   "upgrade.galosphere.preserved_upgrade": "Резервация",
-  "upgrade.galosphere.silver_upgrade": "Серебрянное улучшение"
+  "upgrade.galosphere.silver_upgrade": "Серебряное улучшение"
 }
